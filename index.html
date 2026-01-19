@@ -63,7 +63,7 @@ button.small {padding: 6px 10px; font-size: 0.9em; min-width: 90px; }
 </select>
 
 <button onclick="ajouterOuModifierAliment()">Ajouter</button>
-
+<input type="text" id="recherche" placeholder="🔍 Rechercher un aliment..." oninput="afficherAliments()">
 <h2>Liste des aliments :</h2>
 <ul id="listeAliments"></ul>
 
@@ -215,6 +215,7 @@ afficherAliments();
 
 </body>
 </html>
+
 
 
 
