@@ -110,7 +110,6 @@ function afficherAliments() {
     let texte = `${aliment.nom} - ${aliment.quantite} ${aliment.unite} - ${joursRestants} jour(s) restant`;
     if(joursRestants <= 3) {
       li.className = "urgent";
-      texte += " - URGENT !";
     } else {
       li.className = "ok";
     }
@@ -201,6 +200,7 @@ afficherAliments();
 
 </body>
 </html>
+
 
 
 
