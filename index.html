@@ -17,6 +17,12 @@ button.small { padding: 5px; font-size: 0.9em; margin-left: 5px; }
   body { padding: 10px; }
   input, select, button { width: 100%; }
 }
+.actions {
+  display: inline-flex;
+  gap: 6px;
+  margin-left: 10px;
+}
+
 </style>
 </head>
 <body>
@@ -124,8 +130,12 @@ function afficherAliments() {
     btnSupprimer.className = "small";
     btnSupprimer.onclick = () => supprimerAliment(index);
 
-    li.appendChild(btnModifier);
-    li.appendChild(btnSupprimer);
+    const actions = document.createElement("span");
+    actions.className = "actions";
+    actions.appendChild(btnModifier);
+    actions.appendChild(btnSupprimer);
+
+    li.appendChild(actions);
     ul.appendChild(li);
   });
 }
@@ -192,4 +202,5 @@ afficherAliments();
 
 </body>
 </html>
+
 
