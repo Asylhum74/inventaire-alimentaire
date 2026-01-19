@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Inventaire Alimentaire</title>
+<style>
+body { font-family: Arial, sans-serif; padding: 15px; max-width: 500px; margin: auto; }
+h1 { color: #2c3e50; text-align: center; }
+label { display: block; margin-top: 10px; }
+input, select, button { margin: 5px 0; padding: 10px; font-size: 1em; width: 100%; box-sizing: border-box; }
+.urgent { color: red; font-weight: bold; }
+.ok { color: green; }
+ul { list-style: none; padding: 0; max-height: 400px; overflow-y: auto; margin-top: 10px; }
+li { margin: 5px 0; padding: 5px; border-bottom: 1px solid #ccc; word-wrap: break-word; }
+button.small { padding: 5px; font-size: 0.9em; margin-left: 5px; }
+@media (max-width: 600px) {
+  body { padding: 10px; }
+  input, select, button { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<h1>Inventaire Alimentaire</h1>
+
+<label>Nom :</label>
+<input type="text" id="nom" placeholder="Nom de l'aliment">
+
+<label>Quantité :</label>
+<input type="number" id="quantite" placeholder="Quantité">
+
+<label>Unité :</label>
+<input type="text" id="unite" placeholder="Ex: g, litre, pcs">
+
+<label>Date de péremption :</label>
+<input type="date" id="peremption">
+
+<label>Catégorie :</label>
+<select id="categorie">
+  <option value="Produit laitier">Produit laitier</option>
+  <option value="Conserve">Conserve</option>
+  <option value="Légume">Légume</option>
+  <option value="Fruit">Fruit</option>
+  <option value="Viande">Viande</option>
+</select>
+
+<button onclick="ajouterOuModifierAliment()">Ajouter</button>
+
+<h2>Liste des aliments :</h2>
+<ul id="listeAliments"></ul>
+
+<script>
+let aliments = [];
+let indexEnCours = -1;
+
+// Charger les aliments depuis localStorage
+function chargerAliments() {
+  const data = localStorage.getItem("aliments");
+  if(data) aliments = JSON.parse(data);
+}
+
+// Sauvegarder les aliments dans localStorage
+function sauvegarderAliments() {
+  localStorage.setItem("aliments", JSON.stringify(aliments));
+}
+
+// Calculer les jours restants avant péremption
+function calculerJoursRestants(dateString) {
+  const aujourdHui = new Date();
+  const peremption = new Date(dateString);
+  const diffTime = peremption - aujourdHui;
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays < 0 ? 0 : diffDays;
+}
+
+// Afficher la liste triée par catégorie
+function afficherAliments() {
+  const ul = document.getElementById("listeAliments");
+  ul.innerHTML = "";
+
+  const ordreCategorie = ["Produit laitier", "Conserve", "Légume", "Fruit", "Viande"];
+  aliments.sort((a,b) => ordreCategorie.indexOf(a.categorie) - ordreCategorie.indexOf(b.categorie));
+
+  aliments.forEach((aliment, index) => {
+    const li = document.createElement("li");
+    const joursRestants = calculerJoursRestants(aliment.peremption);
+    let texte = `${aliment.nom} - ${aliment.quantite} ${aliment.unite} - ${aliment.categorie} - ${joursRestants} jour(s) restant`;
+    if(joursRestants <= 3) {
+      li.className = "urgent";
+      texte += " - URGENT !";
+    } else {
+      li.className = "ok";
+    }
+    li.textContent = texte;
+
+    // Boutons Modifier et Supprimer
+    const btnModifier = document.createElement("button");
+    btnModifier.textContent = "Modifier";
+    btnModifier.className = "small";
+    btnModifier.onclick = () => preRemplirFormulaire(index);
+
+    const btnSupprimer = document.createElement("button");
+    btnSupprimer.textContent = "Supprimer";
+    btnSupprimer.className = "small";
+    btnSupprimer.onclick = () => supprimerAliment(index);
+
+    li.appendChild(btnModifier);
+    li.appendChild(btnSupprimer);
+    ul.appendChild(li);
+  });
+}
+
+// Ajouter ou modifier un aliment
+function ajouterOuModifierAliment() {
+  const nom = document.getElementById("nom").value;
+  const quantite = document.getElementById("quantite").value;
+  const unite = document.getElementById("unite").value;
+  const peremption = document.getElementById("peremption").value;
+  const categorie = document.getElementById("categorie").value;
+
+  if(!nom || !quantite || !unite || !peremption || !categorie) {
+    alert("Veuillez remplir tous les champs !");
+    return;
+  }
+
+  const nouvelAliment = {nom, quantite, unite, peremption, categorie};
+
+  if(indexEnCours === -1) {
+    aliments.push(nouvelAliment);
+  } else {
+    aliments[indexEnCours] = nouvelAliment;
+    indexEnCours = -1;
+    document.querySelector("button[onclick='ajouterOuModifierAliment()']").textContent = "Ajouter";
+  }
+
+  // Réinitialiser le formulaire
+  document.getElementById("nom").value = "";
+  document.getElementById("quantite").value = "";
+  document.getElementById("unite").value = "";
+  document.getElementById("peremption").value = "";
+  document.getElementById("categorie").value = "Produit laitier";
+
+  sauvegarderAliments();
+  afficherAliments();
+}
+
+// Pré-remplir le formulaire pour modifier
+function preRemplirFormulaire(index) {
+  const aliment = aliments[index];
+  document.getElementById("nom").value = aliment.nom;
+  document.getElementById("quantite").value = aliment.quantite;
+  document.getElementById("unite").value = aliment.unite;
+  document.getElementById("peremption").value = aliment.peremption;
+  document.getElementById("categorie").value = aliment.categorie;
+  indexEnCours = index;
+  document.querySelector("button[onclick='ajouterOuModifierAliment()']").textContent = "Modifier";
+}
+
+// Supprimer un aliment
+function supprimerAliment(index) {
+  if(confirm("Voulez-vous vraiment supprimer cet aliment ?")) {
+    aliments.splice(index, 1);
+    sauvegarderAliments();
+    afficherAliments();
+  }
+}
+
+// Initialisation
+chargerAliments();
+afficherAliments();
+</script>
+
+</body>
+</html>
