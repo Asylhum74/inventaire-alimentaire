@@ -19,6 +19,11 @@ button.small {padding: 6px 10px; font-size: 0.9em; min-width: 90px; }
   input, select, button { width: 100%; }
 }
 .actions {display: inline-flex; gap: 6px; margin-left: 10px; }
+  
+.dark {background: #121212; color: #e0e0e0; }
+.dark input, .dark select, .dark button {background: #1e1e1e; color: #e0e0e0; border: 1px solid #444; }
+.dark li {border-bottom: 1px solid #333; }
+.toggle {margin: 10px 0; }
 
 </style>
 </head>
@@ -26,6 +31,9 @@ button.small {padding: 6px 10px; font-size: 0.9em; min-width: 90px; }
 
 <h1>Inventaire Alimentaire</h1>
 
+<button class="toggle" onclick="toggleDarkMode()">🌙 Mode sombre</button>
+<input type="text" id="recherche" placeholder="🔍 Rechercher un aliment..." oninput="afficherAliments()">
+  
 <label>Nom :</label>
 <input type="text" id="nom" placeholder="Nom de l'aliment">
 
@@ -60,6 +68,10 @@ button.small {padding: 6px 10px; font-size: 0.9em; min-width: 90px; }
 <ul id="listeAliments"></ul>
 
 <script>
+function toggleDarkMode() {
+  document.body.classList.toggle("dark");
+}
+
 let aliments = [];
 let indexEnCours = -1;
 
@@ -85,6 +97,7 @@ function calculerJoursRestants(dateString) {
 
 // Afficher la liste triée par catégorie
 function afficherAliments() {
+  const recherche = document.getElementById("recherche").value.toLowerCase();
   const ul = document.getElementById("listeAliments");
   ul.innerHTML = "";
 
@@ -96,6 +109,7 @@ function afficherAliments() {
   let categorieActuelle = "";
 
   aliments.forEach((aliment, index) => {
+    if(!aliment.nom.toLowerCase().includes(recherche)) return;
     // Si on change de catégorie → afficher le titre
     if(aliment.categorie !== categorieActuelle) {
       categorieActuelle = aliment.categorie;
@@ -201,6 +215,7 @@ afficherAliments();
 
 </body>
 </html>
+
 
 
 
