@@ -8,20 +8,17 @@ body { font-family: Arial, sans-serif; padding: 15px; max-width: 500px; margin: 
 h1 { color: #2c3e50; text-align: center; }
 label { display: block; margin-top: 10px; }
 input, select, button { margin: 5px 0; padding: 10px; font-size: 1em; width: 100%; box-sizing: border-box; }
-.urgent { color: red; font-weight: bold; }
-.ok { color: green; }
+.urgent {display: flex; align-items: center; flex: 1; }
+.ok {display: flex; align-items: center; flex: 1; }
 ul { list-style: none; padding: 0; max-height: 400px; overflow-y: auto; margin-top: 10px; }
 li { margin: 5px 0; padding: 5px; border-bottom: 1px solid #ccc; word-wrap: break-word; }
-button.small { padding: 5px; font-size: 0.9em; margin-left: 5px; }
+li {display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+button.small {padding: 6px 10px; font-size: 0.9em; min-width: 90px; }
 @media (max-width: 600px) {
   body { padding: 10px; }
   input, select, button { width: 100%; }
 }
-.actions {
-  display: inline-flex;
-  gap: 6px;
-  margin-left: 10px;
-}
+.actions {display: inline-flex; gap: 6px; margin-left: 10px; }
 
 </style>
 </head>
@@ -117,7 +114,9 @@ function afficherAliments() {
     } else {
       li.className = "ok";
     }
-    li.textContent = texte;
+    const spanTexte = document.createElement("span");
+    spanTexte.textContent = texte;
+    li.appendChild(spanTexte);
 
     // Boutons
     const btnModifier = document.createElement("button");
@@ -202,5 +201,6 @@ afficherAliments();
 
 </body>
 </html>
+
 
 
