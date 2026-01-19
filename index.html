@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Inventaire Alimentaire</title>
 <style>
-body { font-family: Arial, sans-serif; padding: 15px; max-width: 500px; margin: auto; }
+body {font-family: Arial, sans-serif; padding: 15px; margin: 0; width: 100%; }
 h1 { color: #2c3e50; text-align: center; }
 label { display: block; margin-top: 10px; }
 input, select, button { margin: 5px 0; padding: 10px; font-size: 1em; width: 100%; box-sizing: border-box; }
@@ -110,6 +110,7 @@ function afficherAliments() {
     let texte = `${aliment.nom} - ${aliment.quantite} ${aliment.unite} - ${joursRestants} jour(s) restant`;
     if(joursRestants <= 3) {
       li.className = "urgent";
+      texte += " - URGENT !";
     } else {
       li.className = "ok";
     }
@@ -200,6 +201,7 @@ afficherAliments();
 
 </body>
 </html>
+
 
 
 
