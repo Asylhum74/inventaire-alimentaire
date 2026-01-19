@@ -37,11 +37,18 @@ button.small { padding: 5px; font-size: 0.9em; margin-left: 5px; }
 
 <label>Catégorie :</label>
 <select id="categorie">
+  <option value="Choisir catégorie">Choisir catégorie</option>
   <option value="Produit laitier">Produit laitier</option>
   <option value="Conserve">Conserve</option>
   <option value="Légume">Légume</option>
   <option value="Fruit">Fruit</option>
   <option value="Viande">Viande</option>
+  <option value="Poisson">Poisson</option>
+  <option value="Féculent">Féculent</option>
+  <option value="Patisserie">Patisserie</option>
+  <option value="Sucré">Sucré</option>
+  <option value="Epice">Epice</option>
+  <option value="Sec">Sec</option>
 </select>
 
 <button onclick="ajouterOuModifierAliment()">Ajouter</button>
@@ -78,13 +85,26 @@ function afficherAliments() {
   const ul = document.getElementById("listeAliments");
   ul.innerHTML = "";
 
-  const ordreCategorie = ["Produit laitier", "Conserve", "Légume", "Fruit", "Viande"];
+  const ordreCategorie = ["Produit laitier", "Conserve", "Légume", "Fruit", "Viande", "Poisson", "Féculent", "Patisserie", "Sucré", "Epice", "Sec"];
+
+  // Trier par catégorie
   aliments.sort((a,b) => ordreCategorie.indexOf(a.categorie) - ordreCategorie.indexOf(b.categorie));
 
+  let categorieActuelle = "";
+
   aliments.forEach((aliment, index) => {
+    // Si on change de catégorie → afficher le titre
+    if(aliment.categorie !== categorieActuelle) {
+      categorieActuelle = aliment.categorie;
+      const titre = document.createElement("li");
+      titre.innerHTML = `<strong style="font-size:1.2em; color:#2c3e50;">${categorieActuelle}</strong>`;
+      ul.appendChild(titre);
+    }
+
     const li = document.createElement("li");
     const joursRestants = calculerJoursRestants(aliment.peremption);
-    let texte = `${aliment.nom} - ${aliment.quantite} ${aliment.unite} - ${aliment.categorie} - ${joursRestants} jour(s) restant`;
+
+    let texte = `${aliment.nom} - ${aliment.quantite} ${aliment.unite} - ${joursRestants} jour(s) restant`;
     if(joursRestants <= 3) {
       li.className = "urgent";
       texte += " - URGENT !";
@@ -93,7 +113,7 @@ function afficherAliments() {
     }
     li.textContent = texte;
 
-    // Boutons Modifier et Supprimer
+    // Boutons
     const btnModifier = document.createElement("button");
     btnModifier.textContent = "Modifier";
     btnModifier.className = "small";
@@ -172,3 +192,4 @@ afficherAliments();
 
 </body>
 </html>
+
