@@ -112,6 +112,7 @@ html, body {height: 100%;}
   <h2>🍽️ Repas de la semaine</h2>
 
   <p>Planifie les repas de la semaine :</p>
+
 <table border="1" cellpadding="5" cellspacing="0">
     <thead>
       <tr>
@@ -173,6 +174,7 @@ html, body {height: 100%;}
     <button onclick="genererListeCourses()">🛒 Générer la liste de courses</button>
   </div>
   <div id="repasSemaine"></div>
+
 </div>
 
 <script>
@@ -304,8 +306,6 @@ function ajouterOuModifierAliment() {
   document.getElementById("categorie").value = "Choisir catégorie";
   document.getElementById("sansDate").checked = false; 
 
-  
-
 
   sauvegarderAliments();
   afficherAliments();
@@ -398,7 +398,7 @@ function chargerRepas() {
 }
 
 function genererListeCourses() {
-  const inventaire = JSON.parse(localStorage.getItem('aliment')) || [];
+  const inventaire = JSON.parse(localStorage.getItem('aliments')) || [];
   const repasData = JSON.parse(localStorage.getItem('repasSemaine')) || {};
   const courses = {};
 
@@ -406,6 +406,8 @@ function genererListeCourses() {
   Object.values(repasData).forEach(jour => {
     Object.values(jour).forEach(texteRepas => {
       // Séparer les ingrédients par virgule
+      if (!texteRepas) return;
+
       const aliment = texteRepas.split(',').map(a => a.trim()).filter(a => a);
       aliment.forEach(nomAliment => {
         // Vérifie si l'aliment est présent dans l'inventaire
@@ -427,7 +429,24 @@ function genererListeCourses() {
     liste = "✅ Tous les ingrédients sont déjà présents dans l'inventaire.";
   }
 
-  alert(liste);
+const container = document.getElementById("repasSemaine");
+container.innerHTML = "<h3>🛒 Liste de courses</h3>";
+
+if (Object.keys(courses).length === 0) {
+  container.innerHTML += "<p>✅ Tous les ingrédients sont déjà présents dans l'inventaire.</p>";
+  return;
+}
+
+const ul = document.createElement("ul");
+
+Object.keys(courses).forEach(aliment => {
+  const li = document.createElement("li");
+  li.textContent = `${aliment} x${courses[aliment]}`;
+  ul.appendChild(li);
+});
+
+container.appendChild(ul);
+
 }
 
 
@@ -443,6 +462,7 @@ function genererListeCourses() {
 
 </body>
 </html>
+
 
 
 
