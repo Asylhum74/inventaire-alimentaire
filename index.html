@@ -61,6 +61,11 @@ html, body {
 
 <label>Date de péremption :</label>
 <input type="date" id="peremption">
+<label>
+  <input type="checkbox" id="sansDate">
+  Pas de date de péremption
+</label>
+
 
 <label>Catégorie :</label>
 <select id="categorie">
@@ -143,10 +148,17 @@ function afficherAliments() {
     }
 
     const li = document.createElement("li");
-    const joursRestants = calculerJoursRestants(aliment.peremption);
+    let texte = `${aliment.nom} - ${aliment.quantite}`;
+
+    if (aliment.datePeremption) {
+      const jours = calculerJoursRestants(aliment.datePeremption);
+      texte += ` - ${jours}`;
+    } else {
+      texte += " - Durée illimitée";
+    }
 
     let texte = `${aliment.nom} - ${aliment.quantite} ${aliment.unite} - ${joursRestants} jour(s) restant`;
-    if(joursRestants <= 3) {
+    if(aliment.datePeremption && calculerJoursRestants(aliment.datePeremption) <= 3) {
       li.className = "urgent";
       texte += " - URGENT !";
     } else {
@@ -182,7 +194,8 @@ function ajouterOuModifierAliment() {
   const nom = document.getElementById("nom").value;
   const quantite = document.getElementById("quantite").value;
   const unite = document.getElementById("unite").value;
-  const peremption = document.getElementById("peremption").value;
+  const sansDate = document.getElementById("sansDate").checked;
+  const datePeremption = sansDate ? null : document.getElementById("date").value;
   const categorie = document.getElementById("categorie").value;
 
   if(!nom || !quantite || !unite || !peremption || !categorie) {
@@ -205,7 +218,9 @@ function ajouterOuModifierAliment() {
   document.getElementById("quantite").value = "";
   document.getElementById("unite").value = "";
   document.getElementById("peremption").value = "";
-  document.getElementById("categorie").value = "Produit laitier";
+  document.getElementById("categorie").value = "Choisir catégorie";
+  document.getElementById("sansDate").checked = false;
+
 
   sauvegarderAliments();
   afficherAliments();
@@ -271,6 +286,7 @@ function importerInventaire(event) {
 
 </body>
 </html>
+
 
 
 
