@@ -170,6 +170,7 @@ html, body {height: 100%;}
   <div style="margin-top:10px;">
     <button onclick="sauvegarderRepas()">💾 Sauvegarder la semaine</button>
     <button onclick="chargerRepas()">🔄 Charger la semaine</button>
+    <button onclick="genererListeCourses()">🛒 Générer la liste de courses</button>
   </div>
   <div id="repasSemaine"></div>
 </div>
@@ -396,6 +397,39 @@ function chargerRepas() {
   });
 }
 
+function genererListeCourses() {
+  const inventaire = JSON.parse(localStorage.getItem('aliments')) || [];
+  const repasData = JSON.parse(localStorage.getItem('repasSemaine')) || {};
+  const courses = {};
+
+  // Parcourir tous les repas
+  Object.values(repasData).forEach(jour => {
+    Object.values(jour).forEach(texteRepas => {
+      // Séparer les ingrédients par virgule
+      const aliments = texteRepas.split(',').map(a => a.trim()).filter(a => a);
+      aliments.forEach(nomAliment => {
+        // Vérifie si l'aliment est présent dans l'inventaire
+        const trouve = inventaire.find(a => a.nom.toLowerCase() === nomAliment.toLowerCase());
+        if (!trouve || trouve.quantite <= 0) {
+          courses[nomAliment] = courses[nomAliment] ? courses[nomAliment] + 1 : 1;
+        }
+      });
+    });
+  });
+
+  // Afficher la liste de courses
+  let liste = "🛒 Liste de courses :\n";
+  Object.keys(courses).forEach(aliment => {
+    liste += `- ${aliment} x${courses[aliment]}\n`;
+  });
+
+  if (Object.keys(courses).length === 0) {
+    liste = "✅ Tous les ingrédients sont déjà présents dans l'inventaire.";
+  }
+
+  alert(liste);
+}
+
 
 </script>
   
@@ -409,6 +443,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
