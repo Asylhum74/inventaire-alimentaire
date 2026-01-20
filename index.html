@@ -154,15 +154,13 @@ function afficherAliments() {
     
     const li = document.createElement("li");
     const joursRestants = calculerJoursRestants(aliment.peremption);
-    let texte = `${aliment.nom} - ${aliment.quantite} ${aliment.unite} - ${joursRestants} jour(s) restant`;
+    let texte = `${aliment.nom} - ${aliment.quantite} ${aliment.unite}`;
+
     if (aliment.peremption) {
-      texte += ` - ${jours}`;
+      texte += ` - ${joursRestants} jour(s) restant`;
     } else {
       texte += " - Durée illimitée";
     }
-
-    
-
 
     //if(joursRestants <= 3) {
     if (aliment.peremption && calculerJoursRestants(aliment.peremption) <= 3) {
@@ -299,6 +297,7 @@ function importerInventaire(event) {
 
 </body>
 </html>
+
 
 
 
