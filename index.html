@@ -35,7 +35,7 @@ html, body {height: 100%;}
 
 #listeAliments {min-height: calc(100vh - 300px); overflow-y: auto; }
 
-.nav {display: flex; gap: 10px; margin-bottom: 15px; background-color: lightgray; padding: 5px; }
+.nav {display: flex; gap: 10px; margin-bottom: 15px; }
 
 .nav button {flex: 1; }
 
@@ -45,7 +45,7 @@ html, body {height: 100%;}
 
 <h1>Inventaire Alimentaire</h1>
   
-<nav class="nav">
+<nav>
   <button onclick="afficherPage('inventaire')">📦 Inventaire</button>
   <button onclick="afficherPage('repas')">🍽️ Repas</button>
 </nav>
@@ -326,6 +326,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
