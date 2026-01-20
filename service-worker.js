@@ -1,4 +1,4 @@
-/*
+
 const CACHE_NAME = "inventaire-cache-v7";
 const FILES_TO_CACHE = [
   "./",
