@@ -31,22 +31,28 @@ button.small {padding: 6px 10px; font-size: 0.9em; min-width: 90px; }
 
 .form-section {margin-bottom: 25px; }
   
-html, body {
-  height: 100%;
-}
+html, body {height: 100%;}
 
-#listeAliments {
-  min-height: calc(100vh - 300px);
-  overflow-y: auto;
-}
-  
+#listeAliments {min-height: calc(100vh - 300px); overflow-y: auto; }
+
+.nav {display: flex; gap: 10px; margin-bottom: 15px; }
+
+.nav button {flex: 1; }
+
 </style>
 </head>
 <body>
 
 <h1>Inventaire Alimentaire</h1>
+<nav class="nav">
+  <button onclick="afficherPage('inventaire')">📦 Inventaire</button>
+  <button onclick="afficherPage('repas')">🍽️ Repas</button>
+</nav>
 
 <button class="toggle" onclick="toggleDarkMode()">🌙 Mode sombre</button>
+
+
+<div id="page-inventaire" class="page"> 
 
 <div style="margin-bottom:10px;">
   <button onclick="exporterInventaire()">💾 Sauvegarder</button>
@@ -99,6 +105,16 @@ html, body {
 <input type="text" id="recherche" placeholder="🔍 Rechercher un aliment..." oninput="afficherAliments()">
 <h2>Liste des aliments :</h2>
 <ul id="listeAliments"></ul>
+  
+</div>
+
+<div id="page-repas" class="page" style="display:none;">
+  <h2>🍽️ Repas de la semaine</h2>
+
+  <p>Planifie les repas de la semaine :</p>
+
+  <div id="repasSemaine"></div>
+</div>
 
 <script>
 if (localStorage.getItem("darkMode") === "true") {
@@ -292,6 +308,13 @@ function importerInventaire(event) {
   reader.readAsText(file);
 }
 
+function afficherPage(page) {
+  document.getElementById("page-inventaire").style.display = "none";
+  document.getElementById("page-repas").style.display = "none";
+
+  document.getElementById("page-" + page).style.display = "block";
+}
+
 </script>
   
 <script>
@@ -304,6 +327,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
