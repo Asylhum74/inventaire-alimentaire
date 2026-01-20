@@ -33,6 +33,11 @@ button.small {padding: 6px 10px; font-size: 0.9em; min-width: 90px; }
 <h1>Inventaire Alimentaire</h1>
 
 <button class="toggle" onclick="toggleDarkMode()">🌙 Mode sombre</button>
+
+<div style="margin-bottom:10px;">
+  <button onclick="exporterInventaire()">💾 Sauvegarder</button>
+  <input type="file" id="importFile" accept=".json" onchange="importerInventaire(event)">
+</div>
   
 <label>Nom :</label>
 <input type="text" id="nom" placeholder="Nom de l'aliment">
@@ -211,10 +216,43 @@ function supprimerAliment(index) {
 // Initialisation
 chargerAliments();
 afficherAliments();
+
+function exporterInventaire() {
+  const dataStr = JSON.stringify(aliments, null, 2);
+  const blob = new Blob([dataStr], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "inventaire.json";
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+function importerInventaire(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      aliments = JSON.parse(e.target.result);
+      sauvegarderAliments();
+      afficherAliments();
+      alert("Inventaire restauré avec succès !");
+    } catch {
+      alert("Fichier invalide");
+    }
+  };
+  reader.readAsText(file);
+}
+
 </script>
 
 </body>
 </html>
+
 
 
 
