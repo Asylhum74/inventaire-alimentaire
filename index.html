@@ -151,17 +151,26 @@ function afficherAliments() {
       titre.innerHTML = `<strong style="font-size:1.2em; color:#2c3e50;">${categorieActuelle}</strong>`;
       ul.appendChild(titre);
     }
+    
+    //const li = document.createElement("li");-----------------------------------------------------------------------------------------
+    //const joursRestants = calculerJoursRestants(aliment.peremption);
+    //let texte = `${aliment.nom} - ${aliment.quantite} ${aliment.unite} - ${joursRestants} jour(s) restant`;
+    let texte = `${aliment.nom} - ${aliment.quantite}`;
+    if (aliment.peremption) {
+      const jours = calculerJoursRestants(aliment.peremption);
+      texte += ` - ${jours}`;
+    } else {
+      texte += " - Durée illimitée";
+    }
 
-    const li = document.createElement("li");
-    const joursRestants = calculerJoursRestants(aliment.peremption);
-
-    let texte = `${aliment.nom} - ${aliment.quantite} ${aliment.unite} - ${joursRestants} jour(s) restant`;
-    if(joursRestants <= 3) {
+    //if(joursRestants <= 3) {-----------------------------------------------------------------------------------
+    if (aliment.peremption && calculerJoursRestants(aliment.peremption) <= 3) {
       li.className = "urgent";
       texte += " - URGENT !";
     } else {
       li.className = "ok";
     }
+    
     const spanTexte = document.createElement("span");
     spanTexte.textContent = texte;
     li.appendChild(spanTexte);
@@ -192,7 +201,11 @@ function ajouterOuModifierAliment() {
   const nom = document.getElementById("nom").value;
   const quantite = document.getElementById("quantite").value;
   const unite = document.getElementById("unite").value;
-  const peremption = document.getElementById("peremption").value;
+  
+  //const peremption = document.getElementById("peremption").value;  --------------------------------
+  const sansDate = document.getElementById("sansDate").checked;
+  const peremption = sansDate ? null : document.getElementById("peremption").value;
+  
   const categorie = document.getElementById("categorie").value;
 
   if(!nom || !quantite || !unite || !peremption || !categorie) {
@@ -216,6 +229,8 @@ function ajouterOuModifierAliment() {
   document.getElementById("unite").value = "";
   document.getElementById("peremption").value = "";
   document.getElementById("categorie").value = "Choisir catégorie";
+  document.getElementById("sansDate").checked = false; // ----------------------------------------
+
   
 
 
@@ -283,6 +298,7 @@ function importerInventaire(event) {
 
 </body>
 </html>
+
 
 
 
