@@ -25,7 +25,9 @@ button.small {padding: 6px 10px; font-size: 0.9em; min-width: 90px; }
 .dark li {border-bottom: 1px solid #333; }
 .toggle {margin: 10px 0; }
 .dark strong, .dark li span, .dark h1, .dark h2 {color: #ffffff; }
-  
+
+.form-section {margin-bottom: 25px; }
+
 </style>
 </head>
 <body>
@@ -67,7 +69,10 @@ button.small {padding: 6px 10px; font-size: 0.9em; min-width: 90px; }
   <option value="Sec">Sec</option>
 </select>
 
-<button onclick="ajouterOuModifierAliment()">Ajouter</button>
+<div class="form-section">
+  <button onclick="ajouterOuModifierAliment()">Ajouter</button>
+</div>
+
 <input type="text" id="recherche" placeholder="🔍 Rechercher un aliment..." oninput="afficherAliments()">
 <h2>Liste des aliments :</h2>
 <ul id="listeAliments"></ul>
@@ -252,6 +257,7 @@ function importerInventaire(event) {
 
 </body>
 </html>
+
 
 
 
