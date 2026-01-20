@@ -153,11 +153,11 @@ function afficherAliments() {
     }
     
     const li = document.createElement("li");
-    const joursRestants = calculerJoursRestants(aliment.peremption);
+    //const joursRestants = calculerJoursRestants(aliment.peremption);
     let texte = `${aliment.nom} - ${aliment.quantite} ${aliment.unite} - ${joursRestants} jour(s) restant`;
     
     if (aliment.peremption) {
-      const jours = calculerJoursRestants(aliment.peremption);
+      const joursRestants = calculerJoursRestants(aliment.peremption);
       texte += ` - ${jours}`;
     } else {
       texte += " - Durée illimitée";
@@ -229,7 +229,7 @@ function ajouterOuModifierAliment() {
   document.getElementById("unite").value = "";
   document.getElementById("peremption").value = "";
   document.getElementById("categorie").value = "Choisir catégorie";
-  document.getElementById("sansDate").checked = false; // ----------------------------------------
+  document.getElementById("sansDate").checked = false; 
 
   
 
@@ -298,6 +298,7 @@ function importerInventaire(event) {
 
 </body>
 </html>
+
 
 
 
