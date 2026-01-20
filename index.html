@@ -84,6 +84,7 @@ html, body {
   <option value="Poisson">Poisson</option>
   <option value="Féculent">Féculent</option>
   <option value="Sucré">Sucré</option>
+  <option value="Sauce">Sauce</option>
   <option value="Epice">Epice</option>
   <option value="Sec">Sec</option>
   <option value="Plat préparé">Plat préparé</option>
@@ -138,7 +139,7 @@ function afficherAliments() {
   const ul = document.getElementById("listeAliments");
   ul.innerHTML = "";
   
-  const ordreCategorie = ["Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sec", "Epice", "Boisson", " Plat préparé"];
+  const ordreCategorie = ["Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sec", "Sauce", "Epice", "Boisson", " Plat préparé"];
   // Trier par catégorie
   aliments.sort((a,b) => ordreCategorie.indexOf(a.categorie) - ordreCategorie.indexOf(b.categorie));
 
@@ -295,6 +296,7 @@ function importerInventaire(event) {
 
 </body>
 </html>
+
 
 
 
