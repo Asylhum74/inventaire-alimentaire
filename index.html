@@ -27,7 +27,16 @@ button.small {padding: 6px 10px; font-size: 0.9em; min-width: 90px; }
 .dark strong, .dark li span, .dark h1, .dark h2 {color: #ffffff; }
 
 .form-section {margin-bottom: 25px; }
+  
+html, body {
+  height: 100%;
+}
 
+#listeAliments {
+  min-height: calc(100vh - 300px);
+  overflow-y: auto;
+}
+  
 </style>
 </head>
 <body>
@@ -172,8 +181,6 @@ function afficherAliments() {
 
 // Ajouter ou modifier un aliment
 function ajouterOuModifierAliment() {
-  console.log("Bouton Ajouter cliqué");
-  alert("Bouton cliqué !");
   const nom = document.getElementById("nom").value;
   const quantite = document.getElementById("quantite").value;
   const unite = document.getElementById("unite").value;
@@ -185,7 +192,7 @@ function ajouterOuModifierAliment() {
     return;
   }
 
-  const nouvelAliment = {nom, quantite, unite, peremption, categorie};
+  const nouvelAliment = {nom, quantite, unite, datePeremption, categorie};
 
   if(indexEnCours === -1) {
     aliments.push(nouvelAliment);
@@ -199,7 +206,7 @@ function ajouterOuModifierAliment() {
   document.getElementById("nom").value = "";
   document.getElementById("quantite").value = "";
   document.getElementById("unite").value = "";
-  document.getElementById("peremption").value = "";
+  document.getElementById("datePeremption").value = "";
   document.getElementById("categorie").value = "Choisir catégorie";
   
 
@@ -268,6 +275,7 @@ function importerInventaire(event) {
 
 </body>
 </html>
+
 
 
 
