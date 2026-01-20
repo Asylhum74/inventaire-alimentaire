@@ -87,8 +87,13 @@ html, body {
 <ul id="listeAliments"></ul>
 
 <script>
+if (localStorage.getItem("darkMode") === "true") {
+  document.body.classList.add("dark");
+}
+
 function toggleDarkMode() {
   document.body.classList.toggle("dark");
+  localStorage.setItem("darkMode", document.body.classList.contains("dark"));
 }
 
 let aliments = [];
@@ -266,6 +271,7 @@ function importerInventaire(event) {
 
 </body>
 </html>
+
 
 
 
