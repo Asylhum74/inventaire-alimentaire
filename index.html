@@ -184,7 +184,7 @@ function ajouterOuModifierAliment() {
   const nom = document.getElementById("nom").value;
   const quantite = document.getElementById("quantite").value;
   const unite = document.getElementById("unite").value;
-  const datePeremption = document.getElementById("date").value;
+  const peremption = document.getElementById("peremption").value;
   const categorie = document.getElementById("categorie").value;
 
   if(!nom || !quantite || !unite || !peremption || !categorie) {
@@ -192,7 +192,7 @@ function ajouterOuModifierAliment() {
     return;
   }
 
-  const nouvelAliment = {nom, quantite, unite, datePeremption, categorie};
+  const nouvelAliment = {nom, quantite, unite, peremption, categorie};
 
   if(indexEnCours === -1) {
     aliments.push(nouvelAliment);
@@ -206,7 +206,7 @@ function ajouterOuModifierAliment() {
   document.getElementById("nom").value = "";
   document.getElementById("quantite").value = "";
   document.getElementById("unite").value = "";
-  document.getElementById("datePeremption").value = "";
+  document.getElementById("peremption").value = "";
   document.getElementById("categorie").value = "Choisir catégorie";
   
 
@@ -275,6 +275,7 @@ function importerInventaire(event) {
 
 </body>
 </html>
+
 
 
 
