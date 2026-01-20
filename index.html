@@ -156,12 +156,12 @@ function afficherAliments() {
     const joursRestants = calculerJoursRestants(aliment.peremption);
     let texte = `${aliment.nom} - ${aliment.quantite} ${aliment.unite} - ${joursRestants} jour(s) restant`;
     
-    //if (aliment.peremption) {
-     // const jours = calculerJoursRestants(aliment.peremption);
-      //texte += ` - ${jours}`;
-    //} else {
-     // texte += " - Durée illimitée";
-    //}
+    if (aliment.peremption) {
+      const jours = calculerJoursRestants(aliment.peremption);
+      texte += ` - ${jours}`;
+    } else {
+      texte += " - Durée illimitée";
+    }
 
     //if(joursRestants <= 3) {
     if (aliment.peremption && calculerJoursRestants(aliment.peremption) <= 3) {
@@ -298,6 +298,7 @@ function importerInventaire(event) {
 
 </body>
 </html>
+
 
 
 
