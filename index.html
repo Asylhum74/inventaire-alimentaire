@@ -398,7 +398,7 @@ function chargerRepas() {
 }
 
 function genererListeCourses() {
-  const inventaire = JSON.parse(localStorage.getItem('aliments')) || [];
+  const inventaire = JSON.parse(localStorage.getItem('aliment')) || [];
   const repasData = JSON.parse(localStorage.getItem('repasSemaine')) || {};
   const courses = {};
 
@@ -406,8 +406,8 @@ function genererListeCourses() {
   Object.values(repasData).forEach(jour => {
     Object.values(jour).forEach(texteRepas => {
       // Séparer les ingrédients par virgule
-      const aliments = texteRepas.split(',').map(a => a.trim()).filter(a => a);
-      aliments.forEach(nomAliment => {
+      const aliment = texteRepas.split(',').map(a => a.trim()).filter(a => a);
+      aliment.forEach(nomAliment => {
         // Vérifie si l'aliment est présent dans l'inventaire
         const trouve = inventaire.find(a => a.nom.toLowerCase() === nomAliment.toLowerCase());
         if (!trouve || trouve.quantite <= 0) {
@@ -443,6 +443,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
