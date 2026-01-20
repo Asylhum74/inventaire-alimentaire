@@ -163,8 +163,8 @@ function afficherAliments() {
      // texte += " - Durée illimitée";
     //}
 
-    //if(joursRestants <= 3) {-----------------------------------------------------------------------------------
-    if (aliment.peremption && calculerJoursRestants(aliment.peremption) <= 3) {
+    if(joursRestants <= 3) {
+    //if (aliment.peremption && calculerJoursRestants(aliment.peremption) <= 3) {
       li.className = "urgent";
       texte += " - URGENT !";
     } else {
@@ -298,6 +298,7 @@ function importerInventaire(event) {
 
 </body>
 </html>
+
 
 
 
