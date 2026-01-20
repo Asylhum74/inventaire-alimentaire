@@ -154,12 +154,13 @@ function afficherAliments() {
     
     const li = document.createElement("li");
     const joursRestants = calculerJoursRestants(aliment.peremption);
-    //if (aliment.peremption) {
-      //texte += ` - ${jours}`;
-    //} else {
-      //texte += " - Durée illimitée";
-    //}
     let texte = `${aliment.nom} - ${aliment.quantite} ${aliment.unite} - ${joursRestants} jour(s) restant`;
+    if (aliment.peremption) {
+      texte += ` - ${jours}`;
+    } else {
+      texte += " - Durée illimitée";
+    }
+
     
 
 
@@ -298,6 +299,7 @@ function importerInventaire(event) {
 
 </body>
 </html>
+
 
 
 
