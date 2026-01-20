@@ -78,7 +78,10 @@ html, body {
   <option value="Sec">Sec</option>
 </select>
 
-<button type="button" onclick="ajouterOuModifierAliment()">Ajouter</button>
+
+<div class="form-section">
+  <button type="button" onclick="ajouterOuModifierAliment()">Ajouter</button>
+</div>
 
 
 <input type="text" id="recherche" placeholder="🔍 Rechercher un aliment..." oninput="afficherAliments()">
@@ -179,6 +182,7 @@ function afficherAliments() {
 // Ajouter ou modifier un aliment
 function ajouterOuModifierAliment() {
   console.log("Bouton Ajouter cliqué");
+  alert("Bouton cliqué !");
   const nom = document.getElementById("nom").value;
   const quantite = document.getElementById("quantite").value;
   const unite = document.getElementById("unite").value;
@@ -273,6 +277,7 @@ function importerInventaire(event) {
 
 </body>
 </html>
+
 
 
 
