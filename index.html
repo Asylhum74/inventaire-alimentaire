@@ -59,14 +59,15 @@ html, body {
 <label>Unité :</label>
 <input type="text" id="unite" placeholder="Ex: g, litre, pcs">
 
-<label>Date de péremption :</label>
-  <input type="date" id="peremption">
 
-<label>
-  <input type="checkbox" id="sansDate">
-  Pas de date de péremption
-</label>
-<br>
+<div style="display: flex; align-items: center; gap: 10px;">
+  <label>Date de péremption :</label>
+  <input type="date" id="peremption">
+  <label style="margin: 0;">
+    <input type="checkbox" id="sansDate">
+    Pas de date de péremption
+  </label>
+</div>
 
 
 
@@ -283,6 +284,7 @@ function importerInventaire(event) {
 
 </body>
 </html>
+
 
 
 
