@@ -39,15 +39,26 @@ html, body {height: 100%;}
 
 .nav button {flex: 1; }
 
+.nav-btn {
+  width: 150px;        /* largeur fixe ou ce que tu veux */
+  padding: 10px;       /* espace intérieur */
+  font-size: 1em;
+  cursor: pointer;
+}
+
+.nav-btn:hover {
+  background-color: #ddd; /* effet au survol */
+}
+
 </style>
 </head>
 <body>
 
 <h1>Inventaire Alimentaire</h1>
   
-<nav>
-  <button onclick="afficherPage('inventaire')">📦 Inventaire</button>
-  <button onclick="afficherPage('repas')">🍽️ Repas</button>
+<nav class="nav">
+  <button class="nav-btn" onclick="afficherPage('inventaire')">📦 Inventaire</button>
+  <button class="nav-btn" onclick="afficherPage('repas')">🍽️ Repas</button>
 </nav>
 
 <button class="toggle" onclick="toggleDarkMode()">🌙 Mode sombre</button>
@@ -326,6 +337,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
