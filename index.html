@@ -35,7 +35,7 @@ html, body {height: 100%;}
 
 #listeAliments {min-height: calc(100vh - 300px); overflow-y: auto; }
 
-.nav {display: flex; gap: 10px; margin-bottom: 15px; }
+.nav {display: flex; gap: 10px; margin-bottom: 15px; background-color: lightgray; padding: 5px; }
 
 .nav button {flex: 1; }
 
@@ -44,6 +44,7 @@ html, body {height: 100%;}
 <body>
 
 <h1>Inventaire Alimentaire</h1>
+  
 <nav class="nav">
   <button onclick="afficherPage('inventaire')">📦 Inventaire</button>
   <button onclick="afficherPage('repas')">🍽️ Repas</button>
@@ -54,57 +55,55 @@ html, body {height: 100%;}
 
 <div id="page-inventaire" class="page"> 
 
-<div style="margin-bottom:10px;">
-  <button onclick="exporterInventaire()">💾 Sauvegarder</button>
-  <input type="file" id="importFile" accept=".json" onchange="importerInventaire(event)">
-</div>
+  <div style="margin-bottom:10px;">
+    <button onclick="exporterInventaire()">💾 Sauvegarder</button>
+    <input type="file" id="importFile" accept=".json" onchange="importerInventaire(event)">
+  </div>
   
-<label>Nom :</label>
-<input type="text" id="nom" placeholder="Nom de l'aliment">
+  <label>Nom :</label>
+  <input type="text" id="nom" placeholder="Nom de l'aliment">
 
-<label>Quantité :</label>
-<input type="number" id="quantite" placeholder="Quantité">
+  <label>Quantité :</label>
+  <input type="number" id="quantite" placeholder="Quantité">
 
-<label>Unité :</label>
-<input type="text" id="unite" placeholder="Ex: g, litre, pcs">
+  <label>Unité :</label>
+  <input type="text" id="unite" placeholder="Ex: g, litre, pcs">
 
-<label>Date de péremption :</label>
-<div style="display: flex; align-items: center; gap: 10px;">
-  <input type="date" id="peremption">
-  <label style="display: flex; align-items: center; gap: 5px; margin: 0;">
-    <input type="checkbox" id="sansDate" style="transform: scale(1.5);">
-    <span style="white-space: nowrap;">Pas de DLC</span>
-  </label>
-</div>
+  <label>Date de péremption :</label>
+  <div style="display: flex; align-items: center; gap: 10px;">
+    <input type="date" id="peremption">
+    <label style="display: flex; align-items: center; gap: 5px; margin: 0;">
+      <input type="checkbox" id="sansDate" style="transform: scale(1.5);">
+      <span style="white-space: nowrap;">Pas de DLC</span>
+    </label>
+  </div>
 
-
-
-<label>Catégorie :</label>
-<select id="categorie">
-  <option value="Choisir catégorie">Choisir catégorie</option>
-  <option value="Boisson">Boisson</option>
-  <option value="Produit laitier">Produit laitier</option>
-  <option value="Légume">Légume</option>
-  <option value="Fruit">Fruit</option>
-  <option value="Viande">Viande</option>
-  <option value="Poisson">Poisson</option>
-  <option value="Féculent">Féculent</option>
-  <option value="Sucré">Sucré</option>
-  <option value="Sauce">Sauce</option>
-  <option value="Epice">Epice</option>
-  <option value="Sec">Sec</option>
-  <option value="Plat préparé">Plat préparé</option>
-</select>
+  <label>Catégorie :</label>
+  <select id="categorie">
+    <option value="Choisir catégorie">Choisir catégorie</option>
+    <option value="Boisson">Boisson</option>
+    <option value="Produit laitier">Produit laitier</option>
+    <option value="Légume">Légume</option>
+    <option value="Fruit">Fruit</option>
+    <option value="Viande">Viande</option>
+    <option value="Poisson">Poisson</option>
+    <option value="Féculent">Féculent</option>
+    <option value="Sucré">Sucré</option>
+    <option value="Sauce">Sauce</option>
+    <option value="Epice">Epice</option>
+    <option value="Sec">Sec</option>
+    <option value="Plat préparé">Plat préparé</option>
+  </select>
 
 
-<div class="form-section">
-  <button type="button" onclick="ajouterOuModifierAliment()">Ajouter</button>
-</div>
+  <div class="form-section">
+    <button type="button" onclick="ajouterOuModifierAliment()">Ajouter</button>
+  </div>
 
 
-<input type="text" id="recherche" placeholder="🔍 Rechercher un aliment..." oninput="afficherAliments()">
-<h2>Liste des aliments :</h2>
-<ul id="listeAliments"></ul>
+  <input type="text" id="recherche" placeholder="🔍 Rechercher un aliment..." oninput="afficherAliments()">
+  <h2>Liste des aliments :</h2>
+  <ul id="listeAliments"></ul>
   
 </div>
 
@@ -327,6 +326,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
