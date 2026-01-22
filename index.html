@@ -430,7 +430,7 @@ function genererListeCourses() {
     inventaire = [];
   }
 
-  alert("Inventaire chargé 27 : " + JSON.stringify(inventaire));
+  alert("Inventaire chargé 30 : " + JSON.stringify(inventaire));
 
   // 2️⃣ Charger repas
   const repasData = JSON.parse(localStorage.getItem('repasSemaine')) || {};
@@ -505,7 +505,7 @@ function genererListeCourses() {
   const ordreCategories = [
     "Autres",
     "Féculent", "Produit laitier", "Viande", "Poisson",
-    "Fruit", "Légume", "Sucré" "Sauce",
+    "Fruit", "Légume", "Sucré", "Sauce",
     "Epice", "Boisson", "Conserve", "Produit du monde", "Hygiène"
   ];
 
@@ -617,6 +617,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
