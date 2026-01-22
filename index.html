@@ -422,71 +422,92 @@ const toutesCategories = ["Féculent", "Produit laitier", "Viande", "Poisson", "
   
 function genererListeCourses() {
 
-  // 1️⃣ Charger inventaire
-  let inventaire = [];
-  try {
-    inventaire = JSON.parse(localStorage.getItem('aliments')) || [];
-  } catch {
-    inventaire = [];
-  }
-
-  alert("Inventaire chargé 12 : " + JSON.stringify(inventaire));
-
-
-  // 2️⃣ Charger repas
+  let inventaire = JSON.parse(localStorage.getItem('aliments')) || {};
   const repasData = JSON.parse(localStorage.getItem('repasSemaine')) || {};
-
-  // 3️⃣ Charger catégories sauvegardées (IMPORTANT ✅)
   let categories = JSON.parse(localStorage.getItem("coursesCategories")) || {};
 
   const totalDemandes = {};
 
+  alert("Inventaire chargé 15 : " + JSON.stringify(inventaire));
+
+  // 🔁 Convertisseur d’unités
+  function normaliserUnite(qte, unite) {
+
+    unite = (unite || "pcs").toLowerCase();
+
+    if (unite === "kg") return { qte: qte * 1000, unite: "g" };
+    if (unite === "l")  return { qte: qte * 1000, unite: "ml" };
+
+    return { qte, unite };
+  }
+
+
   // =========================
-  // CALCULER LES BESOINS TOTAUX
+  // CALCUL DES BESOINS
   // =========================
   Object.values(repasData).forEach(jour => {
+
     Object.values(jour).forEach(texteRepas => {
 
       if (!texteRepas) return;
 
-      const aliments = texteRepas.split(',').map(a => a.trim()).filter(a => a);
+      const aliments = texteRepas.split(',').map(a => a.trim());
 
       aliments.forEach(item => {
 
-        // Format accepté : "Banane 2"
-        const match = item.match(/^(.+?)\s*(\d+)?$/);
+        // Formats acceptés :
+        // Banane
+        // Banane 2
+        // Banane 200 g
+        // Fromage 0.3 kg
+        const match = item.match(/^(.+?)\s*(\d+(?:\.\d+)?)?\s*(\w+)?$/);
         if (!match) return;
 
         const nom = match[1].trim();
         const qte = Number(match[2]) || 1;
+        const unite = match[3] || "pcs";
 
-        totalDemandes[nom] = (totalDemandes[nom] || 0) + qte;
+        const norm = normaliserUnite(qte, unite);
 
-        // 👉 nouveau produit → catégorie Autres seulement si pas déjà définie
-        if (!categories[nom]) {
-          categories[nom] = "Autres";
+        if (!totalDemandes[nom]) {
+          totalDemandes[nom] = { qte: 0, unite: norm.unite };
         }
+
+        totalDemandes[nom].qte += norm.qte;
+
+        if (!categories[nom]) categories[nom] = "Autres";
       });
     });
   });
 
 
   // =========================
-  // SOUSTRAIRE L’INVENTAIRE
+  // COMPARER AVEC INVENTAIRE
   // =========================
   const courses = {};
 
   Object.keys(totalDemandes).forEach(nom => {
 
+    const besoinData = totalDemandes[nom];
+
     const trouve = inventaire.find(a =>
       a.nom.toLowerCase() === nom.toLowerCase()
     );
 
-    const stock = trouve ? Number(trouve.quantite) : 0;
-    const besoin = Math.max(totalDemandes[nom] - stock, 0);
+    let stock = 0;
 
-    if (besoin > 0) {
-      courses[nom] = besoin;
+    if (trouve) {
+      const norm = normaliserUnite(Number(trouve.quantite), trouve.unite);
+      stock = norm.qte;
+    }
+
+    const manque = Math.max(besoinData.qte - stock, 0);
+
+    if (manque > 0) {
+      courses[nom] = {
+        qte: manque,
+        unite: besoinData.unite
+      };
     }
   });
 
@@ -498,94 +519,76 @@ function genererListeCourses() {
   container.innerHTML = "<h3 style='font-size:1.4em;'>🛒 Liste de courses</h3>";
 
   if (Object.keys(courses).length === 0) {
-    container.innerHTML += "<p>✅ Tout est déjà dans l'inventaire.</p>";
+    container.innerHTML += "<p>✅ Tout est déjà en stock.</p>";
     return;
   }
 
-
   const ordreCategories = [
     "Autres",
-    "Féculent", "Produit laitier", "Viande", "Poisson",
-    "Fruit", "Légume", "Sucré", "Sauce",
-    "Epice", "Boisson", "Conserve","Produit du monde", "Hygiène"
+    "Féculent","Produit laitier","Viande","Poisson",
+    "Fruit","Légume","Sucré","Sauce",
+    "Epice","Boisson","Conserve", "Produit du monde", "Hygiène"
   ];
 
 
   ordreCategories.forEach(categorie => {
 
-    const alimentsDeCategorie = Object.keys(courses)
+    const items = Object.keys(courses)
       .filter(nom => categories[nom] === categorie);
 
-    if (alimentsDeCategorie.length === 0) return;
+    if (items.length === 0) return;
 
-
-    // Titre catégorie
     const titre = document.createElement("p");
     titre.textContent = categorie;
     titre.style.fontWeight = "bold";
-    titre.style.fontSize = "1.25em";
-    titre.style.marginTop = "10px";
-
+    titre.style.fontSize = "1.3em";
     container.appendChild(titre);
-
 
     const ul = document.createElement("ul");
 
-
-    alimentsDeCategorie.forEach(nom => {
+    items.forEach(nom => {
 
       const li = document.createElement("li");
-      li.style.fontSize = "1.1em";
       li.style.display = "flex";
-      li.style.alignItems = "center";
       li.style.gap = "10px";
+      li.style.fontSize = "1.1em";
 
       const span = document.createElement("span");
-      span.textContent = `${nom} x${courses[nom]}`;
       span.style.flex = "1";
 
+      const data = courses[nom];
 
-      // =========================
-      // MENU MODIFIER CATEGORIE
-      // =========================
+      span.textContent = `${nom} ${data.qte} ${data.unite}`;
+
       const select = document.createElement("select");
 
-      const optionModifier = document.createElement("option");
-      optionModifier.textContent = "Modifier";
-      optionModifier.selected = true;
-      optionModifier.disabled = true;
-      select.appendChild(optionModifier);
+      const def = document.createElement("option");
+      def.textContent = "Modifier";
+      def.selected = true;
+      def.disabled = true;
+      select.appendChild(def);
 
       ordreCategories.forEach(cat => {
-        const option = document.createElement("option");
-        option.value = cat;
-        option.textContent = cat;
-        select.appendChild(option);
+        const o = document.createElement("option");
+        o.value = cat;
+        o.textContent = cat;
+        select.appendChild(o);
       });
 
-
       select.onchange = () => {
-
         categories[nom] = select.value;
-
-        // 👉 sauvegarde PERSISTANTE
         localStorage.setItem("coursesCategories", JSON.stringify(categories));
-
         genererListeCourses();
       };
-
 
       li.appendChild(span);
       li.appendChild(select);
       ul.appendChild(li);
     });
 
-
     container.appendChild(ul);
   });
 
-
-  // Sauvegarder aussi les catégories si nouveaux aliments
   localStorage.setItem("coursesCategories", JSON.stringify(categories));
 }
 
@@ -617,6 +620,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
