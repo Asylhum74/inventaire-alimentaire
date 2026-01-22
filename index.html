@@ -421,93 +421,96 @@ let categoriesCourses = JSON.parse(localStorage.getItem("categoriesCourses")) ||
 const toutesCategories = ["Choix Catégorie", "Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sauce", "Epice", "Boisson", "Conserve", "Produit du monde", "Hygiène"];
   
 function genererListeCourses() {
+  // 1️⃣ Charger inventaire
+  let inventaire = [];
+  try {
+    inventaire = JSON.parse(localStorage.getItem('aliments')) || [];
+  } catch {
+    inventaire = [];
+  }
+
+  alert("Inventaire chargé 9 : " + JSON.stringify(inventaire));
   
-  const inventaire = JSON.parse(localStorage.getItem('aliments')) || [];
+  // 2️⃣ Charger repas de la semaine
   const repasData = JSON.parse(localStorage.getItem('repasSemaine')) || {};
-  const courses = {};
+  const courses = {};        // Objet pour stocker les besoins
+  const categories = {};     // Objet pour stocker la catégorie de chaque aliment
 
-  alert("Inventaire chargé 8 : " + JSON.stringify(inventaire));
-
-  // Parcours tous les repas et ajoute les aliments manquants
+  // 3️⃣ Parcourir chaque jour et chaque repas
   Object.values(repasData).forEach(jour => {
     Object.values(jour).forEach(texteRepas => {
       if (!texteRepas) return;
-      const aliments = texteRepas.split(',').map(a => a.trim()).filter(a => a);
-      aliments.forEach(nomAliment => {
-        const trouve = inventaire.find(a => a.nom.toLowerCase() === nomAliment.toLowerCase());
-        const quantiteRestante = trouve ? Number(trouve.quantite) : 0;
-        if (!trouve || quantiteRestante <= 0) {
-          // On utilise la catégorie existante ou Autres par défaut
-          const cat = categoriesCourses[nomAliment] || "Autres";
-          if (!courses[cat]) courses[cat] = {};
-          courses[cat][nomAliment] = (courses[cat][nomAliment] || 0) + 1;
 
-          // Sauvegarde la catégorie pour persistance
-          categoriesCourses[nomAliment] = cat;
+      // 4️⃣ Séparer les aliments par virgule
+      const aliments = texteRepas.split(',').map(a => a.trim()).filter(a => a);
+
+      aliments.forEach(item => {
+        // 5️⃣ Séparer nom et quantité si format "Nom 3"
+        const match = item.match(/^(.+?)\s*(\d+)?$/);
+        if (!match) return;
+        let nom = match[1].trim();
+        let qte = Number(match[2]) || 1;
+
+        // 6️⃣ Vérifier inventaire
+        const trouve = inventaire.find(a => a.nom.toLowerCase() === nom.toLowerCase());
+        const besoin = trouve ? Math.max(qte - Number(trouve.quantite), 0) : qte;
+
+        if (besoin > 0) {
+          courses[nom] = (courses[nom] || 0) + besoin;
+
+          // 7️⃣ Définir la catégorie si ce n’est pas déjà défini
+          if (!categories[nom]) categories[nom] = "Autres";
         }
       });
     });
   });
 
-  // Sauvegarde dans le localStorage pour garder le tri
-  localStorage.setItem("categoriesCourses", JSON.stringify(categoriesCourses));
-
-  // Affiche la liste
-  afficherCoursesInteractivesSelect(courses);
-}
-
-function afficherCoursesInteractivesSelect(courses) {
+  // 8️⃣ Affichage HTML
   const container = document.getElementById("repasSemaine");
-  container.innerHTML = "<h3 style='font-size:1.5em;'>🛒 Liste de courses interactive</h3>";
+  container.innerHTML = "<h3 style='font-size:1.2em;'>🛒 Liste de courses</h3>";
 
-  // Créer l'ordre d'affichage, Autres en premier
-  const ordreAffichage = ["Autres", ...Object.keys(courses).filter(c => c !== "Autres")];
+  if (Object.keys(courses).length === 0) {
+    container.innerHTML += "<p>✅ Tous les ingrédients sont déjà présents dans l'inventaire.</p>";
+    return;
+  }
 
-  ordreAffichage.forEach(cat => {
-    if (!courses[cat]) return;
+  // 9️⃣ Créer les catégories triées, "Autres" en premier
+  const ordreCategories = ["Autres", "Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sec", "Sauce", "Epice", "Boisson", "Plat préparé"];
+  
+  ordreCategories.forEach(categorie => {
+    const alimentsDeCategorie = Object.keys(courses).filter(nom => categories[nom] === categorie);
+    if (alimentsDeCategorie.length === 0) return;
 
-    const titreCat = document.createElement("h4");
-    titreCat.textContent = cat;
-    titreCat.style.fontSize = "1.3em";
-    container.appendChild(titreCat);
+    // Titre catégorie
+    const titre = document.createElement("p");
+    titre.style.fontWeight = "bold";
+    titre.style.fontSize = "1.1em";
+    titre.textContent = categorie;
+    container.appendChild(titre);
 
     const ul = document.createElement("ul");
-    Object.keys(courses[cat]).forEach(aliment => {
+
+    alimentsDeCategorie.forEach(nom => {
       const li = document.createElement("li");
-      li.style.display = "flex";
-      li.style.justifyContent = "space-between";
-      li.style.alignItems = "center";
-      li.style.fontSize = "1.1em"; // texte plus gros
+      li.style.fontSize = "1em";
+      li.style.marginBottom = "5px";
 
-      const span = document.createElement("span");
-      span.textContent = `${aliment} x${courses[cat][aliment]}`;
-      li.appendChild(span);
-
-      // Menu déroulant pour modifier la catégorie
+      // Créer menu déroulant pour changer la catégorie
       const select = document.createElement("select");
-
-      // Option "Modifier" par défaut
-      const optionModifier = document.createElement("option");
-      optionModifier.value = "";
-      optionModifier.textContent = "Modifier";
-      select.appendChild(optionModifier);
-
-      // Ajouter toutes les catégories disponibles
-      toutesCategories.forEach(c => {
+      ordreCategories.forEach(cat => {
         const option = document.createElement("option");
-        option.value = c;
-        option.textContent = c;
+        option.value = cat;
+        option.textContent = cat;
+        if (cat === categories[nom]) option.selected = true;
         select.appendChild(option);
       });
 
       select.onchange = () => {
-        if (!select.value) return; // Si "Modifier" sélectionné, ne rien faire
-        const nouvelleCategorie = select.value;
-        categoriesCourses[aliment] = nouvelleCategorie;
-        localStorage.setItem("categoriesCourses", JSON.stringify(categoriesCourses));
-        genererListeCourses(); // Regénère la liste
+        categories[nom] = select.value;
+        genererListeCourses(); // Regénérer la liste en respectant le nouveau choix
       };
 
+      li.textContent = `${nom} x${courses[nom]} `;
       li.appendChild(select);
       ul.appendChild(li);
     });
@@ -544,6 +547,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
