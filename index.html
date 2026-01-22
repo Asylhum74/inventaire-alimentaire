@@ -39,7 +39,7 @@ html, body {height: 100%;}
 
 .nav button {flex: 1; }
 
-.course-checked {text-decoration: line-through; opacity: 0.5; }
+.course-checkbox {transform: scale(1.4); cursor: pointer; margin: 0; }
 
 </style>
 </head>
@@ -432,7 +432,7 @@ function genererListeCourses() {
     inventaire = [];
   }
 
-  alert("Inventaire chargé 35 : " + JSON.stringify(inventaire));
+  alert("Inventaire chargé 37 : " + JSON.stringify(inventaire));
 
   // 2️⃣ Charger repas
   const repasData = JSON.parse(localStorage.getItem('repasSemaine')) || {};
@@ -549,6 +549,7 @@ function genererListeCourses() {
 
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox";
+      checkbox.className = "course-checkbox";
       checkbox.checked = checkedData[nom] || false;
 
 
@@ -647,3 +648,4 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
