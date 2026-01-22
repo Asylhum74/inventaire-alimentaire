@@ -405,6 +405,8 @@ function genererListeCourses() {
   const repasData = JSON.parse(localStorage.getItem('repasSemaine')) || {};
   const courses = {};
 
+  alert("Inventaire chargé 5 : " + JSON.stringify(inventaire));
+
   // Parcours tous les repas
   Object.values(repasData).forEach(jour => {
     Object.values(jour).forEach(texteRepas => {
@@ -488,6 +490,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
