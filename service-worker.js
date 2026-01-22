@@ -1,5 +1,5 @@
 
-const CACHE_NAME = "inventaire-cache-v57";
+const CACHE_NAME = "inventaire-cache-v60";
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
