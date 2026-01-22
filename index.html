@@ -398,7 +398,7 @@ function chargerRepas() {
 }
 
 let categoriesCourses = JSON.parse(localStorage.getItem("categoriesCourses")) || {};
-const toutesCategories = ["Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sauce", "Epice", "Boisson", "Conserve", "Produit du monde", "Hygiène"];
+const toutesCategories = ["Choix Catégorie", "Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sauce", "Epice", "Boisson", "Conserve", "Produit du monde", "Hygiène"];
   
 function genererListeCourses() {
   
@@ -406,9 +406,9 @@ function genererListeCourses() {
   const repasData = JSON.parse(localStorage.getItem('repasSemaine')) || {};
   const courses = {};
 
-  alert("Inventaire chargé 6 : " + JSON.stringify(inventaire));
+  alert("Inventaire chargé 7 : " + JSON.stringify(inventaire));
 
-  // Récupérer tous les ingrédients manquants
+  // Parcours tous les repas et ajoute les aliments manquants
   Object.values(repasData).forEach(jour => {
     Object.values(jour).forEach(texteRepas => {
       if (!texteRepas) return;
@@ -417,17 +417,22 @@ function genererListeCourses() {
         const trouve = inventaire.find(a => a.nom.toLowerCase() === nomAliment.toLowerCase());
         const quantiteRestante = trouve ? Number(trouve.quantite) : 0;
         if (!trouve || quantiteRestante <= 0) {
+          // On utilise la catégorie existante ou Autres par défaut
           const cat = categoriesCourses[nomAliment] || "Autres";
           if (!courses[cat]) courses[cat] = {};
           courses[cat][nomAliment] = (courses[cat][nomAliment] || 0) + 1;
 
+          // Sauvegarde la catégorie pour persistance
           categoriesCourses[nomAliment] = cat;
         }
       });
     });
   });
 
+  // Sauvegarde dans le localStorage pour garder le tri
   localStorage.setItem("categoriesCourses", JSON.stringify(categoriesCourses));
+
+  // Affiche la liste
   afficherCoursesInteractivesSelect(courses);
 }
 
@@ -435,7 +440,12 @@ function afficherCoursesInteractivesSelect(courses) {
   const container = document.getElementById("repasSemaine");
   container.innerHTML = "<h3 style='font-size:1.5em;'>🛒 Liste de courses interactive</h3>";
 
-  Object.keys(courses).forEach(cat => {
+  // Créer l'ordre d'affichage, Autres en premier
+  const ordreAffichage = ["Autres", ...Object.keys(courses).filter(c => c !== "Autres")];
+
+  ordreAffichage.forEach(cat => {
+    if (!courses[cat]) return;
+
     const titreCat = document.createElement("h4");
     titreCat.textContent = cat;
     titreCat.style.fontSize = "1.3em";
@@ -447,27 +457,35 @@ function afficherCoursesInteractivesSelect(courses) {
       li.style.display = "flex";
       li.style.justifyContent = "space-between";
       li.style.alignItems = "center";
-      li.style.fontSize = "1.1em"; // texte plus grand
+      li.style.fontSize = "1.1em"; // texte plus gros
 
       const span = document.createElement("span");
       span.textContent = `${aliment} x${courses[cat][aliment]}`;
       li.appendChild(span);
 
-      // Menu déroulant pour choisir la catégorie
+      // Menu déroulant pour modifier la catégorie
       const select = document.createElement("select");
+
+      // Option "Modifier" par défaut
+      const optionModifier = document.createElement("option");
+      optionModifier.value = "";
+      optionModifier.textContent = "Modifier";
+      select.appendChild(optionModifier);
+
+      // Ajouter toutes les catégories disponibles
       toutesCategories.forEach(c => {
         const option = document.createElement("option");
         option.value = c;
         option.textContent = c;
-        if (c === cat) option.selected = true;
         select.appendChild(option);
       });
 
       select.onchange = () => {
+        if (!select.value) return; // Si "Modifier" sélectionné, ne rien faire
         const nouvelleCategorie = select.value;
         categoriesCourses[aliment] = nouvelleCategorie;
         localStorage.setItem("categoriesCourses", JSON.stringify(categoriesCourses));
-        genererListeCourses(); // Regénère la liste avec la nouvelle catégorie
+        genererListeCourses(); // Regénère la liste
       };
 
       li.appendChild(select);
@@ -477,7 +495,6 @@ function afficherCoursesInteractivesSelect(courses) {
     container.appendChild(ul);
   });
 }
-
 
 </script>
   
@@ -491,6 +508,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
