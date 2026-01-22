@@ -421,6 +421,7 @@ let categoriesCourses = JSON.parse(localStorage.getItem("categoriesCourses")) ||
 const toutesCategories = ["Choix Catégorie", "Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sauce", "Epice", "Boisson", "Conserve", "Produit du monde", "Hygiène"];
   
 function genererListeCourses() {
+
   // 1️⃣ Charger inventaire
   let inventaire = [];
   try {
@@ -429,96 +430,163 @@ function genererListeCourses() {
     inventaire = [];
   }
 
-  alert("Inventaire chargé 10 : " + JSON.stringify(inventaire));
+  alert("Inventaire chargé 12 : " + JSON.stringify(inventaire));
 
-  // 2️⃣ Charger repas de la semaine
+
+  // 2️⃣ Charger repas
   const repasData = JSON.parse(localStorage.getItem('repasSemaine')) || {};
-  const totalDemandes = {};  // Total de chaque aliment sur la semaine
-  const categories = {};     // Catégorie de chaque aliment
 
-  // 3️⃣ Parcourir chaque jour et chaque repas pour cumuler les besoins
+  // 3️⃣ Charger catégories sauvegardées (IMPORTANT ✅)
+  let categories = JSON.parse(localStorage.getItem("coursesCategories")) || {};
+
+  const totalDemandes = {};
+
+  // =========================
+  // CALCULER LES BESOINS TOTAUX
+  // =========================
   Object.values(repasData).forEach(jour => {
     Object.values(jour).forEach(texteRepas => {
+
       if (!texteRepas) return;
 
-      // Séparer les aliments par virgule
       const aliments = texteRepas.split(',').map(a => a.trim()).filter(a => a);
 
       aliments.forEach(item => {
-        // Séparer nom et quantité si format "Banane 1"
+
+        // Format accepté : "Banane 2"
         const match = item.match(/^(.+?)\s*(\d+)?$/);
         if (!match) return;
+
         const nom = match[1].trim();
-        const qte = Number(match[2]) || 1; // par défaut 1 si aucune quantité précisée
+        const qte = Number(match[2]) || 1;
 
         totalDemandes[nom] = (totalDemandes[nom] || 0) + qte;
 
-        // Définir la catégorie si non définie
-        if (!categories[nom]) categories[nom] = "Autres";
+        // 👉 nouveau produit → catégorie Autres seulement si pas déjà définie
+        if (!categories[nom]) {
+          categories[nom] = "Autres";
+        }
       });
     });
   });
 
-  // 4️⃣ Comparer avec l’inventaire pour obtenir ce qu’il faut acheter
+
+  // =========================
+  // SOUSTRAIRE L’INVENTAIRE
+  // =========================
   const courses = {};
+
   Object.keys(totalDemandes).forEach(nom => {
-    const trouve = inventaire.find(a => a.nom.toLowerCase() === nom.toLowerCase());
-    const besoin = trouve ? Math.max(totalDemandes[nom] - Number(trouve.quantite), 0) : totalDemandes[nom];
-    if (besoin > 0) courses[nom] = besoin;
+
+    const trouve = inventaire.find(a =>
+      a.nom.toLowerCase() === nom.toLowerCase()
+    );
+
+    const stock = trouve ? Number(trouve.quantite) : 0;
+    const besoin = Math.max(totalDemandes[nom] - stock, 0);
+
+    if (besoin > 0) {
+      courses[nom] = besoin;
+    }
   });
 
-  // 5️⃣ Affichage HTML
+
+  // =========================
+  // AFFICHAGE
+  // =========================
   const container = document.getElementById("repasSemaine");
-  container.innerHTML = "<h3 style='font-size:1.2em;'>🛒 Liste de courses</h3>";
+  container.innerHTML = "<h3 style='font-size:1.4em;'>🛒 Liste de courses</h3>";
 
   if (Object.keys(courses).length === 0) {
-    container.innerHTML += "<p>✅ Tous les ingrédients sont déjà présents dans l'inventaire.</p>";
+    container.innerHTML += "<p>✅ Tout est déjà dans l'inventaire.</p>";
     return;
   }
 
-  // 6️⃣ Créer les catégories triées, "Autres" en premier
-  const ordreCategories = ["Autres", "Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sec", "Sauce", "Epice", "Boisson", "Plat préparé"];
+
+  const ordreCategories = [
+    "Autres",
+    "Féculent", "Produit laitier", "Viande", "Poisson",
+    "Fruit", "Légume", "Sucré", "Sec", "Sauce",
+    "Epice", "Boisson", "Plat préparé"
+  ];
+
 
   ordreCategories.forEach(categorie => {
-    const alimentsDeCategorie = Object.keys(courses).filter(nom => categories[nom] === categorie);
+
+    const alimentsDeCategorie = Object.keys(courses)
+      .filter(nom => categories[nom] === categorie);
+
     if (alimentsDeCategorie.length === 0) return;
+
 
     // Titre catégorie
     const titre = document.createElement("p");
-    titre.style.fontWeight = "bold";
-    titre.style.fontSize = "1.1em";
     titre.textContent = categorie;
+    titre.style.fontWeight = "bold";
+    titre.style.fontSize = "1.25em";
+    titre.style.marginTop = "10px";
+
     container.appendChild(titre);
+
 
     const ul = document.createElement("ul");
 
-    alimentsDeCategorie.forEach(nom => {
-      const li = document.createElement("li");
-      li.style.fontSize = "1em";
-      li.style.marginBottom = "5px";
 
-      // Créer menu déroulant pour changer la catégorie
+    alimentsDeCategorie.forEach(nom => {
+
+      const li = document.createElement("li");
+      li.style.fontSize = "1.1em";
+      li.style.display = "flex";
+      li.style.alignItems = "center";
+      li.style.gap = "10px";
+
+      const span = document.createElement("span");
+      span.textContent = `${nom} x${courses[nom]}`;
+      span.style.flex = "1";
+
+
+      // =========================
+      // MENU MODIFIER CATEGORIE
+      // =========================
       const select = document.createElement("select");
+
+      const optionModifier = document.createElement("option");
+      optionModifier.textContent = "Modifier";
+      optionModifier.selected = true;
+      optionModifier.disabled = true;
+      select.appendChild(optionModifier);
+
       ordreCategories.forEach(cat => {
         const option = document.createElement("option");
         option.value = cat;
         option.textContent = cat;
-        if (cat === categories[nom]) option.selected = true;
         select.appendChild(option);
       });
 
+
       select.onchange = () => {
+
         categories[nom] = select.value;
-        genererListeCourses(); // Regénérer la liste en respectant le nouveau choix
+
+        // 👉 sauvegarde PERSISTANTE
+        localStorage.setItem("coursesCategories", JSON.stringify(categories));
+
+        genererListeCourses();
       };
 
-      li.textContent = `${nom} x${courses[nom]} `;
+
+      li.appendChild(span);
       li.appendChild(select);
       ul.appendChild(li);
     });
 
+
     container.appendChild(ul);
   });
+
+
+  // Sauvegarder aussi les catégories si nouveaux aliments
+  localStorage.setItem("coursesCategories", JSON.stringify(categories));
 }
 
 function nouvelleSemaine() {
@@ -549,6 +617,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
