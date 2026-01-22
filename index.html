@@ -398,7 +398,7 @@ function chargerRepas() {
 }
 
 function genererListeCourses() {
-  alert("fonction marche")
+  
   let inventaire = [];
 
   try {
@@ -407,7 +407,7 @@ function genererListeCourses() {
     inventaire = [];
   }
 
-  alert("Inventaire chargé : " + JSON.stringify(inventaire));
+  alert("Inventaire chargé 2 : " + JSON.stringify(inventaire));
 
   const repasData = JSON.parse(localStorage.getItem('repasSemaine')) || {};
   const courses = {};
@@ -465,6 +465,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
