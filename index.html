@@ -122,7 +122,7 @@ html, body {height: 100%;}
           <th>Jour</th>
           <th>Petit-déjeuner</th>
           <th>Déjeuner</th>
-          <th>Goûter</th>-->
+          <th>Goûter</th>
           <th>Dîner</th>
         </tr>
       </thead>
@@ -440,7 +440,7 @@ function genererListeCourses() {
     inventaire = [];
   }
 
-  alert("Inventaire chargé 40 : " + JSON.stringify(inventaire));
+  
 
   // 2️⃣ Charger repas
   const repasData = JSON.parse(localStorage.getItem('repasSemaine')) || {};
@@ -656,6 +656,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
