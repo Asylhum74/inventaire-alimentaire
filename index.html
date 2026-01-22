@@ -398,40 +398,41 @@ function chargerRepas() {
 }
 
 function genererListeCourses() {
-  
   let inventaire = [];
-
   try {
     inventaire = JSON.parse(localStorage.getItem('aliments')) || [];
   } catch {
     inventaire = [];
   }
 
-  alert("Inventaire chargé 2 : " + JSON.stringify(inventaire));
-
+  alert("Inventaire chargé 3 : " + JSON.stringify(inventaire));
+  
   const repasData = JSON.parse(localStorage.getItem('repasSemaine')) || {};
   const courses = {};
 
+  // Parcours de tous les repas
   Object.values(repasData).forEach(jour => {
     Object.values(jour).forEach(texteRepas => {
-
       if (!texteRepas) return;
-
       const aliments = texteRepas.split(',').map(a => a.trim()).filter(a => a);
 
       aliments.forEach(nomAliment => {
+        const trouve = inventaire.find(a => a.nom.toLowerCase() === nomAliment.toLowerCase());
+        let quantiteRestante = trouve ? Number(trouve.quantite) : 0;
 
-        const trouve = inventaire.find(a =>
-          a.nom.toLowerCase() === nomAliment.toLowerCase()
-        );
+        // On ajoute uniquement si quantité <= 0
+        if (!trouve || quantiteRestante <= 0) {
+          // Déterminer la catégorie si l’aliment est dans l’inventaire, sinon “Autre”
+          const categorie = trouve ? trouve.categorie : "Autre";
 
-        if (!trouve || Number(trouve.quantite) <= 0) {
-          courses[nomAliment] = (courses[nomAliment] || 0) + 1;
+          if (!courses[categorie]) courses[categorie] = {};
+          courses[categorie][nomAliment] = (courses[categorie][nomAliment] || 0) + 1;
         }
       });
     });
   });
 
+  // Affichage dans le div
   const container = document.getElementById("repasSemaine");
   container.innerHTML = "<h3>🛒 Liste de courses</h3>";
 
@@ -440,16 +441,26 @@ function genererListeCourses() {
     return;
   }
 
-  const ul = document.createElement("ul");
+  // Trier les catégories par ordre défini
+  const ordreCategorie = ["Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sec", "Sauce", "Epice", "Boisson", "Plat préparé", "Autre"];
 
-  Object.keys(courses).forEach(aliment => {
-    const li = document.createElement("li");
-    li.textContent = `${aliment} x${courses[aliment]}`;
-    ul.appendChild(li);
+  ordreCategorie.forEach(cat => {
+    if (!courses[cat]) return;
+
+    const titreCat = document.createElement("h4");
+    titreCat.textContent = cat;
+    container.appendChild(titreCat);
+
+    const ul = document.createElement("ul");
+    Object.keys(courses[cat]).forEach(aliment => {
+      const li = document.createElement("li");
+      li.textContent = `${aliment} x${courses[cat][aliment]}`;
+      ul.appendChild(li);
+    });
+    container.appendChild(ul);
   });
-
-  container.appendChild(ul);
 }
+
 
 
 
@@ -465,6 +476,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
