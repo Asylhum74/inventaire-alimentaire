@@ -398,58 +398,59 @@ function chargerRepas() {
 }
 
 function genererListeCourses() {
-  //const inventaire = JSON.parse(localStorage.getItem('aliments')) || [];
-  const inventaire = aliments;
-  alert("Inventaire chargé 2 : " + JSON.stringify(inventaire));
+
+  let inventaire = [];
+
+  try {
+    inventaire = JSON.parse(localStorage.getItem('aliments')) || [];
+  } catch {
+    inventaire = [];
+  }
+
+  alert("Inventaire chargé : " + JSON.stringify(inventaire));
+
   const repasData = JSON.parse(localStorage.getItem('repasSemaine')) || {};
   const courses = {};
 
-  // Parcourir tous les repas
   Object.values(repasData).forEach(jour => {
     Object.values(jour).forEach(texteRepas => {
-      // Séparer les ingrédients par virgule
+
       if (!texteRepas) return;
 
-      const aliment = texteRepas.split(',').map(a => a.trim()).filter(a => a);
-      aliment.forEach(nomAliment => {
-        // Vérifie si l'aliment est présent dans l'inventaire
-        const trouve = inventaire.find(a => a.nom.toLowerCase() === nomAliment.toLowerCase());
-        if (!trouve || trouve.quantite <= 0) {
-          courses[nomAliment] = courses[nomAliment] ? courses[nomAliment] + 1 : 1;
+      const aliments = texteRepas.split(',').map(a => a.trim()).filter(a => a);
+
+      aliments.forEach(nomAliment => {
+
+        const trouve = inventaire.find(a =>
+          a.nom.toLowerCase() === nomAliment.toLowerCase()
+        );
+
+        if (!trouve || Number(trouve.quantite) <= 0) {
+          courses[nomAliment] = (courses[nomAliment] || 0) + 1;
         }
       });
     });
   });
 
-  // Afficher la liste de courses
-  let liste = "🛒 Liste de courses :\n";
-  Object.keys(courses).forEach(aliment => {
-    liste += `- ${aliment} x${courses[aliment]}\n`;
-  });
+  const container = document.getElementById("repasSemaine");
+  container.innerHTML = "<h3>🛒 Liste de courses</h3>";
 
   if (Object.keys(courses).length === 0) {
-    liste = "✅ Tous les ingrédients sont déjà présents dans l'inventaire.";
+    container.innerHTML += "<p>✅ Tous les ingrédients sont déjà présents dans l'inventaire.</p>";
+    return;
   }
 
-const container = document.getElementById("repasSemaine");
-container.innerHTML = "<h3>🛒 Liste de courses</h3>";
+  const ul = document.createElement("ul");
 
-if (Object.keys(courses).length === 0) {
-  container.innerHTML += "<p>✅ Tous les ingrédients sont déjà présents dans l'inventaire.</p>";
-  return;
+  Object.keys(courses).forEach(aliment => {
+    const li = document.createElement("li");
+    li.textContent = `${aliment} x${courses[aliment]}`;
+    ul.appendChild(li);
+  });
+
+  container.appendChild(ul);
 }
 
-const ul = document.createElement("ul");
-
-Object.keys(courses).forEach(aliment => {
-  const li = document.createElement("li");
-  li.textContent = `${aliment} x${courses[aliment]}`;
-  ul.appendChild(li);
-});
-
-container.appendChild(ul);
-
-}
 
 
 </script>
@@ -464,6 +465,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
