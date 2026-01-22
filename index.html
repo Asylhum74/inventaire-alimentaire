@@ -397,14 +397,15 @@ function chargerRepas() {
   });
 }
 
+let categoriesCourses = JSON.parse(localStorage.getItem("categoriesCourses")) || {};
+  
 function genererListeCourses() {
+  
   const inventaire = JSON.parse(localStorage.getItem('aliments')) || [];
   const repasData = JSON.parse(localStorage.getItem('repasSemaine')) || {};
   const courses = {};
 
-  alert("Inventaire chargé 4 : " + JSON.stringify(inventaire));
-
-  // Récupérer tous les ingrédients manquants
+  // Parcours tous les repas
   Object.values(repasData).forEach(jour => {
     Object.values(jour).forEach(texteRepas => {
       if (!texteRepas) return;
@@ -413,66 +414,26 @@ function genererListeCourses() {
         const trouve = inventaire.find(a => a.nom.toLowerCase() === nomAliment.toLowerCase());
         const quantiteRestante = trouve ? Number(trouve.quantite) : 0;
         if (!trouve || quantiteRestante <= 0) {
-          if (!courses["Autres"]) courses["Autres"] = {};
-          courses["Autres"][nomAliment] = (courses["Autres"][nomAliment] || 0) + 1;
+
+          // On récupère la catégorie existante ou "Autres"
+          const cat = categoriesCourses[nomAliment] || "Autres";
+          if (!courses[cat]) courses[cat] = {};
+          courses[cat][nomAliment] = (courses[cat][nomAliment] || 0) + 1;
+
+          // On stocke la catégorie pour garder le tri
+          categoriesCourses[nomAliment] = cat;
         }
       });
     });
   });
 
-  const container = document.getElementById("repasSemaine");
-  container.innerHTML = "<h3>🛒 Liste de courses interactive</h3>";
+  // Sauvegarder dans localStorage
+  localStorage.setItem("categoriesCourses", JSON.stringify(categoriesCourses));
 
-  if (Object.keys(courses).length === 0) {
-    container.innerHTML += "<p>✅ Tous les ingrédients sont déjà présents dans l'inventaire.</p>";
-    return;
-  }
-
-  // Créer un conteneur pour chaque catégorie
-  Object.keys(courses).forEach(cat => {
-    const titreCat = document.createElement("h4");
-    titreCat.textContent = cat;
-    container.appendChild(titreCat);
-
-    const ul = document.createElement("ul");
-    Object.keys(courses[cat]).forEach(aliment => {
-      const li = document.createElement("li");
-      li.style.display = "flex";
-      li.style.justifyContent = "space-between";
-      li.style.alignItems = "center";
-
-      const span = document.createElement("span");
-      span.textContent = `${aliment} x${courses[cat][aliment]}`;
-      li.appendChild(span);
-
-      // Bouton pour déplacer
-      const bouton = document.createElement("button");
-      bouton.textContent = "Déplacer";
-      bouton.onclick = () => {
-        const nouvelleCategorie = prompt("Entrez la catégorie :");
-        if (!nouvelleCategorie) return;
-
-        // Supprimer l'aliment de l'ancienne catégorie
-        delete courses[cat][aliment];
-        if (Object.keys(courses[cat]).length === 0) delete courses[cat];
-
-        // Ajouter à la nouvelle catégorie
-        if (!courses[nouvelleCategorie]) courses[nouvelleCategorie] = {};
-        courses[nouvelleCategorie][aliment] = 1;
-
-        // Regénérer la liste
-        afficherCoursesInteractives(courses);
-      };
-      li.appendChild(bouton);
-
-      ul.appendChild(li);
-    });
-
-    container.appendChild(ul);
-  });
+  // Affichage interactif
+  afficherCoursesInteractives(courses);
 }
 
-// Fonction pour regénérer l'affichage interactif
 function afficherCoursesInteractives(courses) {
   const container = document.getElementById("repasSemaine");
   container.innerHTML = "<h3>🛒 Liste de courses interactive</h3>";
@@ -498,21 +459,21 @@ function afficherCoursesInteractives(courses) {
       bouton.onclick = () => {
         const nouvelleCategorie = prompt("Entrez la catégorie :");
         if (!nouvelleCategorie) return;
-        delete courses[cat][aliment];
-        if (Object.keys(courses[cat]).length === 0) delete courses[cat];
-        if (!courses[nouvelleCategorie]) courses[nouvelleCategorie] = {};
-        courses[nouvelleCategorie][aliment] = 1;
-        afficherCoursesInteractives(courses);
+
+        // Met à jour la catégorie
+        categoriesCourses[aliment] = nouvelleCategorie;
+        localStorage.setItem("categoriesCourses", JSON.stringify(categoriesCourses));
+
+        // Regénérer la liste
+        genererListeCourses();
       };
       li.appendChild(bouton);
 
       ul.appendChild(li);
     });
-
     container.appendChild(ul);
   });
 }
-
 
 
 </script>
@@ -527,6 +488,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
