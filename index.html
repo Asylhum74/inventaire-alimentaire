@@ -398,10 +398,7 @@ function chargerRepas() {
 }
 
 function genererListeCourses() {
-  const container = document.getElementById("repasSemaine");
-  container.innerHTML = "<pre>" + JSON.stringify(inventaire, null, 2) + "</pre>";
-  return;
-
+  alert("fonction appelée");
   const inventaire = JSON.parse(localStorage.getItem('aliments')) || [];
   const repasData = JSON.parse(localStorage.getItem('repasSemaine')) || {};
   const courses = {};
@@ -466,6 +463,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
