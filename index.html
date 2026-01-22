@@ -113,7 +113,7 @@ html, body {height: 100%;}
 
   <p>Planifie les repas de la semaine :</p>
   
-<div id="containerTableau" style="position: relative; margin-top: 20px;">
+<div id="containerTableau" style="position: relative; margin-top: 20px; display: inline-block;">
   <table border="1" cellpadding="5" cellspacing="0">
       <thead>
         <tr>
@@ -172,7 +172,8 @@ html, body {height: 100%;}
     <button onclick="nouvelleSemaine()" 
           style="
             position: absolute;
-            right: 0;
+            bottom: -50px;   /* juste sous le tableau */
+            right: 0;        /* collé à droite */
             background-color:#e74c3c;
             color:white;
             padding: 6px 12px;
@@ -180,7 +181,7 @@ html, body {height: 100%;}
             border-radius:5px;
             cursor:pointer;
             font-size: 0.9em;
-            min-width: 100px;
+            width: auto !important;   /* casse le width:100% global */
           ">
       🆕 Nouvelle semaine
     </button>
@@ -545,6 +546,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
