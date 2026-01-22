@@ -39,6 +39,8 @@ html, body {height: 100%;}
 
 .nav button {flex: 1; }
 
+.course-checked {text-decoration: line-through; opacity: 0.5; }
+
 </style>
 </head>
 <body>
@@ -430,7 +432,7 @@ function genererListeCourses() {
     inventaire = [];
   }
 
-  alert("Inventaire chargé 20 : " + JSON.stringify(inventaire));
+  alert("Inventaire chargé 22 : " + JSON.stringify(inventaire));
 
   // 2️⃣ Charger repas
   const repasData = JSON.parse(localStorage.getItem('repasSemaine')) || {};
@@ -533,51 +535,80 @@ function genererListeCourses() {
 
     alimentsDeCategorie.forEach(nom => {
 
-      const li = document.createElement("li");
-      li.style.fontSize = "1.1em";
-      li.style.display = "flex";
-      li.style.alignItems = "center";
-      li.style.gap = "10px";
-
-      const span = document.createElement("span");
-      span.textContent = `${nom} x${courses[nom]}`;
-      span.style.flex = "1";
+  const li = document.createElement("li");
+  li.style.fontSize = "1.1em";
+  li.style.display = "flex";
+  li.style.alignItems = "center";
+  li.style.gap = "10px";
 
 
-      // =========================
-      // MENU MODIFIER CATEGORIE
-      // =========================
-      const select = document.createElement("select");
+  // =========================
+  // CHECKBOX ACHETÉ ✅
+  // =========================
+  const checkedData = JSON.parse(localStorage.getItem("coursesChecked")) || {};
 
-      const optionModifier = document.createElement("option");
-      optionModifier.textContent = "Modifier";
-      optionModifier.selected = true;
-      optionModifier.disabled = true;
-      select.appendChild(optionModifier);
-
-      ordreCategories.forEach(cat => {
-        const option = document.createElement("option");
-        option.value = cat;
-        option.textContent = cat;
-        select.appendChild(option);
-      });
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.checked = checkedData[nom] || false;
 
 
-      select.onchange = () => {
+  // =========================
+  // TEXTE
+  // =========================
+  const span = document.createElement("span");
+  span.textContent = `${nom} x${courses[nom]}`;
+  span.style.flex = "1";
 
-        categories[nom] = select.value;
+  if (checkbox.checked) {
+    span.classList.add("course-checked");
+  }
 
-        // 👉 sauvegarde PERSISTANTE
-        localStorage.setItem("coursesCategories", JSON.stringify(categories));
+  checkbox.onchange = () => {
+    const data = JSON.parse(localStorage.getItem("coursesChecked")) || {};
 
-        genererListeCourses();
-      };
+    data[nom] = checkbox.checked;
+
+    localStorage.setItem("coursesChecked", JSON.stringify(data));
+
+    span.classList.toggle("course-checked", checkbox.checked);
+  };
 
 
-      li.appendChild(span);
-      li.appendChild(select);
-      ul.appendChild(li);
-    });
+  // =========================
+  // MENU MODIFIER CATEGORIE
+  // =========================
+  const select = document.createElement("select");
+
+  const optionModifier = document.createElement("option");
+  optionModifier.textContent = "Modifier";
+  optionModifier.selected = true;
+  optionModifier.disabled = true;
+  select.appendChild(optionModifier);
+
+  ordreCategories.forEach(cat => {
+    const option = document.createElement("option");
+    option.value = cat;
+    option.textContent = cat;
+    select.appendChild(option);
+  });
+
+  select.onchange = () => {
+    categories[nom] = select.value;
+    localStorage.setItem("coursesCategories", JSON.stringify(categories));
+    genererListeCourses();
+  };
+
+
+  // =========================
+  // AJOUT DANS LA LIGNE
+  // =========================
+  li.appendChild(checkbox);
+  li.appendChild(span);
+  li.appendChild(select);
+
+  ul.appendChild(li);
+});
+
 
 
     container.appendChild(ul);
@@ -616,6 +647,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
