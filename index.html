@@ -429,43 +429,45 @@ function genererListeCourses() {
     inventaire = [];
   }
 
-  alert("Inventaire chargé 9 : " + JSON.stringify(inventaire));
-  
+  alert("Inventaire chargé 10 : " + JSON.stringify(inventaire));
+
   // 2️⃣ Charger repas de la semaine
   const repasData = JSON.parse(localStorage.getItem('repasSemaine')) || {};
-  const courses = {};        // Objet pour stocker les besoins
-  const categories = {};     // Objet pour stocker la catégorie de chaque aliment
+  const totalDemandes = {};  // Total de chaque aliment sur la semaine
+  const categories = {};     // Catégorie de chaque aliment
 
-  // 3️⃣ Parcourir chaque jour et chaque repas
+  // 3️⃣ Parcourir chaque jour et chaque repas pour cumuler les besoins
   Object.values(repasData).forEach(jour => {
     Object.values(jour).forEach(texteRepas => {
       if (!texteRepas) return;
 
-      // 4️⃣ Séparer les aliments par virgule
+      // Séparer les aliments par virgule
       const aliments = texteRepas.split(',').map(a => a.trim()).filter(a => a);
 
       aliments.forEach(item => {
-        // 5️⃣ Séparer nom et quantité si format "Nom 3"
+        // Séparer nom et quantité si format "Banane 1"
         const match = item.match(/^(.+?)\s*(\d+)?$/);
         if (!match) return;
-        let nom = match[1].trim();
-        let qte = Number(match[2]) || 1;
+        const nom = match[1].trim();
+        const qte = Number(match[2]) || 1; // par défaut 1 si aucune quantité précisée
 
-        // 6️⃣ Vérifier inventaire
-        const trouve = inventaire.find(a => a.nom.toLowerCase() === nom.toLowerCase());
-        const besoin = trouve ? Math.max(qte - Number(trouve.quantite), 0) : qte;
+        totalDemandes[nom] = (totalDemandes[nom] || 0) + qte;
 
-        if (besoin > 0) {
-          courses[nom] = (courses[nom] || 0) + besoin;
-
-          // 7️⃣ Définir la catégorie si ce n’est pas déjà défini
-          if (!categories[nom]) categories[nom] = "Autres";
-        }
+        // Définir la catégorie si non définie
+        if (!categories[nom]) categories[nom] = "Autres";
       });
     });
   });
 
-  // 8️⃣ Affichage HTML
+  // 4️⃣ Comparer avec l’inventaire pour obtenir ce qu’il faut acheter
+  const courses = {};
+  Object.keys(totalDemandes).forEach(nom => {
+    const trouve = inventaire.find(a => a.nom.toLowerCase() === nom.toLowerCase());
+    const besoin = trouve ? Math.max(totalDemandes[nom] - Number(trouve.quantite), 0) : totalDemandes[nom];
+    if (besoin > 0) courses[nom] = besoin;
+  });
+
+  // 5️⃣ Affichage HTML
   const container = document.getElementById("repasSemaine");
   container.innerHTML = "<h3 style='font-size:1.2em;'>🛒 Liste de courses</h3>";
 
@@ -474,9 +476,9 @@ function genererListeCourses() {
     return;
   }
 
-  // 9️⃣ Créer les catégories triées, "Autres" en premier
+  // 6️⃣ Créer les catégories triées, "Autres" en premier
   const ordreCategories = ["Autres", "Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sec", "Sauce", "Epice", "Boisson", "Plat préparé"];
-  
+
   ordreCategories.forEach(categorie => {
     const alimentsDeCategorie = Object.keys(courses).filter(nom => categories[nom] === categorie);
     if (alimentsDeCategorie.length === 0) return;
@@ -547,6 +549,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
