@@ -418,7 +418,7 @@ function chargerRepas() {
 }
 
 let categoriesCourses = JSON.parse(localStorage.getItem("categoriesCourses")) || {};
-const toutesCategories = ["Choix Catégorie", "Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sauce", "Epice", "Boisson", "Conserve", "Produit du monde", "Hygiène"];
+const toutesCategories = ["Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sauce", "Epice", "Boisson", "Conserve", "Produit du monde", "Hygiène"];
   
 function genererListeCourses() {
 
@@ -506,8 +506,8 @@ function genererListeCourses() {
   const ordreCategories = [
     "Autres",
     "Féculent", "Produit laitier", "Viande", "Poisson",
-    "Fruit", "Légume", "Sucré", "Sec", "Sauce",
-    "Epice", "Boisson", "Plat préparé"
+    "Fruit", "Légume", "Sucré", "Sauce",
+    "Epice", "Boisson", "Conserve","Produit du monde", "Hygiène"
   ];
 
 
@@ -617,6 +617,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
