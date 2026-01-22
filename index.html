@@ -398,6 +398,7 @@ function chargerRepas() {
 }
 
 let categoriesCourses = JSON.parse(localStorage.getItem("categoriesCourses")) || {};
+const toutesCategories = ["Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sauce", "Epice", "Boisson", "Conserve", "Produit du monde", "Hygiène"];
   
 function genererListeCourses() {
   
@@ -405,9 +406,9 @@ function genererListeCourses() {
   const repasData = JSON.parse(localStorage.getItem('repasSemaine')) || {};
   const courses = {};
 
-  alert("Inventaire chargé 5 : " + JSON.stringify(inventaire));
+  alert("Inventaire chargé 6 : " + JSON.stringify(inventaire));
 
-  // Parcours tous les repas
+  // Récupérer tous les ingrédients manquants
   Object.values(repasData).forEach(jour => {
     Object.values(jour).forEach(texteRepas => {
       if (!texteRepas) return;
@@ -416,33 +417,28 @@ function genererListeCourses() {
         const trouve = inventaire.find(a => a.nom.toLowerCase() === nomAliment.toLowerCase());
         const quantiteRestante = trouve ? Number(trouve.quantite) : 0;
         if (!trouve || quantiteRestante <= 0) {
-
-          // On récupère la catégorie existante ou "Autres"
           const cat = categoriesCourses[nomAliment] || "Autres";
           if (!courses[cat]) courses[cat] = {};
           courses[cat][nomAliment] = (courses[cat][nomAliment] || 0) + 1;
 
-          // On stocke la catégorie pour garder le tri
           categoriesCourses[nomAliment] = cat;
         }
       });
     });
   });
 
-  // Sauvegarder dans localStorage
   localStorage.setItem("categoriesCourses", JSON.stringify(categoriesCourses));
-
-  // Affichage interactif
-  afficherCoursesInteractives(courses);
+  afficherCoursesInteractivesSelect(courses);
 }
 
-function afficherCoursesInteractives(courses) {
+function afficherCoursesInteractivesSelect(courses) {
   const container = document.getElementById("repasSemaine");
-  container.innerHTML = "<h3>🛒 Liste de courses interactive</h3>";
+  container.innerHTML = "<h3 style='font-size:1.5em;'>🛒 Liste de courses interactive</h3>";
 
   Object.keys(courses).forEach(cat => {
     const titreCat = document.createElement("h4");
     titreCat.textContent = cat;
+    titreCat.style.fontSize = "1.3em";
     container.appendChild(titreCat);
 
     const ul = document.createElement("ul");
@@ -451,28 +447,33 @@ function afficherCoursesInteractives(courses) {
       li.style.display = "flex";
       li.style.justifyContent = "space-between";
       li.style.alignItems = "center";
+      li.style.fontSize = "1.1em"; // texte plus grand
 
       const span = document.createElement("span");
       span.textContent = `${aliment} x${courses[cat][aliment]}`;
       li.appendChild(span);
 
-      const bouton = document.createElement("button");
-      bouton.textContent = "Déplacer";
-      bouton.onclick = () => {
-        const nouvelleCategorie = prompt("Entrez la catégorie :");
-        if (!nouvelleCategorie) return;
+      // Menu déroulant pour choisir la catégorie
+      const select = document.createElement("select");
+      toutesCategories.forEach(c => {
+        const option = document.createElement("option");
+        option.value = c;
+        option.textContent = c;
+        if (c === cat) option.selected = true;
+        select.appendChild(option);
+      });
 
-        // Met à jour la catégorie
+      select.onchange = () => {
+        const nouvelleCategorie = select.value;
         categoriesCourses[aliment] = nouvelleCategorie;
         localStorage.setItem("categoriesCourses", JSON.stringify(categoriesCourses));
-
-        // Regénérer la liste
-        genererListeCourses();
+        genererListeCourses(); // Regénère la liste avec la nouvelle catégorie
       };
-      li.appendChild(bouton);
 
+      li.appendChild(select);
       ul.appendChild(li);
     });
+
     container.appendChild(ul);
   });
 }
@@ -490,6 +491,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
