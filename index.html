@@ -39,6 +39,8 @@ html, body {height: 100%;}
 
 .nav button {flex: 1; }
 
+.course-checked {text-decoration: line-through; opacity: 0.5; }
+
 </style>
 </head>
 <body>
@@ -430,7 +432,7 @@ function genererListeCourses() {
     inventaire = [];
   }
 
-  alert("Inventaire chargé 30 : " + JSON.stringify(inventaire));
+  alert("Inventaire chargé 35 : " + JSON.stringify(inventaire));
 
   // 2️⃣ Charger repas
   const repasData = JSON.parse(localStorage.getItem('repasSemaine')) || {};
@@ -539,9 +541,37 @@ function genererListeCourses() {
       li.style.alignItems = "center";
       li.style.gap = "10px";
 
+
+      // =========================
+      // CHECKBOX ACHETÉ ✅
+      // =========================
+      const checkedData = JSON.parse(localStorage.getItem("coursesChecked")) || {};
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = checkedData[nom] || false;
+
+
+      // =========================
+      // TEXTE
+      // =========================
       const span = document.createElement("span");
       span.textContent = `${nom} x${courses[nom]}`;
       span.style.flex = "1";
+
+      if (checkbox.checked) {
+        span.classList.add("course-checked");
+      }
+
+      checkbox.onchange = () => {
+        const data = JSON.parse(localStorage.getItem("coursesChecked")) || {};
+
+        data[nom] = checkbox.checked;
+
+        localStorage.setItem("coursesChecked", JSON.stringify(data));
+
+        span.classList.toggle("course-checked", checkbox.checked);
+      };
 
 
       // =========================
@@ -562,20 +592,20 @@ function genererListeCourses() {
         select.appendChild(option);
       });
 
-
       select.onchange = () => {
-
         categories[nom] = select.value;
-
-        // 👉 sauvegarde PERSISTANTE
         localStorage.setItem("coursesCategories", JSON.stringify(categories));
-
         genererListeCourses();
       };
 
 
+      // =========================
+      // AJOUT DANS LA LIGNE
+      // =========================
+      li.appendChild(checkbox);
       li.appendChild(span);
       li.appendChild(select);
+
       ul.appendChild(li);
     });
 
@@ -617,109 +647,3 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
