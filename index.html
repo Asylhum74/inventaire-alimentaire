@@ -432,7 +432,7 @@ function genererListeCourses() {
     inventaire = [];
   }
 
-  alert("Inventaire chargé 22 : " + JSON.stringify(inventaire));
+  alert("Inventaire chargé 25 : " + JSON.stringify(inventaire));
 
   // 2️⃣ Charger repas
   const repasData = JSON.parse(localStorage.getItem('repasSemaine')) || {};
@@ -507,7 +507,7 @@ function genererListeCourses() {
   const ordreCategories = [
     "Autres",
     "Féculent", "Produit laitier", "Viande", "Poisson",
-    "Fruit", "Légume", "Sucré", "Sauce",
+    "Fruit", "Légume", "Sucré" "Sauce",
     "Epice", "Boisson", "Conserve", "Produit du monde", "Hygiène"
   ];
 
@@ -535,80 +535,51 @@ function genererListeCourses() {
 
     alimentsDeCategorie.forEach(nom => {
 
-  const li = document.createElement("li");
-  li.style.fontSize = "1.1em";
-  li.style.display = "flex";
-  li.style.alignItems = "center";
-  li.style.gap = "10px";
+      const li = document.createElement("li");
+      li.style.fontSize = "1.1em";
+      li.style.display = "flex";
+      li.style.alignItems = "center";
+      li.style.gap = "10px";
+
+      const span = document.createElement("span");
+      span.textContent = `${nom} x${courses[nom]}`;
+      span.style.flex = "1";
 
 
-  // =========================
-  // CHECKBOX ACHETÉ ✅
-  // =========================
-  const checkedData = JSON.parse(localStorage.getItem("coursesChecked")) || {};
+      // =========================
+      // MENU MODIFIER CATEGORIE
+      // =========================
+      const select = document.createElement("select");
 
-  const checkbox = document.createElement("input");
-  checkbox.type = "checkbox";
-  checkbox.checked = checkedData[nom] || false;
+      const optionModifier = document.createElement("option");
+      optionModifier.textContent = "Modifier";
+      optionModifier.selected = true;
+      optionModifier.disabled = true;
+      select.appendChild(optionModifier);
 
-
-  // =========================
-  // TEXTE
-  // =========================
-  const span = document.createElement("span");
-  span.textContent = `${nom} x${courses[nom]}`;
-  span.style.flex = "1";
-
-  if (checkbox.checked) {
-    span.classList.add("course-checked");
-  }
-
-  checkbox.onchange = () => {
-    const data = JSON.parse(localStorage.getItem("coursesChecked")) || {};
-
-    data[nom] = checkbox.checked;
-
-    localStorage.setItem("coursesChecked", JSON.stringify(data));
-
-    span.classList.toggle("course-checked", checkbox.checked);
-  };
+      ordreCategories.forEach(cat => {
+        const option = document.createElement("option");
+        option.value = cat;
+        option.textContent = cat;
+        select.appendChild(option);
+      });
 
 
-  // =========================
-  // MENU MODIFIER CATEGORIE
-  // =========================
-  const select = document.createElement("select");
+      select.onchange = () => {
 
-  const optionModifier = document.createElement("option");
-  optionModifier.textContent = "Modifier";
-  optionModifier.selected = true;
-  optionModifier.disabled = true;
-  select.appendChild(optionModifier);
+        categories[nom] = select.value;
 
-  ordreCategories.forEach(cat => {
-    const option = document.createElement("option");
-    option.value = cat;
-    option.textContent = cat;
-    select.appendChild(option);
-  });
+        // 👉 sauvegarde PERSISTANTE
+        localStorage.setItem("coursesCategories", JSON.stringify(categories));
 
-  select.onchange = () => {
-    categories[nom] = select.value;
-    localStorage.setItem("coursesCategories", JSON.stringify(categories));
-    genererListeCourses();
-  };
+        genererListeCourses();
+      };
 
 
-  // =========================
-  // AJOUT DANS LA LIGNE
-  // =========================
-  li.appendChild(checkbox);
-  li.appendChild(span);
-  li.appendChild(select);
-
-  ul.appendChild(li);
-});
-
+      li.appendChild(span);
+      li.appendChild(select);
+      ul.appendChild(li);
+    });
 
 
     container.appendChild(ul);
@@ -618,6 +589,7 @@ function genererListeCourses() {
   // Sauvegarder aussi les catégories si nouveaux aliments
   localStorage.setItem("coursesCategories", JSON.stringify(categories));
 }
+
   
 function nouvelleSemaine() {
   if (!confirm("Voulez-vous vraiment commencer une nouvelle semaine ? Toutes les cases seront vidées.")) return;
@@ -647,6 +619,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
