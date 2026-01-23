@@ -565,10 +565,11 @@ function genererListeCourses() {
   titre.style.margin = "0";
 
   const btnAjouterInventaire = document.createElement("button");
-  btnAjouterInventaire.textContent = "➕ Ajouter à l'inventaire";
+  btnAjouterInventaire.textContent = "Ajouter à l'inventaire";
   btnAjouterInventaire.className = "small"; // même style que bouton supprimer
-  btnAjouterInventaire.style.padding = "6px 10px";
-  btnAjouterInventaire.style.flexShrink = "0";
+  btnAjouterInventaire.style.padding = "6px 12px"; // même que supprimer
+  btnAjouterInventaire.style.flexShrink = "0";      // ne pas étirer
+  btnAjouterInventaire.style.width = "auto";       // largeur auto
 
   btnAjouterInventaire.onclick = () => {
     Object.keys(courses).forEach(nom => {
@@ -853,6 +854,7 @@ document.getElementById("editSansDate").addEventListener("change", function() {
   
 </body>
 </html>
+
 
 
 
