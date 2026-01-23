@@ -36,73 +36,28 @@ html, body {height: 100%;}
 #listeAliments {min-height: calc(100vh - 300px); overflow-y: auto; }
 
 .nav {display: flex; gap: 10px; margin-bottom: 15px; }
-
 .nav button {flex: 1; }
   
 .course-checkbox {width: 20px; height: 20px; cursor: pointer; }
 
-.popup {
-  position: fixed;
-  inset: 0; /* top:0; bottom:0; left:0; right:0 */
-  background: rgba(0,0,0,0.5);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
-}
-
-.popup-content {
-  background: #1e1e1e;
-  color: white;
-  width: 100%;
-  max-width: 500px;  /* largeur plus grande */
-  padding: 30px;
-  border-radius: 15px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-  max-height: 90vh;  /* éviter que ça dépasse l’écran */
-  overflow-y: auto;   /* scrollbar si besoin */
-}
-
+.popup {position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+.popup-content {background: #1e1e1e; color: white; width: 100%; max-width: 500px; padding: 30px; border-radius: 15px; display: flex; 
+                flex-direction: column; gap: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); max-height: 90vh; overflow-y: auto; }
 .popup-content input,
 .popup-content select,
-.popup-content button {
-  font-size: 1.1em;
-  padding: 12px;
-  border-radius: 10px;
-}
-
-.popup-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.popup-actions button {
-  flex: 1;
-}
-
-.delete-btn {
-  background: #c0392b;
-  color: white;
-  font-size: 1.2em;
-  padding: 14px;
-}
-
+.popup-content button {font-size: 1.1em; padding: 12px; border-radius: 10px; }
+.popup-actions {display: flex; gap: 10px; }
+.popup-actions button {flex: 1; }
+.delete-btn {background: #c0392b; color: white; font-size: 1.2em; padding: 14px; }
 /* 📱 téléphone = plein écran */
 @media (max-width: 600px) {
-  .popup-content {
-    width: 95%;
-    height: auto;
-    padding: 20px;
-    border-radius: 10px;
-  }
+  .popup-content {width: 95%; height: auto; padding: 20px; border-radius: 10px; }
 }
 
 </style>
+  
 </head>
+  
 <body>
 
 <h1>Gestion Alimentaire</h1>
@@ -113,7 +68,6 @@ html, body {height: 100%;}
 </nav>
 
 <button class="toggle" onclick="toggleDarkMode()">🌙 Mode sombre</button>
-
 
 <div id="page-inventaire" class="page"> 
 
@@ -158,11 +112,9 @@ html, body {height: 100%;}
     <option value="Hygiène">Hygiène</option>
   </select>
 
-
   <div class="form-section">
     <button type="button" onclick="ajouterOuModifierAliment()">Ajouter</button>
   </div>
-
 
   <input type="text" id="recherche" placeholder="🔍 Rechercher un aliment..." oninput="afficherAliments()">
   <h2>Liste des aliments :</h2>
@@ -170,6 +122,7 @@ html, body {height: 100%;}
   
 </div>
 
+  
 <div id="page-repas" class="page" style="display:none;">
   <h2>🍽️ Repas de la semaine</h2>
 
@@ -240,18 +193,9 @@ html, body {height: 100%;}
     </table>
   
     <button onclick="nouvelleSemaine()" 
-          style="
-            background-color:#e74c3c;
-            color:white;
-            padding: 6px 12px;
-            border:none;
-            border-radius:5px;
-            cursor:pointer;
-            font-size: 0.9em;
-            height: fit-content;
+          style="background-color:#e74c3c; color:white; padding: 6px 12px; border:none; border-radius:5px; cursor:pointer; font-size: 0.9em;height: fit-content;
             width: auto !important;
-          ">
-       Nouvelle semaine
+      "> Nouvelle semaine
     </button>
 </div>
 
@@ -267,6 +211,7 @@ html, body {height: 100%;}
 
 </div>
 
+  
 <script>
 if (localStorage.getItem("darkMode") === "true") {
   document.body.classList.add("dark");
@@ -323,13 +268,14 @@ function afficherAliments() {
     }
     
     const li = document.createElement("li");
+    
     li.style.cursor = "pointer";
     li.onclick = (e) => {
       if (e.target.tagName !== "BUTTON") ouvrirPopup(index);
     };
+    
     const joursRestants = calculerJoursRestants(aliment.peremption);
     let texte = `${aliment.nom} - ${aliment.quantite} ${aliment.unite}`;
-
     if (aliment.peremption) {
       texte += ` - ${joursRestants} jour(s) restant`;
     } else {
@@ -490,7 +436,8 @@ function chargerRepas() {
 }
 
 let categoriesCourses = JSON.parse(localStorage.getItem("categoriesCourses")) || {};
-const toutesCategories = ["Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sauce", "Epice", "Boisson", "Conserve", "Produit du monde", "Hygiène"];
+const toutesCategories = ["Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sauce", "Epice", "Boisson", "Conserve", 
+                          "Produit du monde", "Hygiène"];
   
 function genererListeCourses() {
 
@@ -510,9 +457,7 @@ function genererListeCourses() {
 
   const totalDemandes = {};
 
-  // =========================
   // CALCULER LES BESOINS TOTAUX
-  // =========================
   Object.values(repasData).forEach(jour => {
     Object.values(jour).forEach(texteRepas => {
       if (!texteRepas) return;
@@ -535,11 +480,8 @@ function genererListeCourses() {
     });
   });
 
-  // =========================
   // SOUSTRAIRE L’INVENTAIRE
-  // =========================
   const courses = {};
-
   Object.keys(totalDemandes).forEach(nom => {
     const trouve = inventaire.find(a =>
       a.nom.toLowerCase() === nom.toLowerCase()
@@ -552,9 +494,7 @@ function genererListeCourses() {
     }
   });
 
-  // =========================
   // AFFICHAGE
-  // =========================
   const container = document.getElementById("repasSemaine");
   container.innerHTML = "";
 
@@ -647,9 +587,7 @@ function genererListeCourses() {
       li.style.alignItems = "center";
       li.style.gap = "10px";
 
-      // =========================
       // CHECKBOX ACHETÉ
-      // =========================
       const checkedData = JSON.parse(localStorage.getItem("coursesChecked")) || {};
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox";
@@ -671,9 +609,7 @@ function genererListeCourses() {
         span.classList.toggle("course-checked", checkbox.checked);
       };
 
-      // =========================
       // MENU MODIFIER CATEGORIE
-      // =========================
       const select = document.createElement("select");
       const optionModifier = document.createElement("option");
       optionModifier.textContent = "Modifier";
@@ -711,21 +647,17 @@ function genererListeCourses() {
   
 function nouvelleSemaine() {
   if (!confirm("Voulez-vous vraiment commencer une nouvelle semaine ? Toutes les cases seront vidées.")) return;
-
   // Vider toutes les cases du tableau
   document.querySelectorAll('.repas').forEach(input => input.value = '');
-
   // Supprimer les données de la semaine dans le localStorage
   localStorage.removeItem('repasSemaine');
-
   // Supprimer aussi la liste de courses générée
   document.getElementById("repasSemaine").innerHTML = "";
-
   alert("Nouvelle semaine prête ! Toutes les cases ont été vidées.");
 }
 
-
 </script>
+
   
 <script>
 if ("serviceWorker" in navigator) {
@@ -780,7 +712,8 @@ function ouvrirPopup(index) {
   const select = document.getElementById("editCategorie");
   select.innerHTML = "";
 
-  const options = ["Choisir Catégorie","Boisson","Produit laitier","Légume","Fruit","Viande","Poisson","Féculent","Sucré","Sauce","Epice","Sec","Plat préparé","Hygiène"];
+  const options = ["Choisir Catégorie","Boisson","Produit laitier","Légume","Fruit","Viande","Poisson","Féculent","Sucré","Sauce","Epice","Sec",
+                   "Plat préparé","Hygiène"];
 
   options.forEach(cat => {
     const o = document.createElement("option");
@@ -825,10 +758,9 @@ function supprimerDepuisPopup() {
   }
 }
 
-
-  
 </script>
 
+  
 <div id="popupEdit" class="popup">
   <div class="popup-content">
 
@@ -843,8 +775,8 @@ function supprimerDepuisPopup() {
     <div style="display:flex; align-items:center; gap:10px;">
       <input id="editPeremption" type="date" style="flex:1;">
       <label style="display:flex; align-items:center; gap:5px;">
-      <input type="checkbox" id="editSansDate">
-        Pas de DLC
+        <input type="checkbox" id="editSansDate">
+          Pas de DLC
       </label>
     </div>
 
@@ -862,40 +794,5 @@ function supprimerDepuisPopup() {
   </div>
 </div>
 
-  
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
