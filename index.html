@@ -635,15 +635,33 @@ function genererListeCourses() {
       }
 
       checkbox.onchange = () => {
-        const data = JSON.parse(localStorage.getItem("coursesChecked")) || {};
+    const data = JSON.parse(localStorage.getItem("coursesChecked")) || {};
+    data[nom] = checkbox.checked;
+    localStorage.setItem("coursesChecked", JSON.stringify(data));
+    span.classList.toggle("course-checked", checkbox.checked);
 
-        data[nom] = checkbox.checked;
+    // ✅ Ajouter automatiquement dans l'inventaire si coché
+    if (checkbox.checked) {
+        const inventaire = JSON.parse(localStorage.getItem('aliments')) || [];
+        const existe = inventaire.find(a => a.nom.toLowerCase() === nom.toLowerCase());
 
-        localStorage.setItem("coursesChecked", JSON.stringify(data));
+        if (existe) {
+            // si déjà dans l'inventaire, on augmente la quantité
+            existe.quantite = Number(existe.quantite) + courses[nom];
+        } else {
+            // sinon on crée un nouvel aliment avec catégorie "Choisir catégorie"
+            inventaire.push({
+                nom: nom,
+                quantite: courses[nom],
+                unite: "",
+                peremption: null,
+                categorie: "Choisir catégorie"
+            });
+        }
 
-        span.classList.toggle("course-checked", checkbox.checked);
-      };
-
+        localStorage.setItem('aliments', JSON.stringify(inventaire));
+    }
+};
 
       // =========================
       // MENU MODIFIER CATEGORIE
@@ -856,6 +874,7 @@ document.getElementById("editSansDate").addEventListener("change", function() {
   
 </body>
 </html>
+
 
 
 
