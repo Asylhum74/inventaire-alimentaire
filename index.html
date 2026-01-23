@@ -41,31 +41,29 @@ html, body {height: 100%;}
   
 .course-checkbox {width: 20px; height: 20px; cursor: pointer; }
 
-/* ===== POPUP ===== */
-.popup-overlay {position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:1000; }
+/* Fond sombre */
+.popup {position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 999; }
 
-.popup-box { background:#1e1e1e; color:white; padding:20px; border-radius:12px; width:90%; max-width:350px; display:flex; flex-direction:column; gap:8px; }
+/* Carte popup */
+.popup-content { background: #1e1e1e; color: white; padding: 25px; border-radius: 18px; width: 95%; max-width: 420px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
 
-  .popup-content{
-  background:white;
-  padding:20px;
-  border-radius:12px;
-  width:90%;
-  max-width:500px;
+/* inputs plus gros */
+.popup-content input,
+.popup-content select,
+.popup-content button { font-size: 1.05em; padding: 12px; border-radius: 10px; }
+
+/* boutons actions */
+.popup-actions { display: flex; gap: 10px; }
+
+.popup-actions button { flex: 1; font-weight: bold; }
+
+/* bouton supprimer rouge */
+.delete-btn { background: #c0392b; color: white; font-size: 1.1em; padding: 14px; }
+
+/* 📱 téléphone = plein écran */
+@media (max-width: 600px) {
+  .popup-content { width: 100%; height: 100%; border-radius: 0; justify-content: center; }
 }
-
-/* 📱 Mobile = plus grand */
-@media (max-width:600px){
-  .popup-content{
-    width:95%;
-    max-width:none;
-    height:85vh;
-    overflow-y:auto;
-    padding:25px;
-    font-size:1.1em;
-  }
-}
-  
 
 </style>
 </head>
@@ -695,13 +693,8 @@ function ouvrirPopup(index) {
   const checkbox = document.getElementById("editSansDate");
   const dateInput = document.getElementById("editPeremption");
 
-  if (!aliment.peremption) {
-    checkbox.checked = true;
-    dateInput.disabled = true;
-  } else {
-    checkbox.checked = false;
-    dateInput.disabled = false;
-  }
+  checkbox.checked = !aliment.peremption;
+  dateInput.disabled = checkbox.checked;
 
   // remplir catégories dynamiquement
   const select = document.getElementById("editCategorie");
@@ -743,50 +736,61 @@ function sauvegarderEdition() {
   fermerPopup();
 }
 
-document.getElementById("editSansDate").onchange = function(){
-  document.getElementById("editPeremption").disabled = this.checked;
-};
+function supprimerDepuisPopup() {
+  if(confirm("Supprimer cet aliment ?")) {
+    aliments.splice(indexEdition, 1);
+    sauvegarderAliments();
+    afficherAliments();
+    fermerPopup();
+  }
+}
+
+document.getElementById("editSansDate").addEventListener("change", function() {
+  const dateInput = document.getElementById("editPeremption");
+  dateInput.disabled = this.checked;
+
+  // si on remet la date → on autorise le clic
+  if(!this.checked) dateInput.focus();
+});
   
 </script>
 
-<!-- POPUP MODIFICATION -->
-<div id="popupEdit" class="popup-overlay" style="display:none;">
-  <div class="popup-box">
+<div id="popupEdit" class="popup">
+  <div class="popup-content">
 
-    <h3>✏️ Modifier l'aliment</h3>
+    <h2>Modifier l'aliment</h2>
 
-    <label>Nom</label>
-    <input type="text" id="editNom">
+    <input id="editNom" placeholder="Nom">
 
-    <label>Quantité</label>
-    <input type="number" id="editQuantite">
+    <input id="editQuantite" type="number" placeholder="Quantité">
 
-    <label>Unité</label>
-    <input type="text" id="editUnite">
+    <input id="editUnite" placeholder="Unité">
 
-    <label>Date</label>
-    <div style="display:flex; align-items:center; gap:10px;">
-      <input type="date" id="editPeremption">
+    <input id="editPeremption" type="date">
 
-      <label style="display:flex; align-items:center; gap:5px;">
-        <input type="checkbox" id="editSansDate">
-        Pas de DLC
-      </label>
-    </div>
+    <label>
+      <input type="checkbox" id="editSansDate">
+      Pas de DLC
+    </label>
 
-    <label>Catégorie</label>
     <select id="editCategorie"></select>
 
-    <div style="display:flex; gap:10px; margin-top:15px;">
+    <div class="popup-actions">
       <button onclick="sauvegarderEdition()">💾 Sauvegarder</button>
-      <button onclick="fermerPopup()">❌ Annuler</button>
+      <button onclick="fermerPopup()">Annuler</button>
     </div>
+
+    <button class="delete-btn" onclick="supprimerDepuisPopup()">
+      🗑 Supprimer
+    </button>
 
   </div>
 </div>
+
   
 </body>
 </html>
+
 
 
 
