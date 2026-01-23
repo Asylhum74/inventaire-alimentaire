@@ -155,7 +155,7 @@ html, body {height: 100%;}
     <option value="Epice">Epice</option>
     <option value="Sec">Sec</option>
     <option value="Plat préparé">Plat préparé</option>
-    <option value="test">test</option>
+    <option value="Hygiène">test</option>
   </select>
 
 
@@ -306,7 +306,7 @@ function afficherAliments() {
   const ul = document.getElementById("listeAliments");
   ul.innerHTML = "";
   
-  const ordreCategorie = ["Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sec", "Sauce", "Epice", "Boisson", " Plat préparé"];
+  const ordreCategorie = ["Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sec", "Sauce", "Epice", "Boisson", " Plat préparé", "Hygiène"];
   // Trier par catégorie
   aliments.sort((a,b) => ordreCategorie.indexOf(a.categorie) - ordreCategorie.indexOf(b.categorie));
 
@@ -780,7 +780,7 @@ function ouvrirPopup(index) {
   const select = document.getElementById("editCategorie");
   select.innerHTML = "";
 
-  const options = ["Boisson","Produit laitier","Légume","Fruit","Viande","Poisson","Féculent","Sucré","Sauce","Epice","Sec","Plat préparé","test"];
+  const options = ["Choisir Catégorie","Boisson","Produit laitier","Légume","Fruit","Viande","Poisson","Féculent","Sucré","Sauce","Epice","Sec","Plat préparé","Hygiène"];
 
   options.forEach(cat => {
     const o = document.createElement("option");
@@ -875,6 +875,7 @@ document.getElementById("editSansDate").addEventListener("change", function() {
   
 </body>
 </html>
+
 
 
 
