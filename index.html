@@ -825,17 +825,7 @@ function supprimerDepuisPopup() {
   }
 }
 
-document.getElementById("editSansDate").addEventListener("change", function() {
-  const dateInput = document.getElementById("editPeremption");
-  if(this.checked){
-    dateInput.disabled = true;
-    dateInput.style.visibility = "hidden";
-  } else {
-    dateInput.disabled = false;
-    dateInput.style.visibility = "visible";
-    // Ne rien toucher à la valeur pour que tu puisses choisir
-  }
-});
+
   
 </script>
 
@@ -875,6 +865,7 @@ document.getElementById("editSansDate").addEventListener("change", function() {
   
 </body>
 </html>
+
 
 
 
