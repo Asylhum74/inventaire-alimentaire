@@ -493,7 +493,6 @@ let categoriesCourses = JSON.parse(localStorage.getItem("categoriesCourses")) ||
 const toutesCategories = ["Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sauce", "Epice", "Boisson", "Conserve", "Produit du monde", "Hygiène"];
   
 function genererListeCourses() {
-
   // 1️⃣ Charger inventaire
   let inventaire = [];
   try {
@@ -539,13 +538,11 @@ function genererListeCourses() {
   // SOUSTRAIRE L’INVENTAIRE
   // =========================
   const courses = {};
-
   Object.keys(totalDemandes).forEach(nom => {
-    const trouve = inventaire.find(a =>
-      a.nom.toLowerCase() === nom.toLowerCase()
-    );
+    const trouve = inventaire.find(a => a.nom.toLowerCase() === nom.toLowerCase());
     const stock = trouve ? Number(trouve.quantite) : 0;
     const besoin = Math.max(totalDemandes[nom] - stock, 0);
+
     if (besoin > 0) courses[nom] = besoin;
   });
 
@@ -553,35 +550,59 @@ function genererListeCourses() {
   // AFFICHAGE
   // =========================
   const container = document.getElementById("repasSemaine");
-    container.innerHTML = `
-    <h3 style="
-      font-size:1.4em;
-      display:flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    ">
-      <span>🛒 Liste de courses</span>
-    </h3>
-`  ;
+  container.innerHTML = "";
 
-  const h3 = container.querySelector("h3");
+  // ----- TITRE + BOUTON -----
+  const titreDiv = document.createElement("div");
+  titreDiv.style.display = "flex";
+  titreDiv.style.justifyContent = "space-between";
+  titreDiv.style.alignItems = "center";
+  titreDiv.style.marginBottom = "10px";
 
-  // Bouton "Ajouter à l'inventaire"
+  const titre = document.createElement("h3");
+  titre.textContent = "🛒 Liste de courses";
+  titre.style.fontSize = "1.4em";
+  titre.style.margin = "0";
+
   const btnAjouterInventaire = document.createElement("button");
-  btnAjouterInventaire.textContent = "Ajouter à l'inventaire";
-  btnAjouterInventaire.style.padding = "6px 12px";
-  btnAjouterInventaire.style.fontSize = "0.9em";
-  btnAjouterInventaire.style.cursor = "pointer";
-  btnAjouterInventaire.style.backgroundColor = "#1e1e1e";
-  btnAjouterInventaire.style.color = "#e0e0e0";
-  btnAjouterInventaire.style.border = "none";
-  btnAjouterInventaire.style.borderRadius = "6px";
-  btnAjouterInventaire.style.flexShrink = "0"; // NE PAS prendre tout l'espace
-  btnAjouterInventaire.style.whiteSpace = "nowrap";
+  btnAjouterInventaire.textContent = "➕ Ajouter à l'inventaire";
+  btnAjouterInventaire.className = "small"; // même style que bouton supprimer
+  btnAjouterInventaire.style.padding = "6px 10px";
+  btnAjouterInventaire.style.flexShrink = "0";
 
-  // Ajouter le bouton à droite du h3
-  h3.appendChild(btnAjouterInventaire);
+  btnAjouterInventaire.onclick = () => {
+    Object.keys(courses).forEach(nom => {
+      const checkedData = JSON.parse(localStorage.getItem("coursesChecked")) || {};
+      if (checkedData[nom]) {
+        // Vérifier si aliment existe déjà
+        const exist = inventaire.find(a => a.nom.toLowerCase() === nom.toLowerCase());
+        if (exist) {
+          exist.quantite = Number(exist.quantite) + courses[nom];
+        } else {
+          inventaire.push({
+            nom,
+            quantite: courses[nom],
+            unite: "",
+            peremption: null,
+            categorie: "Choisir catégorie"
+          });
+        }
+      }
+    });
+    localStorage.setItem("aliments", JSON.stringify(inventaire));
+    // Supprimer les aliments cochés de la liste
+    const checkedData = JSON.parse(localStorage.getItem("coursesChecked")) || {};
+    Object.keys(checkedData).forEach(nom => {
+      if (checkedData[nom]) delete checkedData[nom];
+    });
+    localStorage.setItem("coursesChecked", JSON.stringify(checkedData));
+    genererListeCourses(); // réaffiche la liste
+    afficherAliments(); // met à jour l'inventaire visible
+  };
+
+  titreDiv.appendChild(titre);
+  titreDiv.appendChild(btnAjouterInventaire);
+  container.appendChild(titreDiv);
 
   if (Object.keys(courses).length === 0) {
     container.innerHTML += "<p>✅ Tout est déjà dans l'inventaire.</p>";
@@ -589,22 +610,21 @@ function genererListeCourses() {
   }
 
   const ordreCategories = [
-    "Autres",
-    "Féculent", "Produit laitier", "Viande", "Poisson",
-    "Fruit", "Légume", "Sucré", "Sauce",
-    "Epice", "Boisson", "Conserve", "Produit du monde", "Hygiène"
+    "Autres", "Féculent", "Produit laitier", "Viande", "Poisson",
+    "Fruit", "Légume", "Sucré", "Sauce", "Epice", "Boisson",
+    "Conserve", "Produit du monde", "Hygiène"
   ];
 
   ordreCategories.forEach(categorie => {
     const alimentsDeCategorie = Object.keys(courses).filter(nom => categories[nom] === categorie);
     if (alimentsDeCategorie.length === 0) return;
 
-    const titre = document.createElement("p");
-    titre.textContent = categorie;
-    titre.style.fontWeight = "bold";
-    titre.style.fontSize = "1.25em";
-    titre.style.marginTop = "10px";
-    container.appendChild(titre);
+    const titreCat = document.createElement("p");
+    titreCat.textContent = categorie;
+    titreCat.style.fontWeight = "bold";
+    titreCat.style.fontSize = "1.25em";
+    titreCat.style.marginTop = "10px";
+    container.appendChild(titreCat);
 
     const ul = document.createElement("ul");
 
@@ -625,7 +645,6 @@ function genererListeCourses() {
       const span = document.createElement("span");
       span.textContent = `${nom} x${courses[nom]}`;
       span.style.flex = "1";
-
       if (checkbox.checked) span.classList.add("course-checked");
 
       checkbox.onchange = () => {
@@ -635,21 +654,19 @@ function genererListeCourses() {
         span.classList.toggle("course-checked", checkbox.checked);
       };
 
-      // 🔹 Menu modifier catégorie
+      // Menu Modifier catégorie
       const select = document.createElement("select");
       const optionModifier = document.createElement("option");
       optionModifier.textContent = "Modifier";
       optionModifier.selected = true;
       optionModifier.disabled = true;
       select.appendChild(optionModifier);
-
       ordreCategories.forEach(cat => {
         const option = document.createElement("option");
         option.value = cat;
         option.textContent = cat;
         select.appendChild(option);
       });
-
       select.onchange = () => {
         categories[nom] = select.value;
         localStorage.setItem("coursesCategories", JSON.stringify(categories));
@@ -665,41 +682,7 @@ function genererListeCourses() {
     container.appendChild(ul);
   });
 
-  // 🔹 Ajouter aliments cochés à l’inventaire
-  btnAjouterInventaire.onclick = () => {
-    document.querySelectorAll(".course-checkbox:checked").forEach(cb => {
-      const li = cb.parentElement;
-      const span = li.querySelector("span");
-      const nomMatch = span.textContent.match(/^(.+?)\sx/);
-      if (!nomMatch) return;
-      const nom = nomMatch[1].trim();
-      const qte = Number(span.textContent.split("x")[1]) || 1;
-
-      const existe = inventaire.find(a => a.nom.toLowerCase() === nom.toLowerCase());
-      if (existe) {
-        existe.quantite = Number(existe.quantite) + qte;
-      } else {
-        inventaire.push({
-          nom: nom,
-          quantite: qte,
-          unite: "",
-          peremption: null,
-          categorie: "Choisir catégorie"
-        });
-      }
-
-      // Supprimer de la liste de courses
-      delete courses[nom];
-    });
-
-    // 🔹 Mettre à jour stockage et inventaire
-    localStorage.setItem('aliments', JSON.stringify(inventaire));
-    aliments = inventaire;
-    afficherAliments();
-    genererListeCourses();
-  };
-
-  // Sauvegarder les catégories
+  // Sauvegarder catégories
   localStorage.setItem("coursesCategories", JSON.stringify(categories));
 }
 
@@ -870,6 +853,7 @@ document.getElementById("editSansDate").addEventListener("change", function() {
   
 </body>
 </html>
+
 
 
 
