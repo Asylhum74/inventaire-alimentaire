@@ -502,12 +502,10 @@ function genererListeCourses() {
     inventaire = [];
   }
 
-  
-
   // 2️⃣ Charger repas
   const repasData = JSON.parse(localStorage.getItem('repasSemaine')) || {};
 
-  // 3️⃣ Charger catégories sauvegardées (IMPORTANT ✅)
+  // 3️⃣ Charger catégories sauvegardées
   let categories = JSON.parse(localStorage.getItem("coursesCategories")) || {};
 
   const totalDemandes = {};
@@ -517,14 +515,11 @@ function genererListeCourses() {
   // =========================
   Object.values(repasData).forEach(jour => {
     Object.values(jour).forEach(texteRepas => {
-
       if (!texteRepas) return;
 
       const aliments = texteRepas.split(',').map(a => a.trim()).filter(a => a);
 
       aliments.forEach(item => {
-
-        // Format accepté : "Banane 2"
         const match = item.match(/^(.+?)\s*(\d+)?$/);
         if (!match) return;
 
@@ -533,7 +528,6 @@ function genererListeCourses() {
 
         totalDemandes[nom] = (totalDemandes[nom] || 0) + qte;
 
-        // 👉 nouveau produit → catégorie Autres seulement si pas déjà définie
         if (!categories[nom]) {
           categories[nom] = "Autres";
         }
@@ -541,14 +535,12 @@ function genererListeCourses() {
     });
   });
 
-
   // =========================
   // SOUSTRAIRE L’INVENTAIRE
   // =========================
   const courses = {};
 
   Object.keys(totalDemandes).forEach(nom => {
-
     const trouve = inventaire.find(a =>
       a.nom.toLowerCase() === nom.toLowerCase()
     );
@@ -561,18 +553,41 @@ function genererListeCourses() {
     }
   });
 
-
   // =========================
   // AFFICHAGE
   // =========================
   const container = document.getElementById("repasSemaine");
-  container.innerHTML = "<h3 style='font-size:1.4em;'>🛒 Liste de courses</h3>";
+  container.innerHTML = "";
 
   if (Object.keys(courses).length === 0) {
-    container.innerHTML += "<p>✅ Tout est déjà dans l'inventaire.</p>";
+    container.innerHTML = "<h3 style='font-size:1.4em;'>🛒 Liste de courses</h3><p>✅ Tout est déjà dans l'inventaire.</p>";
     return;
   }
 
+  // Création du header titre + bouton
+  const headerDiv = document.createElement("div");
+  headerDiv.style.display = "flex";
+  headerDiv.style.alignItems = "center";
+  headerDiv.style.justifyContent = "space-between";
+  headerDiv.style.marginBottom = "10px";
+
+  const titre = document.createElement("h3");
+  titre.textContent = "🛒 Liste de courses";
+  titre.style.fontSize = "1.4em";
+
+  const btnAjouterInventaire = document.createElement("button");
+  btnAjouterInventaire.textContent = "Ajouter à l'inventaire";
+  btnAjouterInventaire.style.padding = "6px 12px";
+  btnAjouterInventaire.style.fontSize = "0.9em";
+  btnAjouterInventaire.style.cursor = "pointer";
+  btnAjouterInventaire.style.backgroundColor = "#27ae60";
+  btnAjouterInventaire.style.color = "white";
+  btnAjouterInventaire.style.border = "none";
+  btnAjouterInventaire.style.borderRadius = "5px";
+
+  headerDiv.appendChild(titre);
+  headerDiv.appendChild(btnAjouterInventaire);
+  container.appendChild(headerDiv);
 
   const ordreCategories = [
     "Autres",
@@ -581,93 +596,49 @@ function genererListeCourses() {
     "Epice", "Boisson", "Conserve", "Produit du monde", "Hygiène"
   ];
 
-
   ordreCategories.forEach(categorie => {
-
-    const alimentsDeCategorie = Object.keys(courses)
-      .filter(nom => categories[nom] === categorie);
-
+    const alimentsDeCategorie = Object.keys(courses).filter(nom => categories[nom] === categorie);
     if (alimentsDeCategorie.length === 0) return;
 
-
     // Titre catégorie
-    const titre = document.createElement("p");
-    titre.textContent = categorie;
-    titre.style.fontWeight = "bold";
-    titre.style.fontSize = "1.25em";
-    titre.style.marginTop = "10px";
-
-    container.appendChild(titre);
-
+    const titreCat = document.createElement("p");
+    titreCat.textContent = categorie;
+    titreCat.style.fontWeight = "bold";
+    titreCat.style.fontSize = "1.25em";
+    titreCat.style.marginTop = "10px";
+    container.appendChild(titreCat);
 
     const ul = document.createElement("ul");
 
-
     alimentsDeCategorie.forEach(nom => {
-
       const li = document.createElement("li");
       li.style.fontSize = "1.1em";
       li.style.display = "flex";
       li.style.alignItems = "center";
       li.style.gap = "10px";
 
-
-      // =========================
-      // CHECKBOX ACHETÉ ✅
-      // =========================
+      // ✅ Checkbox
       const checkedData = JSON.parse(localStorage.getItem("coursesChecked")) || {};
-
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox";
       checkbox.className = "course-checkbox";
       checkbox.checked = checkedData[nom] || false;
 
-
-      // =========================
-      // TEXTE
-      // =========================
+      // Texte
       const span = document.createElement("span");
       span.textContent = `${nom} x${courses[nom]}`;
       span.style.flex = "1";
-
-      if (checkbox.checked) {
-        span.classList.add("course-checked");
-      }
+      if (checkbox.checked) span.classList.add("course-checked");
 
       checkbox.onchange = () => {
-    const data = JSON.parse(localStorage.getItem("coursesChecked")) || {};
-    data[nom] = checkbox.checked;
-    localStorage.setItem("coursesChecked", JSON.stringify(data));
-    span.classList.toggle("course-checked", checkbox.checked);
+        const data = JSON.parse(localStorage.getItem("coursesChecked")) || {};
+        data[nom] = checkbox.checked;
+        localStorage.setItem("coursesChecked", JSON.stringify(data));
+        span.classList.toggle("course-checked", checkbox.checked);
+      };
 
-    // ✅ Ajouter automatiquement dans l'inventaire si coché
-    if (checkbox.checked) {
-        const inventaire = JSON.parse(localStorage.getItem('aliments')) || [];
-        const existe = inventaire.find(a => a.nom.toLowerCase() === nom.toLowerCase());
-
-        if (existe) {
-            // si déjà dans l'inventaire, on augmente la quantité
-            existe.quantite = Number(existe.quantite) + courses[nom];
-        } else {
-            // sinon on crée un nouvel aliment avec catégorie "Choisir catégorie"
-            inventaire.push({
-                nom: nom,
-                quantite: courses[nom],
-                unite: "",
-                peremption: null,
-                categorie: "Choisir catégorie"
-            });
-        }
-
-        localStorage.setItem('aliments', JSON.stringify(inventaire));
-    }
-};
-
-      // =========================
-      // MENU MODIFIER CATEGORIE
-      // =========================
+      // Menu Modifier catégorie
       const select = document.createElement("select");
-
       const optionModifier = document.createElement("option");
       optionModifier.textContent = "Modifier";
       optionModifier.selected = true;
@@ -687,24 +658,52 @@ function genererListeCourses() {
         genererListeCourses();
       };
 
-
-      // =========================
-      // AJOUT DANS LA LIGNE
-      // =========================
+      // Ajouter éléments dans la ligne
       li.appendChild(checkbox);
       li.appendChild(span);
       li.appendChild(select);
-
       ul.appendChild(li);
     });
-
 
     container.appendChild(ul);
   });
 
-
-  // Sauvegarder aussi les catégories si nouveaux aliments
+  // Sauvegarder catégories si nouveaux aliments
   localStorage.setItem("coursesCategories", JSON.stringify(categories));
+
+  // =========================
+  // Fonction du bouton "Ajouter à l'inventaire"
+  // =========================
+  btnAjouterInventaire.onclick = () => {
+    const inventaire = JSON.parse(localStorage.getItem('aliments')) || [];
+
+    document.querySelectorAll(".course-checkbox:checked").forEach(cb => {
+      const li = cb.parentElement;
+      const span = li.querySelector("span");
+      const nomMatch = span.textContent.match(/^(.+?)\sx/);
+      if (!nomMatch) return;
+      const nom = nomMatch[1].trim();
+      const besoin = Number(span.textContent.split("x")[1]) || 1;
+
+      const existe = inventaire.find(a => a.nom.toLowerCase() === nom.toLowerCase());
+      if (existe) {
+        existe.quantite = Number(existe.quantite) + besoin;
+      } else {
+        inventaire.push({
+          nom: nom,
+          quantite: besoin,
+          unite: "",
+          peremption: null,
+          categorie: "Choisir catégorie"
+        });
+      }
+
+      cb.checked = false;
+    });
+
+    localStorage.setItem('aliments', JSON.stringify(inventaire));
+    afficherAliments(); // Met à jour l'inventaire immédiatement
+  };
 }
 
   
@@ -874,6 +873,7 @@ document.getElementById("editSansDate").addEventListener("change", function() {
   
 </body>
 </html>
+
 
 
 
