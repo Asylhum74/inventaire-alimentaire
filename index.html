@@ -46,23 +46,23 @@ html, body {height: 100%;}
   inset: 0;
   background: rgba(0,0,0,0.7);
   display: none;
-  align-items: center;
-  justify-content: flex-start;
-  padding-top: 40px;
+  align-items: center;       /* centre verticalement */
+  justify-content: center;   /* centre horizontalement */
+  padding: 20px;             /* un petit padding autour */
   z-index: 1000;
 }
 
 .popup-content {
   background: #1e1e1e;
   color: white;
-  width: 95%;
-  max-width: 420px;
-  padding: 25px;
+  width: 90%;               /* un peu plus large */
+  max-width: 500px;         /* plus grand max */
+  padding: 30px;
   border-radius: 18px;
 
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 15px;
 }
 
 .popup-content input,
@@ -734,12 +734,12 @@ function ouvrirPopup(index) {
   if(checkbox.checked){
     dateInput.disabled = true;
     dateInput.style.visibility = "hidden";
-    dateInput.value = "";
+    // NE PAS effacer la valeur
   } else {
     dateInput.disabled = false;
     dateInput.style.visibility = "visible";
-    dateInput.value = aliment.peremption;
-  }  
+    if(aliment.peremption) dateInput.value = aliment.peremption;
+  }
   // remplir catégories dynamiquement
   const select = document.getElementById("editCategorie");
   select.innerHTML = "";
@@ -791,14 +791,13 @@ function supprimerDepuisPopup() {
 
 document.getElementById("editSansDate").addEventListener("change", function() {
   const dateInput = document.getElementById("editPeremption");
-
   if(this.checked){
     dateInput.disabled = true;
     dateInput.style.visibility = "hidden";
-    dateInput.value = "";
   } else {
     dateInput.disabled = false;
     dateInput.style.visibility = "visible";
+    // Ne rien toucher à la valeur pour que tu puisses choisir
   }
 });
   
@@ -840,6 +839,7 @@ document.getElementById("editSansDate").addEventListener("change", function() {
   
 </body>
 </html>
+
 
 
 
