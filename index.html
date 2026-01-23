@@ -576,14 +576,17 @@ function genererListeCourses() {
   titre.style.fontSize = "1.4em";
 
   const btnAjouterInventaire = document.createElement("button");
-  btnAjouterInventaire.textContent = "Ajouter à l'inventaire";
+  btnAjouterInventaire.textContent = "Ajouter à l’inventaire";
   btnAjouterInventaire.style.padding = "6px 12px";
   btnAjouterInventaire.style.fontSize = "0.9em";
   btnAjouterInventaire.style.cursor = "pointer";
-  btnAjouterInventaire.style.backgroundColor = "#27ae60";
-  btnAjouterInventaire.style.color = "white";
-  btnAjouterInventaire.style.border = "none";
+  btnAjouterInventaire.style.backgroundColor = "#f0f0f0"; // gris clair
+  btnAjouterInventaire.style.color = "#000";               // texte noir
+  btnAjouterInventaire.style.border = "1px solid #ccc";
   btnAjouterInventaire.style.borderRadius = "5px";
+  btnAjouterInventaire.style.display = "inline-block";     // pour ne pas prendre toute la largeur
+  btnAjouterInventaire.style.minWidth = "fit-content";     // juste assez large pour le texte
+  btnAjouterInventaire.style.whiteSpace = "nowrap";        // texte sur une seule ligne
 
   headerDiv.appendChild(titre);
   headerDiv.appendChild(btnAjouterInventaire);
@@ -698,13 +701,17 @@ function genererListeCourses() {
         });
       }
 
+      // décocher la checkbox après ajout
       cb.checked = false;
     });
 
+    // Sauvegarder inventaire
     localStorage.setItem('aliments', JSON.stringify(inventaire));
-    afficherAliments(); // Met à jour l'inventaire immédiatement
-  };
-}
+
+    // 🔄 Mettre à jour l'affichage immédiatement
+    afficherAliments();    // actualise la liste d'inventaire
+    genererListeCourses(); // actualise la liste de courses
+};
 
   
 function nouvelleSemaine() {
@@ -873,6 +880,7 @@ document.getElementById("editSansDate").addEventListener("change", function() {
   
 </body>
 </html>
+
 
 
 
