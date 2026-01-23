@@ -553,22 +553,35 @@ function genererListeCourses() {
   // AFFICHAGE
   // =========================
   const container = document.getElementById("repasSemaine");
-  container.innerHTML = "<h3 style='font-size:1.4em; display:flex; justify-content:space-between; align-items:center;'>🛒 Liste de courses</h3>";
+    container.innerHTML = `
+    <h3 style="
+      font-size:1.4em;
+      display:flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    ">
+      <span>🛒 Liste de courses</span>
+    </h3>
+`  ;
 
-  // 🔹 Ajouter bouton “Ajouter à l’inventaire”
+  const h3 = container.querySelector("h3");
+
+  // Bouton "Ajouter à l'inventaire"
   const btnAjouterInventaire = document.createElement("button");
-  btnAjouterInventaire.textContent = "➕ Ajouter à l'inventaire";
+  btnAjouterInventaire.textContent = "Ajouter à l'inventaire";
   btnAjouterInventaire.style.padding = "6px 12px";
   btnAjouterInventaire.style.fontSize = "0.9em";
   btnAjouterInventaire.style.cursor = "pointer";
-  btnAjouterInventaire.style.backgroundColor = "#3498db"; // même couleur que sauvegarder la semaine
-  btnAjouterInventaire.style.color = "#fff";
+  btnAjouterInventaire.style.backgroundColor = "#1e1e1e";
+  btnAjouterInventaire.style.color = "#e0e0e0";
   btnAjouterInventaire.style.border = "none";
   btnAjouterInventaire.style.borderRadius = "6px";
-  btnAjouterInventaire.style.minWidth = "90px";
+  btnAjouterInventaire.style.flexShrink = "0"; // NE PAS prendre tout l'espace
   btnAjouterInventaire.style.whiteSpace = "nowrap";
 
-  container.querySelector("h3").appendChild(btnAjouterInventaire);
+  // Ajouter le bouton à droite du h3
+  h3.appendChild(btnAjouterInventaire);
 
   if (Object.keys(courses).length === 0) {
     container.innerHTML += "<p>✅ Tout est déjà dans l'inventaire.</p>";
@@ -857,6 +870,7 @@ document.getElementById("editSansDate").addEventListener("change", function() {
   
 </body>
 </html>
+
 
 
 
