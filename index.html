@@ -574,7 +574,10 @@ function genererListeCourses() {
   // Bouton Ajouter à l'inventaire
   const btnAjouterInventaire = document.createElement("button");
   btnAjouterInventaire.textContent = "➕ Ajouter à l'inventaire";
-  btnAjouterInventaire.className = "small"; // style cohérent avec le bouton Supprimer
+  btnAjouterInventaire.className = "small"; // même style que bouton supprimer
+  btnAjouterInventaire.style.padding = "6px 12px"; // même que supprimer
+  btnAjouterInventaire.style.flexShrink = "0";      // ne pas étirer
+  btnAjouterInventaire.style.width = "auto";       // largeur auto
   btnAjouterInventaire.onclick = () => {
     const checkedData = JSON.parse(localStorage.getItem("coursesChecked")) || {};
 
@@ -602,7 +605,6 @@ function genererListeCourses() {
     genererListeCourses();
     afficherAliments();
 
-    alert("Aliments ajoutés à l'inventaire !");
   };
 
   headerWrapper.appendChild(btnAjouterInventaire);
@@ -873,6 +875,7 @@ document.getElementById("editSansDate").addEventListener("change", function() {
   
 </body>
 </html>
+
 
 
 
