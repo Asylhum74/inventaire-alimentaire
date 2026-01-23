@@ -47,7 +47,8 @@ html, body {height: 100%;}
   background: rgba(0,0,0,0.7);
   display: none;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-top: 40px;
   z-index: 1000;
 }
 
@@ -94,7 +95,8 @@ html, body {height: 100%;}
     width: 100%;
     height: 100%;
     border-radius: 0;
-    justify-content: center;
+    justify-content: flex-start;
+    padding-top: 40px;
   }
 }
 
@@ -729,9 +731,15 @@ function ouvrirPopup(index) {
 
   checkbox.checked = !aliment.peremption;
 
-  dateInput.style.display = checkbox.checked ? "none" : "block";
-  dateInput.value = aliment.peremption || "";
-
+  if(checkbox.checked){
+    dateInput.disabled = true;
+    dateInput.style.visibility = "hidden";
+    dateInput.value = "";
+  } else {
+    dateInput.disabled = false;
+    dateInput.style.visibility = "visible";
+    dateInput.value = aliment.peremption;
+  }  
   // remplir catégories dynamiquement
   const select = document.getElementById("editCategorie");
   select.innerHTML = "";
@@ -785,10 +793,12 @@ document.getElementById("editSansDate").addEventListener("change", function() {
   const dateInput = document.getElementById("editPeremption");
 
   if(this.checked){
-    dateInput.style.display = "none";
+    dateInput.disabled = true;
+    dateInput.style.visibility = "hidden";
     dateInput.value = "";
   } else {
-    dateInput.style.display = "block";
+    dateInput.disabled = false;
+    dateInput.style.visibility = "visible";
   }
 });
   
@@ -830,6 +840,7 @@ document.getElementById("editSansDate").addEventListener("change", function() {
   
 </body>
 </html>
+
 
 
 
