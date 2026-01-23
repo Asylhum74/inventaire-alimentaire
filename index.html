@@ -41,6 +41,12 @@ html, body {height: 100%;}
   
 .course-checkbox {width: 20px; height: 20px; cursor: pointer; }
 
+/* ===== POPUP ===== */
+.popup-overlay {position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:1000; }
+
+.popup-box { background:#1e1e1e; color:white; padding:20px; border-radius:12px; width:90%; max-width:350px; display:flex; flex-direction:column; gap:8px; }
+  
+
 </style>
 </head>
 <body>
@@ -263,6 +269,10 @@ function afficherAliments() {
     }
     
     const li = document.createElement("li");
+    li.style.cursor = "pointer";
+    li.onclick = (e) => {
+      if (e.target.tagName !== "BUTTON") ouvrirPopup(index);
+    };
     const joursRestants = calculerJoursRestants(aliment.peremption);
     let texte = `${aliment.nom} - ${aliment.quantite} ${aliment.unite}`;
 
@@ -283,15 +293,14 @@ function afficherAliments() {
     spanTexte.textContent = texte;
     li.appendChild(spanTexte);
 
-    // Boutons
-    const btnModifier = document.createElement("button");
-    btnModifier.textContent = "Modifier";
-    btnModifier.className = "small";
-    btnModifier.onclick = () => preRemplirFormulaire(index);
-
     const btnSupprimer = document.createElement("button");
     btnSupprimer.textContent = "Supprimer";
-    btnSupprimer.className = "small";
+    btnSupprimer.style.padding = "10px 16px";
+    btnSupprimer.style.fontSize = "1em";
+    btnSupprimer.style.background = "#e74c3c";
+    btnSupprimer.style.color = "white";
+    btnSupprimer.style.border = "none";
+    btnSupprimer.style.borderRadius = "6px";
     btnSupprimer.onclick = () => supprimerAliment(index);
 
     const actions = document.createElement("span");
@@ -652,10 +661,91 @@ if ("serviceWorker" in navigator) {
     .then(() => console.log("Service Worker enregistré"))
     .catch(err => console.error("SW erreur", err));
 }
+
+let indexEdition = -1;
+
+function ouvrirPopup(index) {
+  const aliment = aliments[index];
+
+  indexEdition = index;
+
+  document.getElementById("editNom").value = aliment.nom;
+  document.getElementById("editQuantite").value = aliment.quantite;
+  document.getElementById("editUnite").value = aliment.unite;
+  document.getElementById("editPeremption").value = aliment.peremption || "";
+
+  // remplir catégories dynamiquement
+  const select = document.getElementById("editCategorie");
+  select.innerHTML = "";
+
+  const options = ["Boisson","Produit laitier","Légume","Fruit","Viande","Poisson","Féculent","Sucré","Sauce","Epice","Sec","Plat préparé","test"];
+
+  options.forEach(cat => {
+    const o = document.createElement("option");
+    o.value = cat;
+    o.textContent = cat;
+    if(cat === aliment.categorie) o.selected = true;
+    select.appendChild(o);
+  });
+
+  document.getElementById("popupEdit").style.display = "flex";
+}
+
+function fermerPopup() {
+  document.getElementById("popupEdit").style.display = "none";
+}
+
+function sauvegarderEdition() {
+
+  if(indexEdition === -1) return;
+
+  aliments[indexEdition] = {
+    nom: document.getElementById("editNom").value,
+    quantite: document.getElementById("editQuantite").value,
+    unite: document.getElementById("editUnite").value,
+    peremption: document.getElementById("editPeremption").value || null,
+    categorie: document.getElementById("editCategorie").value
+  };
+
+  sauvegarderAliments();
+  afficherAliments();
+  fermerPopup();
+}
+  
 </script>
 
+<!-- POPUP MODIFICATION -->
+<div id="popupEdit" class="popup-overlay" style="display:none;">
+  <div class="popup-box">
+
+    <h3>✏️ Modifier l'aliment</h3>
+
+    <label>Nom</label>
+    <input type="text" id="editNom">
+
+    <label>Quantité</label>
+    <input type="number" id="editQuantite">
+
+    <label>Unité</label>
+    <input type="text" id="editUnite">
+
+    <label>Date</label>
+    <input type="date" id="editPeremption">
+
+    <label>Catégorie</label>
+    <select id="editCategorie"></select>
+
+    <div style="display:flex; gap:10px; margin-top:15px;">
+      <button onclick="sauvegarderEdition()">💾 Sauvegarder</button>
+      <button onclick="fermerPopup()">❌ Annuler</button>
+    </div>
+
+  </div>
+</div>
+  
 </body>
 </html>
+
 
 
 
