@@ -65,6 +65,7 @@ html, body {height: 100%;}
 <nav class="nav">
   <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherPage('inventaire')">📦 Inventaire</button>
   <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherPage('repas')">🍽️ Repas</button>
+  <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherPage('recettes')">📖 Recettes</button>
 </nav>
 
 <button class="toggle" onclick="toggleDarkMode()">🌙 Mode sombre</button>
@@ -209,6 +210,25 @@ html, body {height: 100%;}
   </div>
   <div id="repasSemaine"></div>
 
+</div>
+
+<div id="page-recettes" class="page" style="display:none;">
+  <h2>📖 Mes Recettes</h2>
+
+  <div>
+    <label>Nom de la recette :</label>
+    <input type="text" id="recetteNom" placeholder="Nom de la recette">
+    
+    <label>Ingrédients (séparés par des virgules) :</label>
+    <input type="text" id="recetteIngredients" placeholder="Ex: Tomate, Lait, Oeuf">
+
+    <div class="form-section">
+      <button type="button" onclick="ajouterRecette()">Ajouter la recette</button>
+    </div>
+  </div>
+
+  <h3>Liste des recettes :</h3>
+  <ul id="listeRecettes"></ul>
 </div>
 
   
@@ -656,6 +676,83 @@ function nouvelleSemaine() {
   alert("Nouvelle semaine prête ! Toutes les cases ont été vidées.");
 }
 
+let recettes = [];
+let indexRecetteEnCours = -1;
+
+// Charger recettes depuis le localStorage
+function chargerRecettes() {
+  const data = localStorage.getItem("recettes");
+  if(data) recettes = JSON.parse(data);
+}
+
+// Sauvegarder recettes dans localStorage
+function sauvegarderRecettes() {
+  localStorage.setItem("recettes", JSON.stringify(recettes));
+}
+
+// Ajouter une recette
+function ajouterRecette() {
+  const nom = document.getElementById("recetteNom").value.trim();
+  const ingredients = document.getElementById("recetteIngredients").value
+                      .split(",").map(i => i.trim()).filter(i => i);
+
+  if(!nom || ingredients.length === 0) {
+    alert("Veuillez remplir le nom et les ingrédients !");
+    return;
+  }
+
+  recettes.push({nom, ingredients});
+
+  document.getElementById("recetteNom").value = "";
+  document.getElementById("recetteIngredients").value = "";
+
+  sauvegarderRecettes();
+  afficherRecettes();
+}
+
+// Afficher la liste des recettes
+function afficherRecettes() {
+  const ul = document.getElementById("listeRecettes");
+  ul.innerHTML = "";
+
+  recettes.forEach((recette, index) => {
+    const li = document.createElement("li");
+    li.style.display = "flex";
+    li.style.justifyContent = "space-between";
+    li.style.alignItems = "center";
+    li.style.marginBottom = "5px";
+
+    const span = document.createElement("span");
+    span.textContent = `${recette.nom} (${recette.ingredients.join(", ")})`;
+    li.appendChild(span);
+
+    const btnAjouterRepas = document.createElement("button");
+    btnAjouterRepas.textContent = "➡️ Ajouter au repas";
+    btnAjouterRepas.style.padding = "6px 12px";
+    btnAjouterRepas.onclick = () => ouvrirPopupRecette(index);
+    li.appendChild(btnAjouterRepas);
+
+    const btnSupprimer = document.createElement("button");
+    btnSupprimer.textContent = "Supprimer";
+    btnSupprimer.style.padding = "6px 12px";
+    btnSupprimer.style.marginLeft = "5px";
+    btnSupprimer.style.background = "#e74c3c";
+    btnSupprimer.style.color = "white";
+    btnSupprimer.onclick = () => {
+      if(confirm(`Supprimer la recette "${recette.nom}" ?`)) {
+        recettes.splice(index, 1);
+        sauvegarderRecettes();
+        afficherRecettes();
+      }
+    };
+    li.appendChild(btnSupprimer);
+
+    ul.appendChild(li);
+  });
+}
+
+
+
 </script>
 
   
@@ -758,6 +855,40 @@ function supprimerDepuisPopup() {
   }
 }
 
+function ouvrirPopupRecette(index) {
+  indexRecetteEnCours = index;
+  document.getElementById("popupRecette").style.display = "flex";
+}
+
+function fermerPopupRecette() {
+  document.getElementById("popupRecette").style.display = "none";
+}
+
+function confirmerAjoutRecette() {
+  if(indexRecetteEnCours === -1) return;
+
+  const recette = recettes[indexRecetteEnCours];
+  const jour = document.getElementById("recetteJour").value;
+  const typeRepas = document.getElementById("recetteTypeRepas").value;
+
+  const input = document.querySelector(`input[data-jour="${jour}"][data-repas="${typeRepas}"]`);
+  if(!input) {
+    alert("Le champ de repas correspondant n'a pas été trouvé !");
+    fermerPopupRecette();
+    return;
+  }
+
+  const valeursExistantes = input.value ? input.value.split(",").map(v => v.trim()) : [];
+  const nouvellesValeurs = [...valeursExistantes, ...recette.ingredients];
+  input.value = nouvellesValeurs.join(", ");
+
+  alert(`Recette "${recette.nom}" ajoutée à ${jour} - ${typeRepas} !`);
+  fermerPopupRecette();
+}
+
+chargerRecettes();
+afficherRecettes();
+  
 </script>
 
   
@@ -794,5 +925,37 @@ function supprimerDepuisPopup() {
   </div>
 </div>
 
+<div id="popupRecette" class="popup">
+  <div class="popup-content">
+    <h2>Ajouter la recette à un repas</h2>
+
+    <p>Sélectionnez le jour et le type de repas :</p>
+    <label>Jour :</label>
+    <select id="recetteJour">
+      <option value="Lundi">Lundi</option>
+      <option value="Mardi">Mardi</option>
+      <option value="Mercredi">Mercredi</option>
+      <option value="Jeudi">Jeudi</option>
+      <option value="Vendredi">Vendredi</option>
+      <option value="Samedi">Samedi</option>
+      <option value="Dimanche">Dimanche</option>
+    </select>
+
+    <label>Repas :</label>
+    <select id="recetteTypeRepas">
+      <option value="Petit-déjeuner">Petit-déjeuner</option>
+      <option value="Déjeuner">Déjeuner</option>
+      <option value="Dîner">Dîner</option>
+      <option value="Autre">Autre</option>
+    </select>
+
+    <div class="popup-actions">
+      <button onclick="confirmerAjoutRecette()">💾 Ajouter</button>
+      <button onclick="fermerPopupRecette()">Annuler</button>
+    </div>
+  </div>
+</div>
+  
 </body>
 </html>
+
