@@ -106,17 +106,18 @@ html, body {height: 100%;}
 <div id="page-alimentaire" class="page" style="display:none;">
 
   <h1>Gestion Alimentaire</h1>
+  <button class="small" onclick="afficherPage('accueil')">⬅ Retour</button>
   
   <nav class="nav">
-    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherPage('inventaire')">📦 Inventaire</button>
-    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherPage('repas')">🍽️ Repas</button>
-    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherPage('recettes')">📖 Recettes</button>
+    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherSousPage('inventaire')">📦 Inventaire</button>
+    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherSousPage('repas')">🍽️ Repas</button>
+    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherSousPage('recettes')">📖 Recettes</button>
   </nav>
 
-    <div style="margin-bottom:10px;">
+    <div id="inventaire" style="margin-bottom:10px;">
       <button onclick="exporterInventaire()">💾 Sauvegarder</button>
       <input type="file" id="importFile" accept=".json" onchange="importerInventaire(event)">
-    </div>
+   
   
     <label>Nom :</label>
     <input type="text" id="nom" placeholder="Nom de l'aliment">
@@ -161,8 +162,9 @@ html, body {height: 100%;}
     <input type="text" id="recherche" placeholder="🔍 Rechercher un aliment..." oninput="afficherAliments()">
     <h2>Liste des aliments :</h2>
     <ul id="listeAliments"></ul>
-    
-  <div id="page-repas" class="page" style="display:none;">
+    </div>
+      
+  <div id="page-repas" style="display:none;">
     <h2>🍽️ Repas de la semaine</h2>
 
     <p>Planifie les repas de la semaine :</p>
@@ -250,7 +252,7 @@ html, body {height: 100%;}
 
   </div>
 
-  <div id="page-recettes" class="page" style="display:none;">
+  <div id="page-recettes" style="display:none;">
     <h2>📖 Mes Recettes</h2>
 
     <div>
@@ -480,6 +482,14 @@ function importerInventaire(event) {
 function afficherPage(page) {
   document.querySelectorAll(".page").forEach(p => p.style.display = "none");
   document.getElementById("page-" + page).style.display = "block";
+}
+
+function afficherSousPage(id) {
+  document.querySelectorAll("#page-alimentaire > div[id]").forEach(d => {
+    d.style.display = "none";
+  });
+
+  document.getElementById(id).style.display = "block";
 }
 
 function sauvegarderRepas() {
@@ -802,7 +812,7 @@ function afficherRecettes() {
 }
 
 afficherPage("accueil");
-
+afficherSousPage("inventaire");
 
 </script>
 
@@ -1009,6 +1019,7 @@ afficherRecettes();
   
 </body>
 </html>
+
 
 
 
