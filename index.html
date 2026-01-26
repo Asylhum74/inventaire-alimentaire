@@ -426,9 +426,12 @@ function importerInventaire(event) {
 }
 
 function afficherPage(page) {
-  document.getElementById("page-inventaire").style.display = "none";
-  document.getElementById("page-repas").style.display = "none";
+  // cacher toutes les pages
+  document.querySelectorAll(".page").forEach(p => {
+    p.style.display = "none";
+  });
 
+  // afficher celle demandée
   document.getElementById("page-" + page).style.display = "block";
 }
 
@@ -958,4 +961,5 @@ afficherRecettes();
   
 </body>
 </html>
+
 
