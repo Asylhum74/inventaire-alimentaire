@@ -114,9 +114,9 @@ html, body {height: 100%;}
     <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherSousPage('recettes')">📖 Recettes</button>
   </nav>
 
-    <div id="inventaire" style="margin-bottom:10px;">
-      <button onclick="exporterInventaire()">💾 Sauvegarder</button>
-      <input type="file" id="importFile" accept=".json" onchange="importerInventaire(event)">
+  <div id="inventaire" style="margin-bottom:10px;">
+    <button onclick="exporterInventaire()">💾 Sauvegarder</button>
+    <input type="file" id="importFile" accept=".json" onchange="importerInventaire(event)">
    
   
     <label>Nom :</label>
@@ -162,7 +162,7 @@ html, body {height: 100%;}
     <input type="text" id="recherche" placeholder="🔍 Rechercher un aliment..." oninput="afficherAliments()">
     <h2>Liste des aliments :</h2>
     <ul id="listeAliments"></ul>
-    </div>
+  </div>
       
   <div id="page-repas" style="display:none;">
     <h2>🍽️ Repas de la semaine</h2>
@@ -1019,6 +1019,7 @@ afficherRecettes();
   
 </body>
 </html>
+
 
 
 
