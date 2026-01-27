@@ -281,10 +281,42 @@ html, body {height: 100%;}
 </div>
 
 <div id="page-budget" class="page" style="display:none;">
-  <h2>💰 Budget</h2>
-  <p>Section à venir...</p>
-  <button onclick="afficherPage('accueil')">⬅ Retour</button>
+
+  <h2>💰 Budget mensuel</h2>
+  <button class="small" onclick="afficherPage('accueil')">⬅ Retour</button>
+
+  <h3>Ajouter une dépense</h3>
+
+  <label>Montant (€)</label>
+  <input type="number" id="budgetMontant" placeholder="Ex: 25">
+
+  <label>Catégorie</label>
+  <select id="budgetCategorie">
+    <option>Nourriture</option>
+    <option>Logement</option>
+    <option>Voiture</option>
+    <option>Loisir</option>
+    <option>Santé</option>
+    <option>Abonnement</option>
+    <option>Autre</option>
+  </select>
+
+  <label>Description</label>
+  <input type="text" id="budgetNote" placeholder="Ex: courses lidl">
+
+  <button onclick="ajouterDepense()">Ajouter</button>
+
+  <hr>
+
+  <h3>Total du mois : <span id="budgetTotal">0 €</span></h3>
+
+  <canvas id="budgetChart" height="220"></canvas>
+
+  <h3>Dépenses :</h3>
+  <ul id="budgetListe"></ul>
+
 </div>
+
 
   
 <script>
@@ -830,7 +862,8 @@ const tachesProprete = {
     "Plan de travail",
     "Plaques",
     "Sol",
-    "Poubelle"
+    "Poubelle",
+    "Nettoyer Frigo, Micro-onde,..."
   ],
   "Salle de bain": [
     "Lavabo",
@@ -933,6 +966,135 @@ function resetProprete() {
   localStorage.removeItem("propreteEtat");
   afficherProprete();
 }
+
+/* =========================
+   💰 BUDGET
+========================= */
+
+let depenses = [];
+
+// Charger
+function chargerDepenses() {
+  const data = localStorage.getItem("budgetDepenses");
+  if(data) depenses = JSON.parse(data);
+}
+
+// Sauvegarder
+function sauvegarderDepenses() {
+  localStorage.setItem("budgetDepenses", JSON.stringify(depenses));
+}
+
+// Ajouter
+function ajouterDepense() {
+  const montant = parseFloat(document.getElementById("budgetMontant").value);
+  const categorie = document.getElementById("budgetCategorie").value;
+  const note = document.getElementById("budgetNote").value;
+
+  if(!montant || montant <= 0) {
+    alert("Montant invalide");
+    return;
+  }
+
+  depenses.push({
+    montant,
+    categorie,
+    note,
+    date: new Date().toISOString()
+  });
+
+  document.getElementById("budgetMontant").value = "";
+  document.getElementById("budgetNote").value = "";
+
+  sauvegarderDepenses();
+  afficherDepenses();
+}
+
+// Supprimer
+function supprimerDepense(index) {
+  depenses.splice(index, 1);
+  sauvegarderDepenses();
+  afficherDepenses();
+}
+
+// Afficher
+function afficherDepenses() {
+  const ul = document.getElementById("budgetListe");
+  const totalSpan = document.getElementById("budgetTotal");
+
+  ul.innerHTML = "";
+
+  let total = 0;
+
+  depenses.forEach((d, index) => {
+    total += d.montant;
+
+    const li = document.createElement("li");
+    li.style.display = "flex";
+    li.style.justifyContent = "space-between";
+    li.style.alignItems = "center";
+
+    li.innerHTML = `
+      <span>${d.categorie} - ${d.montant}€ (${d.note || ""})</span>
+    `;
+
+    const btn = document.createElement("button");
+    btn.textContent = "Supprimer";
+    btn.className = "small";
+    btn.style.background = "#e74c3c";
+    btn.style.color = "white";
+    btn.onclick = () => supprimerDepense(index);
+
+    li.appendChild(btn);
+    ul.appendChild(li);
+  });
+
+  totalSpan.textContent = total.toFixed(2) + " €";
+
+  dessinerGraphique();
+}
+
+/* =========================
+   📊 GRAPHIQUE CANVAS
+========================= */
+
+function dessinerGraphique() {
+  const canvas = document.getElementById("budgetChart");
+  const ctx = canvas.getContext("2d");
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  const totaux = {};
+
+  depenses.forEach(d => {
+    totaux[d.categorie] = (totaux[d.categorie] || 0) + d.montant;
+  });
+
+  const categories = Object.keys(totaux);
+  const valeurs = Object.values(totaux);
+
+  if(categories.length === 0) return;
+
+  const max = Math.max(...valeurs);
+
+  const largeurBarre = canvas.width / categories.length;
+
+  categories.forEach((cat, i) => {
+    const hauteur = (valeurs[i] / max) * (canvas.height - 40);
+
+    const x = i * largeurBarre + 10;
+    const y = canvas.height - hauteur - 20;
+
+    ctx.fillRect(x, y, largeurBarre - 20, hauteur);
+
+    ctx.fillText(cat, x, canvas.height - 5);
+    ctx.fillText(valeurs[i] + "€", x, y - 5);
+  });
+}
+
+/* ========================= */
+
+chargerDepenses();
+afficherDepenses();
 
 
 afficherPage("accueil");
@@ -1191,6 +1353,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
