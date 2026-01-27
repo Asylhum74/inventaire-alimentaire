@@ -164,7 +164,7 @@ html, body {height: 100%;}
     <ul id="listeAliments"></ul>
   </div>
       
-  <div id="page-repas" style="display:none;">
+  <div id="repas" style="display:none;">
     <h2>🍽️ Repas de la semaine</h2>
 
     <p>Planifie les repas de la semaine :</p>
@@ -252,7 +252,7 @@ html, body {height: 100%;}
 
   </div>
 
-  <div id="page-recettes" style="display:none;">
+  <div id="recettes" style="display:none;">
     <h2>📖 Mes Recettes</h2>
 
     <div>
@@ -482,6 +482,11 @@ function importerInventaire(event) {
 function afficherPage(page) {
   document.querySelectorAll(".page").forEach(p => p.style.display = "none");
   document.getElementById("page-" + page).style.display = "block";
+
+  // si on entre dans alimentaire → afficher inventaire par défaut
+  if(page === "alimentaire") {
+    afficherSousPage("inventaire");
+  }
 }
 
 function afficherSousPage(id) {
@@ -1019,6 +1024,7 @@ afficherRecettes();
   
 </body>
 </html>
+
 
 
 
