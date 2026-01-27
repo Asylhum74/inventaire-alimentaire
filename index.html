@@ -54,25 +54,15 @@ html, body {height: 100%;}
   .popup-content {width: 95%; height: auto; padding: 20px; border-radius: 10px; }
 }
 
-.page {
-  display: none;
-}
+.page {display: none; }
 
-.home-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  margin-top: 40px;
-}
+.home-grid {display: flex; flex-direction: column; gap: 20px; margin-top: 40px; }
+.home-btn {padding: 25px; font-size: 1.4em; border-radius: 15px; cursor: pointer; width: 100%; }
 
-.home-btn {
-  padding: 25px;
-  font-size: 1.4em;
-  border-radius: 15px;
-  cursor: pointer;
-  width: 100%;
-}
-
+.room {margin-top: 20px; padding: 12px; border-radius: 10px; background: rgba(0,0,0,0.05); }
+.dark .room {background: rgba(255,255,255,0.05); }
+.task {display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 1.1em; }
+.task input {width: 22px; height: 22px; }
 
 </style>
   
@@ -274,9 +264,16 @@ html, body {height: 100%;}
 </div>
 
 <div id="page-proprete" class="page" style="display:none;">
+
   <h2>🧽 Propreté</h2>
-  <p>Section à venir...</p>
-  <button onclick="afficherPage('accueil')">⬅ Retour</button>
+  <button class="small" onclick="afficherPage('accueil')">⬅ Retour</button>
+
+  <div id="listeTachesProprete"></div>
+
+  <div style="margin-top:20px;">
+    <button onclick="resetProprete()">🔄 Nouvelle semaine</button>
+  </div>
+
 </div>
 
 <div id="page-budget" class="page" style="display:none;">
@@ -486,6 +483,9 @@ function afficherPage(page) {
   // si on entre dans alimentaire → afficher inventaire par défaut
   if(page === "alimentaire") {
     afficherSousPage("inventaire");
+  }
+   if(page === "proprete") {
+    afficherProprete();
   }
 }
 
@@ -816,6 +816,97 @@ function afficherRecettes() {
   });
 }
 
+/* =========================
+   🧽 PROPRETÉ
+========================= */
+
+// Pièces + tâches (modifiable facilement)
+const tachesProprete = {
+  "Cuisine": [
+    "Vaisselle",
+    "Plan de travail",
+    "Plaques",
+    "Sol",
+    "Poubelle"
+  ],
+  "Salle de bain": [
+    "Lavabo",
+    "Douche / baignoire",
+    "WC",
+    "Miroir",
+    "Sol"
+  ],
+  "Salon": [
+    "Poussière",
+    "Aspirateur",
+    "Table",
+    "Canapé"
+  ],
+  "Chambre": [
+    "Aérer",
+    "Draps",
+    "Rangement",
+    "Aspirateur"
+  ]
+};
+
+
+function afficherProprete() {
+
+  const container = document.getElementById("listeTachesProprete");
+  container.innerHTML = "";
+
+  const data = JSON.parse(localStorage.getItem("propreteEtat")) || {};
+
+  Object.keys(tachesProprete).forEach(piece => {
+
+    const divRoom = document.createElement("div");
+    divRoom.className = "room";
+
+    const titre = document.createElement("h3");
+    titre.textContent = piece;
+    divRoom.appendChild(titre);
+
+    tachesProprete[piece].forEach(tache => {
+
+      const label = document.createElement("label");
+      label.className = "task";
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+
+      const key = piece + "_" + tache;
+
+      checkbox.checked = data[key] || false;
+
+      checkbox.onchange = () => {
+        const etat = JSON.parse(localStorage.getItem("propreteEtat")) || {};
+        etat[key] = checkbox.checked;
+        localStorage.setItem("propreteEtat", JSON.stringify(etat));
+      };
+
+      const span = document.createElement("span");
+      span.textContent = tache;
+
+      label.appendChild(checkbox);
+      label.appendChild(span);
+
+      divRoom.appendChild(label);
+    });
+
+    container.appendChild(divRoom);
+  });
+}
+
+
+function resetProprete() {
+  if (!confirm("Commencer une nouvelle semaine ? Toutes les cases seront décochées.")) return;
+
+  localStorage.removeItem("propreteEtat");
+  afficherProprete();
+}
+
+
 afficherPage("accueil");
 afficherSousPage("inventaire");
 
@@ -1072,6 +1163,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
