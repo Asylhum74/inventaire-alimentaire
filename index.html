@@ -938,11 +938,19 @@ function afficherPage(page) {
     afficherProprete();
   }
 }
-function afficherSousPage(id) {
-  document.querySelectorAll("#page-alimentaire > div[id]").forEach(d => {
-    d.style.display = "none";
-  });
-  document.getElementById(id).style.display = "block";
+function afficherSousPage(nom) {
+  document.getElementById("inventaire").style.display = "none";
+  document.getElementById("page-repas").style.display = "none";
+  document.getElementById("page-recettes").style.display = "none";
+  if (nom === "inventaire") {
+    document.getElementById("inventaire").style.display = "block";
+  }
+  if (nom === "repas") {
+    document.getElementById("page-repas").style.display = "block";
+  }
+  if (nom === "recettes") {
+    document.getElementById("page-recettes").style.display = "block";
+  }
 }
 
 /* =========================
@@ -1160,6 +1168,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
