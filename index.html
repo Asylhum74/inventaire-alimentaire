@@ -1093,8 +1093,8 @@ function afficherDepenses() {
   const ul = document.getElementById("budgetListe");
   ul.innerHTML = "";
 
-  // On récupère les dépenses depuis le localStorage
-  const depenses = JSON.parse(localStorage.getItem("depenses")) || [];
+  // On récupère les dépenses depuis le localStorage (bonne clé)
+  const depenses = JSON.parse(localStorage.getItem("budgetDepenses")) || [];
 
   // Tri par catégorie
   const depensesTriees = {};
@@ -1105,20 +1105,21 @@ function afficherDepenses() {
 
   // Affichage par catégorie
   Object.keys(depensesTriees).forEach(categorie => {
-    // Titre de la catégorie
     const titre = document.createElement("li");
     titre.innerHTML = `<strong>${categorie}</strong>`;
     ul.appendChild(titre);
 
-    // Dépenses de cette catégorie
     depensesTriees[categorie].forEach(d => {
       const li = document.createElement("li");
-      li.textContent = `${d.nom} : ${d.montant} €`;
+      li.textContent = `${d.note} : ${d.montant} €`; // <-- utiliser note
       ul.appendChild(li);
     });
   });
-}
 
+  // Mettre à jour le total
+  const total = depenses.reduce((s, d) => s + d.montant, 0);
+  document.getElementById("budgetTotal").textContent = total.toFixed(2) + " €";
+}
 
 /* ========================= */
 
@@ -1382,6 +1383,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
