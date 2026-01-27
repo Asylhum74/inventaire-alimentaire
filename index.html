@@ -64,6 +64,10 @@ html, body {height: 100%;}
 .task {display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 1.1em; }
 .task input {width: 22px; height: 22px; }
 
+.progress-bar {height: 10px; background: #ddd; border-radius: 10px; overflow: hidden; margin: 6px 0 12px 0; }
+.dark .progress-bar {background: #333;}
+.progress-fill {height: 100%; width: 0%; background: #2ecc71; transition: width 0.3s ease; }
+
 </style>
   
 </head>
@@ -823,7 +827,6 @@ function afficherRecettes() {
 // Pièces + tâches (modifiable facilement)
 const tachesProprete = {
   "Cuisine": [
-    "Vaisselle",
     "Plan de travail",
     "Plaques",
     "Sol",
@@ -837,13 +840,11 @@ const tachesProprete = {
     "Sol"
   ],
   "Salon": [
-    "Poussière",
+    "Rangement",
     "Aspirateur",
-    "Table",
-    "Canapé"
+    "Serpillère",
   ],
   "Chambre": [
-    "Aérer",
     "Draps",
     "Rangement",
     "Aspirateur"
@@ -863,10 +864,31 @@ function afficherProprete() {
     const divRoom = document.createElement("div");
     divRoom.className = "room";
 
+    /* ===== TITRE ===== */
     const titre = document.createElement("h3");
     titre.textContent = piece;
-    divRoom.appendChild(titre);
 
+    /* ===== BARRE PROGRESSION ===== */
+    const progressBar = document.createElement("div");
+    progressBar.className = "progress-bar";
+
+    const progressFill = document.createElement("div");
+    progressFill.className = "progress-fill";
+
+    progressBar.appendChild(progressFill);
+
+    divRoom.appendChild(titre);
+    divRoom.appendChild(progressBar);
+
+    let total = tachesProprete[piece].length;
+    let cochees = 0;
+
+    const majProgression = () => {
+      const pourcentage = Math.round((cochees / total) * 100);
+      progressFill.style.width = pourcentage + "%";
+    };
+
+    /* ===== TÂCHES ===== */
     tachesProprete[piece].forEach(tache => {
 
       const label = document.createElement("label");
@@ -878,11 +900,17 @@ function afficherProprete() {
       const key = piece + "_" + tache;
 
       checkbox.checked = data[key] || false;
+      if (checkbox.checked) cochees++;
 
       checkbox.onchange = () => {
+
         const etat = JSON.parse(localStorage.getItem("propreteEtat")) || {};
+
         etat[key] = checkbox.checked;
         localStorage.setItem("propreteEtat", JSON.stringify(etat));
+
+        cochees += checkbox.checked ? 1 : -1;
+        majProgression();
       };
 
       const span = document.createElement("span");
@@ -894,10 +922,10 @@ function afficherProprete() {
       divRoom.appendChild(label);
     });
 
+    majProgression();
     container.appendChild(divRoom);
   });
 }
-
 
 function resetProprete() {
   if (!confirm("Commencer une nouvelle semaine ? Toutes les cases seront décochées.")) return;
@@ -1163,6 +1191,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
