@@ -260,9 +260,9 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
     <div class="form-section">
       <button type="button" onclick="ajouterRecette()">Ajouter la recette</button>
     </div>
+    <h3>Liste des recettes :</h3>
+    <ul id="listeRecettes"></ul>
   </div>
-  <h3>Liste des recettes :</h3>
-  <ul id="listeRecettes"></ul>
 </div>
   
 <!-- ==========================
@@ -938,19 +938,11 @@ function afficherPage(page) {
     afficherProprete();
   }
 }
-function afficherSousPage(nom) {
-  document.getElementById("inventaire").style.display = "none";
-  document.getElementById("page-repas").style.display = "none";
-  document.getElementById("page-recettes").style.display = "none";
-  if (nom === "inventaire") {
-    document.getElementById("inventaire").style.display = "block";
-  }
-  if (nom === "repas") {
-    document.getElementById("page-repas").style.display = "block";
-  }
-  if (nom === "recettes") {
-    document.getElementById("page-recettes").style.display = "block";
-  }
+function afficherSousPage(id) { 
+  document.querySelectorAll("#page-alimentaire > div[id]").forEach(d 
+    => { 
+    d.style.display = "none"; }); 
+  document.getElementById(id).style.display = "block"; 
 }
 
 /* =========================
@@ -1168,6 +1160,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
