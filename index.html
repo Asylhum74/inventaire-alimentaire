@@ -286,10 +286,14 @@ html, body {height: 100%;}
   <button class="small" onclick="afficherPage('accueil')">⬅ Retour</button>
 
   <!-- Onglets -->
-  <div style="margin-top: 20px;">
-    <button onclick="afficherBudgetOnglet('depenses')" class="budget-tab">Dépenses</button>
-    <button onclick="afficherBudgetOnglet('graphique')" class="budget-tab">Graphique</button>
-  </div>
+  <!--<div style="margin-top: 20px;">
+    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherBudgetOnglet('depenses')" class="budget-tab">Dépenses</button>
+    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherBudgetOnglet('graphique')" class="budget-tab">Graphique</button>
+  </div>-->
+  <nav class="nav">
+    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherBudgetOnglet('depenses')" class="budget-tab">Dépenses</button>
+    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherBudgetOnglet('graphique')" class="budget-tab">Graphique</button>
+  </nav>
 
   <!-- Contenu Dépenses -->
   <div id="budget-depenses" style="margin-top: 20px;">
@@ -1409,6 +1413,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
