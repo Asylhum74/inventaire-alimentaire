@@ -285,38 +285,49 @@ html, body {height: 100%;}
   <h2>💰 Budget mensuel</h2>
   <button class="small" onclick="afficherPage('accueil')">⬅ Retour</button>
 
-  <h3>Ajouter une dépense</h3>
+  <!-- Onglets -->
+  <div style="margin-top: 20px;">
+    <button onclick="afficherBudgetOnglet('depenses')" class="budget-tab">Dépenses</button>
+    <button onclick="afficherBudgetOnglet('graphique')" class="budget-tab">Graphique</button>
+  </div>
 
-  <label>Montant (€)</label>
-  <input type="number" id="budgetMontant" placeholder="Ex: 25">
+  <!-- Contenu Dépenses -->
+  <div id="budget-depenses" style="margin-top: 20px;">
 
-  <label>Catégorie</label>
-  <select id="budgetCategorie">
-    <option>Nourriture</option>
-    <option>Logement</option>
-    <option>Voiture</option>
-    <option>Loisir</option>
-    <option>Santé</option>
-    <option>Abonnement</option>
-    <option>Autre</option>
-  </select>
+    <h3>Ajouter une dépense</h3>
+    <label>Montant (€)</label>
+    <input type="number" id="budgetMontant" placeholder="Ex: 25">
 
-  <label>Description</label>
-  <input type="text" id="budgetNote" placeholder="Ex: courses lidl">
+    <label>Catégorie</label>
+    <select id="budgetCategorie">
+      <option>Nourriture</option>
+      <option>Logement</option>
+      <option>Voiture</option>
+      <option>Loisir</option>
+      <option>Santé</option>
+      <option>Abonnement</option>
+      <option>Autre</option>
+    </select>
 
-  <button onclick="ajouterDepense()">Ajouter</button>
+    <label>Description</label>
+    <input type="text" id="budgetNote" placeholder="Ex: courses lidl">
 
-  <hr>
+    <button onclick="ajouterDepense()">Ajouter</button>
 
-  <h3>Total du mois : <span id="budgetTotal">0 €</span></h3>
+    <hr>
 
-  <canvas id="budgetChart" height="220"></canvas>
+    <h3>Total du mois : <span id="budgetTotal">0 €</span></h3>
 
-  <h3>Dépenses :</h3>
-  <ul id="budgetListe"></ul>
+    <h3>Dépenses :</h3>
+    <ul id="budgetListe"></ul>
+  </div>
+
+  <!-- Contenu Graphique -->
+  <div id="budget-graphique" style="margin-top: 20px; display:none;">
+    <canvas id="budgetPieChart" width="300" height="300"></canvas>
+  </div>
 
 </div>
-
 
   
 <script>
@@ -972,7 +983,68 @@ function resetProprete() {
 ========================= */
 
 let depenses = [];
+  
+function afficherBudgetOnglet(onglet) {
+  document.getElementById("budget-depenses").style.display = (onglet === 'depenses') ? 'block' : 'none';
+  document.getElementById("budget-graphique").style.display = (onglet === 'graphique') ? 'block' : 'none';
 
+  if(onglet === 'graphique') dessinerCamembert();
+}
+
+/* =========================
+   📊 Camembert Budget
+========================= */
+const couleursCategories = {
+  "Nourriture": "#f39c12",
+  "Logement": "#2980b9",
+  "Voiture": "#27ae60",
+  "Loisir": "#8e44ad",
+  "Santé": "#e74c3c",
+  "Abonnement": "#16a085",
+  "Autre": "#7f8c8d"
+};
+
+function dessinerCamembert() {
+  const canvas = document.getElementById("budgetPieChart");
+  const ctx = canvas.getContext("2d");
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  const totaux = {};
+  depenses.forEach(d => {
+    totaux[d.categorie] = (totaux[d.categorie] || 0) + d.montant;
+  });
+
+  const categories = Object.keys(totaux);
+  const valeurs = Object.values(totaux);
+
+  const total = valeurs.reduce((a,b) => a+b, 0);
+  if(total === 0) return;
+
+  let startAngle = -0.5 * Math.PI;
+
+  categories.forEach(cat => {
+    const sliceAngle = (totaux[cat]/total) * 2 * Math.PI;
+
+    ctx.fillStyle = couleursCategories[cat] || "#bdc3c7";
+    ctx.beginPath();
+    ctx.moveTo(canvas.width/2, canvas.height/2);
+    ctx.arc(canvas.width/2, canvas.height/2, Math.min(canvas.width/2, canvas.height/2)-10, startAngle, startAngle + sliceAngle);
+    ctx.closePath();
+    ctx.fill();
+
+    // Étiquette
+    const midAngle = startAngle + sliceAngle/2;
+    const labelX = canvas.width/2 + Math.cos(midAngle) * (canvas.width/2.5);
+    const labelY = canvas.height/2 + Math.sin(midAngle) * (canvas.height/2.5);
+    ctx.fillStyle = "#000";
+    ctx.font = "14px Arial";
+    ctx.fillText(cat, labelX - 20, labelY);
+    ctx.fillText(totaux[cat].toFixed(2) + "€", labelX - 20, labelY + 16);
+
+    startAngle += sliceAngle;
+  });
+}
+  
 // Charger
 function chargerDepenses() {
   const data = localStorage.getItem("budgetDepenses");
@@ -1353,6 +1425,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
