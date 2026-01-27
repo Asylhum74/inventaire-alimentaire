@@ -1093,14 +1093,14 @@ function afficherDepenses() {
   const ul = document.getElementById("budgetListe");
   ul.innerHTML = "";
 
-  // On récupère les dépenses depuis le localStorage (bonne clé)
   const depenses = JSON.parse(localStorage.getItem("budgetDepenses")) || [];
 
   // Tri par catégorie
   const depensesTriees = {};
-  depenses.forEach(d => {
-    if(!depensesTriees[d.categorie]) depensesTriees[d.categorie] = [];
-    depensesTriees[d.categorie].push(d);
+  depenses.forEach((d, index) => {
+    if (!depensesTriees[d.categorie]) depensesTriees[d.categorie] = [];
+    // On ajoute l'index pour pouvoir supprimer
+    depensesTriees[d.categorie].push({ ...d, index });
   });
 
   // Affichage par catégorie
@@ -1111,7 +1111,32 @@ function afficherDepenses() {
 
     depensesTriees[categorie].forEach(d => {
       const li = document.createElement("li");
-      li.textContent = `${d.note} : ${d.montant} €`; // <-- utiliser note
+      li.style.display = "flex";
+      li.style.justifyContent = "space-between";
+      li.style.alignItems = "center";
+
+      const span = document.createElement("span");
+      span.textContent = `${d.note} : ${d.montant} €`;
+
+      const btnSupprimer = document.createElement("button");
+      btnSupprimer.textContent = "Supprimer";
+      btnSupprimer.style.padding = "4px 8px";
+      btnSupprimer.style.marginLeft = "10px";
+      btnSupprimer.style.background = "#e74c3c";
+      btnSupprimer.style.color = "white";
+      btnSupprimer.style.border = "none";
+      btnSupprimer.style.borderRadius = "4px";
+      btnSupprimer.onclick = () => {
+        if (confirm("Supprimer cette dépense ?")) {
+          depenses.splice(d.index, 1);
+          localStorage.setItem("budgetDepenses", JSON.stringify(depenses));
+          afficherDepenses();
+        }
+      };
+
+      li.appendChild(span);
+      li.appendChild(btnSupprimer);
+
       ul.appendChild(li);
     });
   });
@@ -1120,6 +1145,7 @@ function afficherDepenses() {
   const total = depenses.reduce((s, d) => s + d.montant, 0);
   document.getElementById("budgetTotal").textContent = total.toFixed(2) + " €";
 }
+
 
 /* ========================= */
 
@@ -1383,6 +1409,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
