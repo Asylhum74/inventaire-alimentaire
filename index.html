@@ -1090,38 +1090,35 @@ function supprimerDepense(index) {
 
 // Afficher
 function afficherDepenses() {
-  const ul = document.getElementById("budgetListe");
-  const totalSpan = document.getElementById("budgetTotal");
-
+  const ul = document.getElementById("listeDepenses");
   ul.innerHTML = "";
 
-  let total = 0;
+  // On récupère les dépenses depuis le localStorage
+  const depenses = JSON.parse(localStorage.getItem("depenses")) || [];
 
-  depenses.forEach((d, index) => {
-    total += d.montant;
-
-    const li = document.createElement("li");
-    li.style.display = "flex";
-    li.style.justifyContent = "space-between";
-    li.style.alignItems = "center";
-
-    li.innerHTML = `
-      <span>${d.categorie} - ${d.montant}€ (${d.note || ""})</span>
-    `;
-
-    const btn = document.createElement("button");
-    btn.textContent = "Supprimer";
-    btn.className = "small";
-    btn.style.background = "#e74c3c";
-    btn.style.color = "white";
-    btn.onclick = () => supprimerDepense(index);
-
-    li.appendChild(btn);
-    ul.appendChild(li);
+  // Tri par catégorie
+  const depensesTriees = {};
+  depenses.forEach(d => {
+    if(!depensesTriees[d.categorie]) depensesTriees[d.categorie] = [];
+    depensesTriees[d.categorie].push(d);
   });
 
-  totalSpan.textContent = total.toFixed(2) + " €";
+  // Affichage par catégorie
+  Object.keys(depensesTriees).forEach(categorie => {
+    // Titre de la catégorie
+    const titre = document.createElement("li");
+    titre.innerHTML = `<strong>${categorie}</strong>`;
+    ul.appendChild(titre);
+
+    // Dépenses de cette catégorie
+    depensesTriees[categorie].forEach(d => {
+      const li = document.createElement("li");
+      li.textContent = `${d.nom} : ${d.montant} €`;
+      ul.appendChild(li);
+    });
+  });
 }
+
 
 /* ========================= */
 
@@ -1385,6 +1382,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
