@@ -286,10 +286,6 @@ html, body {height: 100%;}
   <button class="small" onclick="afficherPage('accueil')">⬅ Retour</button>
 
   <!-- Onglets -->
-  <!--<div style="margin-top: 20px;">
-    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherBudgetOnglet('depenses')" class="budget-tab">Dépenses</button>
-    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherBudgetOnglet('graphique')" class="budget-tab">Graphique</button>
-  </div>-->
   <nav class="nav">
     <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherBudgetOnglet('depenses')" class="budget-tab">Dépenses</button>
     <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherBudgetOnglet('graphique')" class="budget-tab">Graphique</button>
@@ -327,8 +323,9 @@ html, body {height: 100%;}
   </div>
 
   <!-- Contenu Graphique -->
-  <div id="budget-graphique" style="margin-top: 20px; display:none;">
+  <div id="budget-graphique" style="display:none;">
     <canvas id="budgetPieChart" width="300" height="300"></canvas>
+    <ul id="budgetLegend" style="list-style:none; padding:0; margin-top:10px;"></ul>
   </div>
 
 </div>
@@ -992,7 +989,7 @@ function afficherBudgetOnglet(onglet) {
   document.getElementById("budget-depenses").style.display = (onglet === 'depenses') ? 'block' : 'none';
   document.getElementById("budget-graphique").style.display = (onglet === 'graphique') ? 'block' : 'none';
 
-  if(onglet === 'graphique') dessinerCamembert();
+  if(onglet === 'graphique') genererGraphique();
 }
 
 /* =========================
@@ -1008,46 +1005,54 @@ const couleursCategories = {
   "Autre": "#7f8c8d"
 };
 
-function dessinerCamembert() {
-  const canvas = document.getElementById("budgetPieChart");
-  const ctx = canvas.getContext("2d");
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+function genererGraphique(){
+  const ctx = document.getElementById("budgetPieChart").getContext("2d");
+  const legend = document.getElementById("budgetLegend");
+  legend.innerHTML = "";
 
-  const totaux = {};
+  // Calcul des totaux par catégorie
+  const data = {};
   depenses.forEach(d => {
-    totaux[d.categorie] = (totaux[d.categorie] || 0) + d.montant;
+    data[d.cat] = (data[d.cat] || 0) + d.montant;
   });
 
-  const categories = Object.keys(totaux);
-  const valeurs = Object.values(totaux);
+  const total = Object.values(data).reduce((a, b) => a + b, 0);
+  if(total === 0){
+    ctx.clearRect(0, 0, 300, 300);
+    legend.innerHTML = "<li>Aucune dépense enregistrée</li>";
+    return;
+  }
 
-  const total = valeurs.reduce((a,b) => a+b, 0);
-  if(total === 0) return;
+  // Couleurs pour chaque catégorie
+  const colors = ["#e74c3c","#3498db","#2ecc71","#f1c40f","#9b59b6","#1abc9c","#e67e22","#9e9e9e","#ff69b4","#8b4513"];
+  
+  ctx.clearRect(0, 0, 300, 300);
+  let startAngle = 0;
+  let i = 0;
 
-  let startAngle = -0.5 * Math.PI;
-
-  categories.forEach(cat => {
-    const sliceAngle = (totaux[cat]/total) * 2 * Math.PI;
-
-    ctx.fillStyle = couleursCategories[cat] || "#bdc3c7";
+  for(const cat in data){
+    const sliceAngle = (data[cat] / total) * 2 * Math.PI;
+    ctx.fillStyle = colors[i % colors.length];
+    
+    // Dessiner le segment
     ctx.beginPath();
-    ctx.moveTo(canvas.width/2, canvas.height/2);
-    ctx.arc(canvas.width/2, canvas.height/2, Math.min(canvas.width/2, canvas.height/2)-10, startAngle, startAngle + sliceAngle);
+    ctx.moveTo(150, 150);
+    ctx.arc(150, 150, 150, startAngle, startAngle + sliceAngle);
     ctx.closePath();
     ctx.fill();
-
-    // Étiquette
-    const midAngle = startAngle + sliceAngle/2;
-    const labelX = canvas.width/2 + Math.cos(midAngle) * (canvas.width/2.5);
-    const labelY = canvas.height/2 + Math.sin(midAngle) * (canvas.height/2.5);
-    ctx.fillStyle = "#000";
-    ctx.font = "14px Arial";
-    ctx.fillText(cat, labelX - 20, labelY);
-    ctx.fillText(totaux[cat].toFixed(2) + "€", labelX - 20, labelY + 16);
+    
+    // Ajouter à la légende
+    const li = document.createElement("li");
+    li.textContent = `${cat} : ${data[cat].toFixed(2)} €`;
+    li.style.color = colors[i % colors.length];
+    li.style.fontWeight = "bold";
+    legend.appendChild(li);
 
     startAngle += sliceAngle;
-  });
+    i++;
+  }
 }
+
   
 // Charger
 function chargerDepenses() {
@@ -1413,4 +1418,5 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
