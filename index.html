@@ -408,7 +408,6 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
 // ------------------- MODE SOMBRE -------------------
 if (localStorage.getItem("darkMode") === "true") {
   document.body.classList.add("dark");
@@ -1051,10 +1050,8 @@ afficherDepenses();
 afficherPage("accueil");
 afficherSousPage("inventaire");
 
-});
 </script>
 <script>
-document.addEventListener("DOMContentLoaded", () => {
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js")
     .then(() => console.log("Service Worker enregistré"))
@@ -1182,11 +1179,11 @@ function sauvegarderRepasPopup() {
   inputRepasActif.value =document.getElementById("repasTexte").value;
   fermerPopupRepas();
 }
-});
 </script>
   
 </body>
 </html>
+
 
 
 
