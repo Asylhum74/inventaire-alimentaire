@@ -968,7 +968,7 @@ function afficherOngletProprete(id) {
   document.querySelectorAll(".proprete-page")
     .forEach(p => p.style.display = "none");
   document.getElementById("proprete-" + id).style.display = "block";
-  afficherTaches("proprete-" + id);
+  afficherTaches(id);
 }
 
 /* =========================
@@ -1186,6 +1186,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
