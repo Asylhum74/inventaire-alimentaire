@@ -69,16 +69,151 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 /* ==========================
    🖤 POPUPS
 ========================== */
-.popup {position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.6);
-        z-index: 99999; }
-.popup-content {background: #1e1e1e; color: white; width: 100%; max-width: 500px; padding: 30px; border-radius: 15px; display: flex; 
-                flex-direction: column; gap: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); max-height: 90vh; overflow-y: auto; }
+/* POPUPS */
+.popup {
+  display: none; /* masqué par défaut */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5); /* fond semi-transparent */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  position: relative;
+}
+
+.popup-content h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+  text-align: center;
+}
+
 .popup-content input,
 .popup-content select,
-.popup-content button {font-size: 1.1em; padding: 12px; border-radius: 10px; }
-.popup-actions {display: flex; gap: 10px; }
-.popup-actions button {flex: 1; }
-.delete-btn {background: #c0392b; color: white; font-size: 1.2em; padding: 14px; }
+.popup-content textarea {
+  width: 100%;
+  padding: 8px 10px;
+  margin: 5px 0 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.popup-content textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.popup-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.popup-actions button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+}
+
+.popup-actions button:hover {
+  opacity: 0.9;
+}
+
+.popup-actions button.delete-btn {
+  background: #e74c3c;
+  color: white;
+}
+
+.popup-actions button.delete-btn:hover {
+  background: #c0392b;
+}
+
+.popup-actions button:first-of-type {
+  background: #3498db;
+  color: white;
+}
+
+.popup-actions button:first-of-type:hover {
+  background: #2980b9;
+}
+
+.popup-actions button:nth-child(2) {
+  background: #95a5a6;
+  color: white;
+}
+
+.popup-actions button:nth-child(2):hover {
+  background: #7f8c8d;
+}
+
+/* BOUTONS GENERAUX */
+button {
+  cursor: pointer;
+  border-radius: 6px;
+  border: none;
+  padding: 6px 12px;
+  background: #3498db;
+  color: white;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background: #2980b9;
+}
+
+/* ALIMENTS / RECETTES LISTE */
+.aliment, .recette {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+/* INPUTS REPAS */
+.semaine input.repas {
+  width: calc(33% - 10px);
+  margin: 5px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+/* Responsive pour petits écrans */
+@media (max-width: 480px) {
+  .popup-content {
+    width: 95%;
+  }
+  .semaine input.repas {
+    width: 100%;
+    margin: 5px 0;
+  }
+}
+
 
 /* ==========================
     TELEPHONE
@@ -344,67 +479,85 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 <!-- ==========================
    POPUPS
 ========================== -->
-<!-- Modifier un aliment -->
+<!-- ALIMENTS -->
+<div id="listeAliments">
+  <div class="aliment">
+    <span>Nom Aliment</span>
+    <button class="edit-btn" data-index="0">Modifier</button>
+  </div>
+  <!-- répéter pour chaque aliment -->
+</div>
+
+<!-- POPUP MODIFIER ALIMENT -->
 <div id="popupEdit" class="popup">
   <div class="popup-content">
-    <h2>Modifier l'aliment</h2>
+    <h3>Modifier Aliment</h3>
     <input id="editNom" placeholder="Nom">
     <input id="editQuantite" type="number" placeholder="Quantité">
     <input id="editUnite" placeholder="Unité">
-    <div style="display:flex; align-items:center; gap:10px;">
-      <input id="editPeremption" type="date" style="flex:1;">
-      <label style="display:flex; align-items:center; gap:5px;">
-        <input type="checkbox" id="editSansDate">Pas de DLC</label>
-    </div>
+    <input id="editPeremption" type="date">
+    <label><input type="checkbox" id="editSansDate"> Sans date</label>
     <select id="editCategorie"></select>
     <div class="popup-actions">
-      <button onclick="sauvegarderEdition()">💾 Sauvegarder</button>
-      <button onclick="fermerPopup()">Annuler</button>
+      <button>Sauvegarder</button>
+      <button>Annuler</button>
+      <button class="delete-btn">Supprimer</button>
     </div>
-    <button class="delete-btn" onclick="supprimerDepuisPopup()">🗑 Supprimer</button>
   </div>
 </div>
 
-<!-- Ajouter une recette au repas -->
+<!-- RECETTES -->
+<div id="listeRecettes">
+  <div class="recette">
+    <span>Nom Recette</span>
+    <button>Ajouter au repas</button>
+  </div>
+  <!-- répéter pour chaque recette -->
+</div>
+
+<!-- POPUP AJOUTER RECETTE AU REPAS -->
 <div id="popupRecette" class="popup">
   <div class="popup-content">
-    <h2>Ajouter la recette à un repas</h2>
-    <p>Sélectionnez le jour et le type de repas :</p>
-    <label>Jour :</label>
-    <select id="recetteJour">
-      <option value="Lundi">Lundi</option>
-      <option value="Mardi">Mardi</option>
-      <option value="Mercredi">Mercredi</option>
-      <option value="Jeudi">Jeudi</option>
-      <option value="Vendredi">Vendredi</option>
-      <option value="Samedi">Samedi</option>
-      <option value="Dimanche">Dimanche</option>
-    </select>
-    <label>Repas :</label>
-    <select id="recetteTypeRepas">
-      <option value="Petit-déjeuner">Petit-déjeuner</option>
-      <option value="Déjeuner">Déjeuner</option>
-      <option value="Dîner">Dîner</option>
-      <option value="Autre">Autre</option>
-    </select>
+    <h3>Ajouter recette au repas</h3>
+    <label>Jour
+      <select id="recetteJour">
+        <option value="lundi">Lundi</option>
+        <option value="mardi">Mardi</option>
+        <!-- autres jours -->
+      </select>
+    </label>
+    <label>Repas
+      <select id="recetteTypeRepas">
+        <option value="petitDej">Petit-déjeuner</option>
+        <option value="dejeuner">Déjeuner</option>
+        <option value="diner">Dîner</option>
+      </select>
+    </label>
     <div class="popup-actions">
-      <button onclick="confirmerAjoutRecette()">💾 Ajouter</button>
-      <button onclick="fermerPopupRecette()">Annuler</button>
+      <button>Ajouter</button>
+      <button>Annuler</button>
     </div>
   </div>
 </div>
 
-<!-- Ajouter un repas -->
+<!-- POPUP MODIFIER REPAS -->
 <div id="popupRepasEdit" class="popup">
   <div class="popup-content">
-    <h2>Modifier le repas</h2>
-    <p id="repasTitre"></p>
-    <textarea id="repasTexte" style="min-height:120px; font-size:1.2em;" placeholder="Ex: Pâtes, Tomates, Fromage"></textarea>
+    <h3 id="repasTitre">Modifier repas</h3>
+    <textarea id="repasTexte"></textarea>
     <div class="popup-actions">
-      <button onclick="sauvegarderRepasPopup()">💾 Sauvegarder</button>
-      <button onclick="fermerPopupRepas()">Annuler</button>
+      <button>Sauvegarder</button>
+      <button>Annuler</button>
     </div>
   </div>
+</div>
+
+<!-- INPUTS REPAS -->
+<div class="semaine">
+  <input class="repas" data-jour="lundi" data-repas="petitDej" placeholder="Petit-déj">
+  <input class="repas" data-jour="lundi" data-repas="dejeuner" placeholder="Déjeuner">
+  <input class="repas" data-jour="lundi" data-repas="diner" placeholder="Dîner">
+  <!-- répéter pour chaque jour -->
 </div>
 
 <script>
@@ -428,8 +581,6 @@ const toutesCategories = ["Féculent", "Produit laitier", "Viande", "Poisson", "
 let recettes = [];
 let indexRecetteEnCours = -1;
 let depenses = [];
-let indexEdition = -1;
-let inputRepasActif = null;
 
 /* =========================
    Alimentaire
@@ -1058,131 +1209,178 @@ if ("serviceWorker" in navigator) {
     .catch(err => console.error("SW erreur", err));
 }
 
-/* =========================
-   Pop-Up modifier aliment
-========================= */
-function ouvrirPopup(index) {
-  const aliment = aliments[index];
-  indexEdition = index;
-  document.getElementById("editNom").value = aliment.nom;
-  document.getElementById("editQuantite").value = aliment.quantite;
-  document.getElementById("editUnite").value = aliment.unite;
-  const checkbox = document.getElementById("editSansDate");
-  const dateInput = document.getElementById("editPeremption");
-  if (!aliment.peremption) {
-    checkbox.checked = true;
-    dateInput.disabled = true;
-    dateInput.style.visibility = "hidden";
-    dateInput.value = ""; 
-  } else {
-    checkbox.checked = false;
-    dateInput.disabled = false;
-    dateInput.style.visibility = "visible";
-    dateInput.value = aliment.peremption;
-  }
-  checkbox.addEventListener("change", function() {
-    if (this.checked) {
-      dateInput.disabled = true;
-      dateInput.style.visibility = "hidden";
+document.addEventListener("DOMContentLoaded", () => {
+
+  // ---------------- VARIABLES GLOBALES ----------------
+  let indexEdition = -1;
+  let indexRecetteEnCours = -1;
+
+  // ---------------- POPUP MODIFIER ALIMENT ----------------
+  const popupEdit = document.getElementById("popupEdit");
+  const editNom = document.getElementById("editNom");
+  const editQuantite = document.getElementById("editQuantite");
+  const editUnite = document.getElementById("editUnite");
+  const editPeremption = document.getElementById("editPeremption");
+  const editSansDate = document.getElementById("editSansDate");
+  const editCategorie = document.getElementById("editCategorie");
+
+  function ouvrirPopup(index) {
+    const aliment = aliments[index];
+    indexEdition = index;
+
+    editNom.value = aliment.nom;
+    editQuantite.value = aliment.quantite;
+    editUnite.value = aliment.unite;
+
+    if (!aliment.peremption) {
+      editSansDate.checked = true;
+      editPeremption.disabled = true;
+      editPeremption.style.visibility = "hidden";
+      editPeremption.value = "";
     } else {
-      dateInput.disabled = false;
-      dateInput.style.visibility = "visible";
-      if (aliment.peremption) dateInput.value = aliment.peremption;
+      editSansDate.checked = false;
+      editPeremption.disabled = false;
+      editPeremption.style.visibility = "visible";
+      editPeremption.value = aliment.peremption;
     }
-  });
-  const select = document.getElementById("editCategorie");
-  select.innerHTML = "";
-  const options = ["Choisir Catégorie","Boisson","Produit laitier","Légume","Fruit","Viande","Poisson","Féculent","Sucré","Sauce","Epice","Sec",
-                   "Plat préparé","Hygiène"];
-  options.forEach(cat => {
-    const o = document.createElement("option");
-    o.value = cat;
-    o.textContent = cat;
-    if(cat === aliment.categorie) o.selected = true;
-    select.appendChild(o);
-  });
-  document.getElementById("popupEdit").style.display = "flex";
-}
-function fermerPopup() {
-  document.getElementById("popupEdit").style.display = "none";
-}
-function sauvegarderEdition() {
-  if(indexEdition === -1) return;
-  const sansDate = document.getElementById("editSansDate").checked;
-  aliments[indexEdition] = {
-    nom: document.getElementById("editNom").value,
-    quantite: document.getElementById("editQuantite").value,
-    unite: document.getElementById("editUnite").value,
-    peremption: sansDate ? null : document.getElementById("editPeremption").value,
-    categorie: document.getElementById("editCategorie").value
-  };
-  sauvegarderAliments();
-  afficherAliments();
-  fermerPopup();
-}
-function supprimerDepuisPopup() {
-  if(confirm("Supprimer cet aliment ?")) {
-    aliments.splice(indexEdition, 1);
+
+    editSansDate.onchange = () => {
+      if (editSansDate.checked) {
+        editPeremption.disabled = true;
+        editPeremption.style.visibility = "hidden";
+      } else {
+        editPeremption.disabled = false;
+        editPeremption.style.visibility = "visible";
+      }
+    };
+
+    // Remplir les catégories
+    const options = ["Choisir Catégorie","Boisson","Produit laitier","Légume","Fruit","Viande","Poisson","Féculent","Sucré","Sauce","Epice","Sec",
+                     "Plat préparé","Hygiène"];
+    editCategorie.innerHTML = "";
+    options.forEach(cat => {
+      const o = document.createElement("option");
+      o.value = cat;
+      o.textContent = cat;
+      if (cat === aliment.categorie) o.selected = true;
+      editCategorie.appendChild(o);
+    });
+
+    popupEdit.style.display = "flex";
+  }
+
+  function fermerPopup() {
+    popupEdit.style.display = "none";
+    indexEdition = -1;
+  }
+
+  function sauvegarderEdition() {
+    if (indexEdition === -1) return;
+    aliments[indexEdition] = {
+      nom: editNom.value,
+      quantite: editQuantite.value,
+      unite: editUnite.value,
+      peremption: editSansDate.checked ? null : editPeremption.value,
+      categorie: editCategorie.value
+    };
     sauvegarderAliments();
     afficherAliments();
     fermerPopup();
   }
-}
 
-/* =========================
-   Pop-Up ajouter recette à repas
-========================= */ 
-function ouvrirPopupRecette(index) {
-  indexRecetteEnCours = index;
-  document.getElementById("popupRecette").style.display = "flex";
-}
-function fermerPopupRecette() {
-  document.getElementById("popupRecette").style.display = "none";
-}
-function confirmerAjoutRecette() {
-  if(indexRecetteEnCours === -1) return;
-  const recette = recettes[indexRecetteEnCours];
-  const jour = document.getElementById("recetteJour").value;
-  const typeRepas = document.getElementById("recetteTypeRepas").value;
-  const input = document.querySelector(`input[data-jour="${jour}"][data-repas="${typeRepas}"]`);
-  if(!input) {
-    alert("Le champ de repas correspondant n'a pas été trouvé !");
-    fermerPopupRecette();
-    return;
+  function supprimerDepuisPopup() {
+    if(indexEdition === -1) return;
+    if(confirm("Supprimer cet aliment ?")) {
+      aliments.splice(indexEdition, 1);
+      sauvegarderAliments();
+      afficherAliments();
+      fermerPopup();
+    }
   }
-  const valeursExistantes = input.value ? input.value.split(",").map(v => v.trim()) : [];
-  const nouvellesValeurs = [...valeursExistantes, ...recette.ingredients];
-  input.value = nouvellesValeurs.join(", ");
-  alert(`Recette "${recette.nom}" ajoutée à ${jour} - ${typeRepas} !`);
-  fermerPopupRecette();
-}
-//Initialisation
-chargerRecettes();
-afficherRecettes();
 
-/* =========================
-   Pop-Up modifier repas
-========================= */
-function ouvrirPopupRepas(input) {
-  inputRepasActif = input;
-  const jour = input.dataset.jour;
-  const type = input.dataset.repas;
-  document.getElementById("repasTitre").textContent =`${jour} - ${type}`;
-  document.getElementById("repasTexte").value = input.value;
-  document.getElementById("popupRepasEdit").style.display = "flex";
-}
-function fermerPopupRepas() {
-  document.getElementById("popupRepasEdit").style.display = "none";
-}
-function sauvegarderRepasPopup() {
-  if (!inputRepasActif) return;
-  inputRepasActif.value =document.getElementById("repasTexte").value;
-  fermerPopupRepas();
-}
+  document.querySelector("#popupEdit .popup-actions button:nth-child(1)").onclick = sauvegarderEdition;
+  document.querySelector("#popupEdit .popup-actions button:nth-child(2)").onclick = fermerPopup;
+  document.querySelector("#popupEdit .delete-btn").onclick = supprimerDepuisPopup;
+
+
+  // ---------------- POPUP AJOUTER RECETTE AU REPAS ----------------
+  const popupRecette = document.getElementById("popupRecette");
+  const recetteJour = document.getElementById("recetteJour");
+  const recetteTypeRepas = document.getElementById("recetteTypeRepas");
+
+  function ouvrirPopupRecette(index) {
+    indexRecetteEnCours = index;
+    popupRecette.style.display = "flex";
+  }
+
+  function fermerPopupRecette() {
+    popupRecette.style.display = "none";
+    indexRecetteEnCours = -1;
+  }
+
+  function confirmerAjoutRecette() {
+    if(indexRecetteEnCours === -1) return;
+    const recette = recettes[indexRecetteEnCours];
+    const jour = recetteJour.value;
+    const typeRepas = recetteTypeRepas.value;
+
+    const input = document.querySelector(`input[data-jour="${jour}"][data-repas="${typeRepas}"]`);
+    if(!input) {
+      alert("Champ de repas non trouvé !");
+      return;
+    }
+
+    input.value = recette.ingredients.join(", ");
+    fermerPopupRecette();
+  }
+
+  document.querySelector("#popupRecette .popup-actions button:nth-child(1)").onclick = confirmerAjoutRecette;
+  document.querySelector("#popupRecette .popup-actions button:nth-child(2)").onclick = fermerPopupRecette;
+
+  // ---------------- POPUP MODIFIER REPAS ----------------
+  const popupRepasEdit = document.getElementById("popupRepasEdit");
+  const repasTitre = document.getElementById("repasTitre");
+  const repasTexte = document.getElementById("repasTexte");
+  let inputRepasEnCours = null;
+
+  function ouvrirPopupRepas(input) {
+    inputRepasEnCours = input;
+    repasTitre.textContent = `${input.dataset.jour} - ${input.dataset.repas}`;
+    repasTexte.value = input.value;
+    popupRepasEdit.style.display = "flex";
+  }
+
+  function fermerPopupRepas() {
+    popupRepasEdit.style.display = "none";
+    inputRepasEnCours = null;
+  }
+
+  function sauvegarderRepasPopup() {
+    if(!inputRepasEnCours) return;
+    inputRepasEnCours.value = repasTexte.value;
+    fermerPopupRepas();
+  }
+
+  document.querySelector("#popupRepasEdit .popup-actions button:nth-child(1)").onclick = sauvegarderRepasPopup;
+  document.querySelector("#popupRepasEdit .popup-actions button:nth-child(2)").onclick = fermerPopupRepas;
+
+  // ---------------- ATTACHER LES INPUTS REPAS ----------------
+  document.querySelectorAll(".repas").forEach(input => {
+    input.addEventListener("click", () => ouvrirPopupRepas(input));
+  });
+
+  // ---------------- ATTACHER BOUTONS "AJOUTER AU REPAS" RECETTE ----------------
+  document.querySelectorAll("#listeRecettes button").forEach((btn, i) => {
+    btn.addEventListener("click", () => ouvrirPopupRecette(i));
+  });
+
+});
+
 </script>
   
 </body>
 </html>
+
 
 
 
