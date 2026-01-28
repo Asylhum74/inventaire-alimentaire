@@ -341,7 +341,72 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
   </div>
 </div>
 
-  
+<!-- ==========================
+   POPUPS
+========================== -->
+<!-- Modifier un aliment -->
+<div id="popupEdit" class="popup">
+  <div class="popup-content">
+    <h2>Modifier l'aliment</h2>
+    <input id="editNom" placeholder="Nom">
+    <input id="editQuantite" type="number" placeholder="Quantité">
+    <input id="editUnite" placeholder="Unité">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <input id="editPeremption" type="date" style="flex:1;">
+      <label style="display:flex; align-items:center; gap:5px;">
+        <input type="checkbox" id="editSansDate">Pas de DLC</label>
+    </div>
+    <select id="editCategorie"></select>
+    <div class="popup-actions">
+      <button onclick="sauvegarderEdition()">💾 Sauvegarder</button>
+      <button onclick="fermerPopup()">Annuler</button>
+    </div>
+    <button class="delete-btn" onclick="supprimerDepuisPopup()">🗑 Supprimer</button>
+  </div>
+</div>
+
+<!-- Ajouter une recette au repas -->
+<div id="popupRecette" class="popup">
+  <div class="popup-content">
+    <h2>Ajouter la recette à un repas</h2>
+    <p>Sélectionnez le jour et le type de repas :</p>
+    <label>Jour :</label>
+    <select id="recetteJour">
+      <option value="Lundi">Lundi</option>
+      <option value="Mardi">Mardi</option>
+      <option value="Mercredi">Mercredi</option>
+      <option value="Jeudi">Jeudi</option>
+      <option value="Vendredi">Vendredi</option>
+      <option value="Samedi">Samedi</option>
+      <option value="Dimanche">Dimanche</option>
+    </select>
+    <label>Repas :</label>
+    <select id="recetteTypeRepas">
+      <option value="Petit-déjeuner">Petit-déjeuner</option>
+      <option value="Déjeuner">Déjeuner</option>
+      <option value="Dîner">Dîner</option>
+      <option value="Autre">Autre</option>
+    </select>
+    <div class="popup-actions">
+      <button onclick="confirmerAjoutRecette()">💾 Ajouter</button>
+      <button onclick="fermerPopupRecette()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- Ajouter un repas -->
+<div id="popupRepasEdit" class="popup">
+  <div class="popup-content">
+    <h2>Modifier le repas</h2>
+    <p id="repasTitre"></p>
+    <textarea id="repasTexte" style="min-height:120px; font-size:1.2em;" placeholder="Ex: Pâtes, Tomates, Fromage"></textarea>
+    <div class="popup-actions">
+      <button onclick="sauvegarderRepasPopup()">💾 Sauvegarder</button>
+      <button onclick="fermerPopupRepas()">Annuler</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ------------------- MODE SOMBRE -------------------
 if (localStorage.getItem("darkMode") === "true") {
@@ -1115,75 +1180,10 @@ function sauvegarderRepasPopup() {
   fermerPopupRepas();
 }
 </script>
-
-<!-- ==========================
-   POPUPS
-========================== -->
-<!-- Modifier un aliment -->
-<div id="popupEdit" class="popup">
-  <div class="popup-content">
-    <h2>Modifier l'aliment</h2>
-    <input id="editNom" placeholder="Nom">
-    <input id="editQuantite" type="number" placeholder="Quantité">
-    <input id="editUnite" placeholder="Unité">
-    <div style="display:flex; align-items:center; gap:10px;">
-      <input id="editPeremption" type="date" style="flex:1;">
-      <label style="display:flex; align-items:center; gap:5px;">
-        <input type="checkbox" id="editSansDate">Pas de DLC</label>
-    </div>
-    <select id="editCategorie"></select>
-    <div class="popup-actions">
-      <button onclick="sauvegarderEdition()">💾 Sauvegarder</button>
-      <button onclick="fermerPopup()">Annuler</button>
-    </div>
-    <button class="delete-btn" onclick="supprimerDepuisPopup()">🗑 Supprimer</button>
-  </div>
-</div>
-
-<!-- Ajouter une recette au repas -->
-<div id="popupRecette" class="popup">
-  <div class="popup-content">
-    <h2>Ajouter la recette à un repas</h2>
-    <p>Sélectionnez le jour et le type de repas :</p>
-    <label>Jour :</label>
-    <select id="recetteJour">
-      <option value="Lundi">Lundi</option>
-      <option value="Mardi">Mardi</option>
-      <option value="Mercredi">Mercredi</option>
-      <option value="Jeudi">Jeudi</option>
-      <option value="Vendredi">Vendredi</option>
-      <option value="Samedi">Samedi</option>
-      <option value="Dimanche">Dimanche</option>
-    </select>
-    <label>Repas :</label>
-    <select id="recetteTypeRepas">
-      <option value="Petit-déjeuner">Petit-déjeuner</option>
-      <option value="Déjeuner">Déjeuner</option>
-      <option value="Dîner">Dîner</option>
-      <option value="Autre">Autre</option>
-    </select>
-    <div class="popup-actions">
-      <button onclick="confirmerAjoutRecette()">💾 Ajouter</button>
-      <button onclick="fermerPopupRecette()">Annuler</button>
-    </div>
-  </div>
-</div>
-
-<!-- Ajouter un repas -->
-<div id="popupRepasEdit" class="popup">
-  <div class="popup-content">
-    <h2>Modifier le repas</h2>
-    <p id="repasTitre"></p>
-    <textarea id="repasTexte" style="min-height:120px; font-size:1.2em;" placeholder="Ex: Pâtes, Tomates, Fromage"></textarea>
-    <div class="popup-actions">
-      <button onclick="sauvegarderRepasPopup()">💾 Sauvegarder</button>
-      <button onclick="fermerPopupRepas()">Annuler</button>
-    </div>
-  </div>
-</div>
   
 </body>
 </html>
+
 
 
 
