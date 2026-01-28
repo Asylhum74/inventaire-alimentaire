@@ -408,6 +408,7 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 </div>
 
 <script>
+document.addEventListener("DOMContentLoaded", () => {
 // ------------------- MODE SOMBRE -------------------
 if (localStorage.getItem("darkMode") === "true") {
   document.body.classList.add("dark");
@@ -418,11 +419,22 @@ function toggleDarkMode() {
 }
 
 /* =========================
-   Alimentaire
+   Initialisation variable
 ========================= */
 let aliments = [];
 let indexEnCours = -1;
+let categoriesCourses = JSON.parse(localStorage.getItem("categoriesCourses")) || {};
+const toutesCategories = ["Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sauce", "Epice", "Boisson", "Conserve", 
+                          "Produit du monde", "Hygiène"];
+let recettes = [];
+let indexRecetteEnCours = -1;
+let depenses = [];
+let indexEdition = -1;
+let inputRepasActif = null;
 
+/* =========================
+   Alimentaire
+========================= */
 // Charger les aliments depuis localStorage
 function chargerAliments() {
   const data = localStorage.getItem("aliments");
@@ -489,11 +501,9 @@ function afficherAliments() {
     }
     const li = document.createElement("li");
     li.style.cursor = "pointer";
-    li.addEventListener("click", function(e) {
-        if (e.target.tagName !== "BUTTON") {
-            ouvrirPopup(idx);
-        }
-    });
+    li.onclick = (e) => {
+      if (e.target.tagName !== "BUTTON") ouvrirPopup(index);
+    };
     const joursRestants = calculerJoursRestants(aliment.peremption);
     let texte = `${aliment.nom} - ${aliment.quantite} ${aliment.unite}`;
     if (aliment.peremption) {
@@ -575,10 +585,6 @@ function importerInventaire(event) {
 /* =========================
    Repas
 ========================= */
-let categoriesCourses = JSON.parse(localStorage.getItem("categoriesCourses")) || {};
-const toutesCategories = ["Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sauce", "Epice", "Boisson", "Conserve", 
-                          "Produit du monde", "Hygiène"];
-  
 function sauvegarderRepas() {
   const repasData = {};
   document.querySelectorAll('.repas').forEach(input => {
@@ -761,9 +767,6 @@ function nouvelleSemaine() {
 /* =========================
    Recette
 ========================= */
-let recettes = [];
-let indexRecetteEnCours = -1;
-
 function chargerRecettes() {
   const data = localStorage.getItem("recettes");
   if(data) recettes = JSON.parse(data);
@@ -890,7 +893,6 @@ function resetProprete(type) {
 /* =========================
    BUDGET
 ========================= */
-let depenses = [];
 function afficherBudgetOnglet(onglet) {
   document.getElementById("budget-depenses").style.display = (onglet === 'depenses') ? 'block' : 'none';
   document.getElementById("budget-graphique").style.display = (onglet === 'graphique') ? 'block' : 'none';
@@ -1049,9 +1051,10 @@ afficherDepenses();
 afficherPage("accueil");
 afficherSousPage("inventaire");
 
+});
 </script>
 <script>
-  
+document.addEventListener("DOMContentLoaded", () => {
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js")
     .then(() => console.log("Service Worker enregistré"))
@@ -1061,7 +1064,6 @@ if ("serviceWorker" in navigator) {
 /* =========================
    Pop-Up modifier aliment
 ========================= */
-let indexEdition = -1;
 function ouvrirPopup(index) {
   const aliment = aliments[index];
   indexEdition = index;
@@ -1164,7 +1166,6 @@ afficherRecettes();
 /* =========================
    Pop-Up modifier repas
 ========================= */
-let inputRepasActif = null;
 function ouvrirPopupRepas(input) {
   inputRepasActif = input;
   const jour = input.dataset.jour;
@@ -1181,10 +1182,12 @@ function sauvegarderRepasPopup() {
   inputRepasActif.value =document.getElementById("repasTexte").value;
   fermerPopupRepas();
 }
+});
 </script>
   
 </body>
 </html>
+
 
 
 
