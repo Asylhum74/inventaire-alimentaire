@@ -55,6 +55,7 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 .task input {width: 22px; height: 22px; }
 .progress-fill {height: 100%; width: 0%; background: #2ecc71; transition: width 0.3s ease; }
 .proprete-page {display: none; }
+.progress-bar {height: 10px; background: #ddd; border-radius: 10px; overflow: hidden; margin: 6px 0 12px 0; }
 
 /* ==========================
    🌙 MODE SOMBRE
@@ -65,6 +66,7 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 .dark strong, .dark li span, .dark h1, .dark h2 {color: #ffffff; }
 .dark .room {background: rgba(255,255,255,0.05); }
 .toggle {margin: 10px 0; }
+.dark .progress-bar {background: #333;}
 
 /* ==========================
    🖤 POPUPS
@@ -1186,6 +1188,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
