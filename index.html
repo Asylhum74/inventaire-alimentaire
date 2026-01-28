@@ -15,7 +15,9 @@ html, body {height: 100%;}
 h1 { color: #2c3e50; text-align: center; }
 label { display: block; margin-top: 10px; }
 input, select, button { margin: 5px 0; padding: 10px; font-size: 1em; width: 100%; box-sizing: border-box; }
+
 button.small {padding: 6px 10px; font-size: 0.9em; min-width: 90px; }
+
 .nav {display: flex; gap: 10px; margin-bottom: 15px; }
 .nav button {flex: 1; }
   
@@ -34,16 +36,16 @@ button.small {padding: 6px 10px; font-size: 0.9em; min-width: 90px; }
    🍽 ALIMENTAIRE
 ========================== */
 ul { list-style: none; padding: 0; max-height: 400px; overflow-y: auto; margin-top: 10px; }
-li { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin:5px 0; border-bottom:1px solid #ccc; padding:5px; 
-    word-wrap:break-word; }
+li { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin:5px 0; border-bottom:1px solid #ccc; padding:5px; word-wrap:break-word; }
+
 .actions {display: inline-flex; gap: 6px; margin-left: 10px; }
+  
 .urgent {color: red; font-weight: bold; display: flex; align-items: center; flex: 1; }
 .ok {color: black; display: flex; align-items: center; flex: 1; }
+
 .course-checkbox {width: 20px; height: 20px; cursor: pointer; }
 .form-section {margin-bottom: 25px; }
 #listeAliments {min-height: calc(100vh - 300px); overflow-y: auto; }
-.repas-actions {display: flex; gap: 12px; margin-top: 15px; }
-.repas-actions button {flex: 1; padding: 12px; font-size: 1em; }
 
 /* ==========================
    🧽 PROPRETÉ
@@ -51,9 +53,8 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 .room {margin-top: 20px; padding: 12px; border-radius: 10px; background: rgba(0,0,0,0.05); }
 .task {display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 1.1em; }
 .task input {width: 22px; height: 22px; }
-.progress-fill {height: 100%; width: 0%; background: #2ecc71; transition: width 0.3s ease; }
-.proprete-page {display: none; }
 .progress-bar {height: 10px; background: #ddd; border-radius: 10px; overflow: hidden; margin: 6px 0 12px 0; }
+.progress-fill {height: 100%; width: 0%; background: #2ecc71; transition: width 0.3s ease; }
 
 /* ==========================
    🌙 MODE SOMBRE
@@ -63,157 +64,21 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 .dark li {border-bottom: 1px solid #333; }
 .dark strong, .dark li span, .dark h1, .dark h2 {color: #ffffff; }
 .dark .room {background: rgba(255,255,255,0.05); }
-.toggle {margin: 10px 0; }
 .dark .progress-bar {background: #333;}
+.toggle {margin: 10px 0; }
 
 /* ==========================
    🖤 POPUPS
 ========================== */
-/* POPUPS */
-.popup {
-  display: none; /* masqué par défaut */
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5); /* fond semi-transparent */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.popup-content {
-  background: #fff;
-  padding: 20px;
-  border-radius: 12px;
-  max-width: 400px;
-  width: 90%;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-  position: relative;
-}
-
-.popup-content h3 {
-  margin-top: 0;
-  margin-bottom: 15px;
-  font-size: 1.3rem;
-  text-align: center;
-}
-
+.popup {position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+.popup-content {background: #1e1e1e; color: white; width: 100%; max-width: 500px; padding: 30px; border-radius: 15px; display: flex; 
+                flex-direction: column; gap: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); max-height: 90vh; overflow-y: auto; }
 .popup-content input,
 .popup-content select,
-.popup-content textarea {
-  width: 100%;
-  padding: 8px 10px;
-  margin: 5px 0 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 1rem;
-  box-sizing: border-box;
-}
-
-.popup-content textarea {
-  resize: vertical;
-  min-height: 60px;
-}
-
-.popup-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 10px;
-}
-
-.popup-actions button {
-  padding: 8px 14px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.95rem;
-  transition: background 0.2s;
-}
-
-.popup-actions button:hover {
-  opacity: 0.9;
-}
-
-.popup-actions button.delete-btn {
-  background: #e74c3c;
-  color: white;
-}
-
-.popup-actions button.delete-btn:hover {
-  background: #c0392b;
-}
-
-.popup-actions button:first-of-type {
-  background: #3498db;
-  color: white;
-}
-
-.popup-actions button:first-of-type:hover {
-  background: #2980b9;
-}
-
-.popup-actions button:nth-child(2) {
-  background: #95a5a6;
-  color: white;
-}
-
-.popup-actions button:nth-child(2):hover {
-  background: #7f8c8d;
-}
-
-/* BOUTONS GENERAUX */
-button {
-  cursor: pointer;
-  border-radius: 6px;
-  border: none;
-  padding: 6px 12px;
-  background: #3498db;
-  color: white;
-  font-size: 0.95rem;
-  transition: background 0.2s;
-}
-
-button:hover {
-  background: #2980b9;
-}
-
-/* ALIMENTS / RECETTES LISTE */
-.aliment, .recette {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-  padding: 6px 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-}
-
-/* INPUTS REPAS */
-.semaine input.repas {
-  width: calc(33% - 10px);
-  margin: 5px;
-  padding: 6px 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-}
-
-/* Responsive pour petits écrans */
-@media (max-width: 480px) {
-  .popup-content {
-    width: 95%;
-  }
-  .semaine input.repas {
-    width: 100%;
-    margin: 5px 0;
-  }
-}
-
+.popup-content button {font-size: 1.1em; padding: 12px; border-radius: 10px; }
+.popup-actions {display: flex; gap: 10px; }
+.popup-actions button {flex: 1; }
+.delete-btn {background: #c0392b; color: white; font-size: 1.2em; padding: 14px; }
 
 /* ==========================
     TELEPHONE
@@ -377,10 +242,10 @@ button:hover {
         <button onclick="nouvelleSemaine()" style="background-color:#e74c3c; color:white; padding: 6px 12px; border:none; border-radius:5px; cursor:pointer; 
           font-size: 0.9em;height: fit-content;width: auto !important;"> Nouvelle semaine</button>
     </div>
-    <div class="repas-actions">
-      <button onclick="sauvegarderRepas()">💾 Sauvegarder</button>
-      <button onclick="chargerRepas()">🔄 Charger</button>
-      <button onclick="genererListeCourses()">🛒 Liste de courses</button>
+    <div style="margin-top:10px;">
+      <button onclick="sauvegarderRepas()">💾 Sauvegarder la semaine</button>
+      <button onclick="chargerRepas()">🔄 Charger la semaine</button>
+      <button onclick="genererListeCourses()">🛒 Générer la liste de courses</button>
     </div>
     <div id="repasSemaine"></div>
   </div>
@@ -395,9 +260,9 @@ button:hover {
     <div class="form-section">
       <button type="button" onclick="ajouterRecette()">Ajouter la recette</button>
     </div>
-    <h3>Liste des recettes :</h3>
-    <ul id="listeRecettes"></ul>
   </div>
+  <h3>Liste des recettes :</h3>
+  <ul id="listeRecettes"></ul>
 </div>
   
 <!-- ==========================
@@ -406,25 +271,10 @@ button:hover {
 <div id="page-proprete" class="page" style="display:none;">
   <h2>🧽 Propreté</h2>
   <button class="small" onclick="afficherPage('accueil')">⬅ Retour</button>
-  
-  <!-- Onglets -->
-  <nav class="nav">
-    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherOngletProprete('menage')">🏠 Appartement</button>
-    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherOngletProprete('voiture')">🚗 Voiture</button>
-  </nav>
-
-  <!-- ===== Appartement ===== -->
-  <div id="proprete-menage" class="proprete-page">
-    <div id="liste-menage"></div>
-    <button onclick="resetProprete('menage')">🔄 Nouvelle semaine</button>
+  <div id="listeTachesProprete"></div>
+  <div style="margin-top:20px;">
+    <button onclick="resetProprete()">🔄 Nouvelle semaine</button>
   </div>
-
-  <!-- ===== Voiture ===== -->
-  <div id="proprete-voiture" class="proprete-page">
-    <div id="liste-voiture"></div>
-    <button onclick="resetProprete('voiture')">🔄 Reset voiture</button>
-  </div>
-  
 </div>
 
 <!-- ==========================
@@ -440,8 +290,7 @@ button:hover {
     <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherBudgetOnglet('graphique')" class="budget-tab">Graphique</button>
   </nav>
 
-  <!-- ===== Depense ===== -->
-  <div id="inventaire" style="margin-bottom:10px;">
+  <!-- Contenu Dépenses -->
   <div id="budget-depenses" style="margin-top: 20px;">
     <h3>Ajouter une dépense</h3>
     <label>Montant (€)</label>
@@ -468,98 +317,14 @@ button:hover {
     <ul id="budgetListe"></ul>
   </div>
 
-  <!-- ===== Graphique ===== -->
-  <div id="inventaire" style="margin-bottom:10px;">
+  <!-- Contenu Graphique -->
   <div id="budget-graphique" style="display:none;">
     <canvas id="budgetPieChart" width="300" height="300"></canvas>
     <ul id="budgetLegend" style="list-style:none; padding:0; margin-top:10px;"></ul>
   </div>
 </div>
 
-<!-- ==========================
-   POPUPS
-========================== -->
-<!-- ALIMENTS -->
-<div id="listeAliments">
-  <div class="aliment">
-    <span>Nom Aliment</span>
-    <button class="edit-btn" data-index="0">Modifier</button>
-  </div>
-  <!-- répéter pour chaque aliment -->
-</div>
-
-<!-- POPUP MODIFIER ALIMENT -->
-<div id="popupEdit" class="popup">
-  <div class="popup-content">
-    <h3>Modifier Aliment</h3>
-    <input id="editNom" placeholder="Nom">
-    <input id="editQuantite" type="number" placeholder="Quantité">
-    <input id="editUnite" placeholder="Unité">
-    <input id="editPeremption" type="date">
-    <label><input type="checkbox" id="editSansDate"> Sans date</label>
-    <select id="editCategorie"></select>
-    <div class="popup-actions">
-      <button>Sauvegarder</button>
-      <button>Annuler</button>
-      <button class="delete-btn">Supprimer</button>
-    </div>
-  </div>
-</div>
-
-<!-- RECETTES -->
-<div id="listeRecettes">
-  <div class="recette">
-    <span>Nom Recette</span>
-    <button>Ajouter au repas</button>
-  </div>
-  <!-- répéter pour chaque recette -->
-</div>
-
-<!-- POPUP AJOUTER RECETTE AU REPAS -->
-<div id="popupRecette" class="popup">
-  <div class="popup-content">
-    <h3>Ajouter recette au repas</h3>
-    <label>Jour
-      <select id="recetteJour">
-        <option value="lundi">Lundi</option>
-        <option value="mardi">Mardi</option>
-        <!-- autres jours -->
-      </select>
-    </label>
-    <label>Repas
-      <select id="recetteTypeRepas">
-        <option value="petitDej">Petit-déjeuner</option>
-        <option value="dejeuner">Déjeuner</option>
-        <option value="diner">Dîner</option>
-      </select>
-    </label>
-    <div class="popup-actions">
-      <button>Ajouter</button>
-      <button>Annuler</button>
-    </div>
-  </div>
-</div>
-
-<!-- POPUP MODIFIER REPAS -->
-<div id="popupRepasEdit" class="popup">
-  <div class="popup-content">
-    <h3 id="repasTitre">Modifier repas</h3>
-    <textarea id="repasTexte"></textarea>
-    <div class="popup-actions">
-      <button>Sauvegarder</button>
-      <button>Annuler</button>
-    </div>
-  </div>
-</div>
-
-<!-- INPUTS REPAS -->
-<div class="semaine">
-  <input class="repas" data-jour="lundi" data-repas="petitDej" placeholder="Petit-déj">
-  <input class="repas" data-jour="lundi" data-repas="dejeuner" placeholder="Déjeuner">
-  <input class="repas" data-jour="lundi" data-repas="diner" placeholder="Dîner">
-  <!-- répéter pour chaque jour -->
-</div>
-
+  
 <script>
 // ------------------- MODE SOMBRE -------------------
 if (localStorage.getItem("darkMode") === "true") {
@@ -571,20 +336,11 @@ function toggleDarkMode() {
 }
 
 /* =========================
-   Initialisation variable
+   Alimentaire
 ========================= */
 let aliments = [];
 let indexEnCours = -1;
-let categoriesCourses = JSON.parse(localStorage.getItem("categoriesCourses")) || {};
-const toutesCategories = ["Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sauce", "Epice", "Boisson", "Conserve", 
-                          "Produit du monde", "Hygiène"];
-let recettes = [];
-let indexRecetteEnCours = -1;
-let depenses = [];
 
-/* =========================
-   Alimentaire
-========================= */
 // Charger les aliments depuis localStorage
 function chargerAliments() {
   const data = localStorage.getItem("aliments");
@@ -735,6 +491,10 @@ function importerInventaire(event) {
 /* =========================
    Repas
 ========================= */
+let categoriesCourses = JSON.parse(localStorage.getItem("categoriesCourses")) || {};
+const toutesCategories = ["Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sauce", "Epice", "Boisson", "Conserve", 
+                          "Produit du monde", "Hygiène"];
+  
 function sauvegarderRepas() {
   const repasData = {};
   document.querySelectorAll('.repas').forEach(input => {
@@ -917,6 +677,9 @@ function nouvelleSemaine() {
 /* =========================
    Recette
 ========================= */
+let recettes = [];
+let indexRecetteEnCours = -1;
+
 function chargerRecettes() {
   const data = localStorage.getItem("recettes");
   if(data) recettes = JSON.parse(data);
@@ -976,23 +739,16 @@ function afficherRecettes() {
    PROPRETÉ
 ========================= */
 const tachesProprete = {
-  menage: {
-    "Cuisine": ["Plan de travail", "Plaques", "Sol", "Poubelle", "Nettoyage appareil"],
-    "Salle de bain": ["Lavabo", "Douche", "WC", "Miroir", "Sol"],
-    "Salon": ["Rangement", "Aspirateur", "Serpillère"],
-    "Chambre": ["Draps", "Rangement", "Aspirateur"]
-  },
-  voiture: {
-    "Intérieur": ["Rangement", "Aspirateur", "Tableau de bord", "Vitres"],
-    "Extérieur": ["Nettoyage", "Séchage", "Cire"],
-  }
-};            
-function afficherTaches(type) {
-  const container = document.getElementById("liste-" + type);
+  "Cuisine": ["Plan de travail", "Plaques", "Sol", "Poubelle", "Nettoyer Frigo, Micro-onde,..."],
+  "Salle de bain": ["Lavabo", "Douche", "WC", "Miroir", "Sol"],
+  "Salon": ["Rangement", "Aspirateur", "Serpillère"],
+  "Chambre": ["Draps", "Rangement", "Aspirateur"]
+};
+function afficherProprete() {
+  const container = document.getElementById("listeTachesProprete");
   container.innerHTML = "";
-  const data = JSON.parse(localStorage.getItem("propreteEtat_" + type)) || {};
-  const pieces = tachesProprete[type];
-  Object.keys(pieces).forEach(piece => {
+  const data = JSON.parse(localStorage.getItem("propreteEtat")) || {};
+  Object.keys(tachesProprete).forEach(piece => {
     const divRoom = document.createElement("div");
     divRoom.className = "room";
     const titre = document.createElement("h3");
@@ -1004,12 +760,13 @@ function afficherTaches(type) {
     progressBar.appendChild(progressFill);
     divRoom.appendChild(titre);
     divRoom.appendChild(progressBar);
-    let total = pieces[piece].length;
+    let total = tachesProprete[piece].length;
     let cochees = 0;
     const majProgression = () => {
-      progressFill.style.width = Math.round((cochees / total) * 100) + "%";
+      const pourcentage = Math.round((cochees / total) * 100);
+      progressFill.style.width = pourcentage + "%";
     };
-    pieces[piece].forEach(tache => {
+    tachesProprete[piece].forEach(tache => {
       const label = document.createElement("label");
       label.className = "task";
       const checkbox = document.createElement("input");
@@ -1018,9 +775,9 @@ function afficherTaches(type) {
       checkbox.checked = data[key] || false;
       if (checkbox.checked) cochees++;
       checkbox.onchange = () => {
-        const etat = JSON.parse(localStorage.getItem("propreteEtat_" + type)) || {};
+        const etat = JSON.parse(localStorage.getItem("propreteEtat")) || {};
         etat[key] = checkbox.checked;
-        localStorage.setItem("propreteEtat_" + type, JSON.stringify(etat));
+        localStorage.setItem("propreteEtat", JSON.stringify(etat));
         cochees += checkbox.checked ? 1 : -1;
         majProgression();
       };
@@ -1028,21 +785,23 @@ function afficherTaches(type) {
       span.textContent = tache;
       label.appendChild(checkbox);
       label.appendChild(span);
+
       divRoom.appendChild(label);
     });
     majProgression();
     container.appendChild(divRoom);
   });
 }
-function resetProprete(type) {
-  if (!confirm("Tout réinitialiser ?")) return;
-  localStorage.removeItem("propreteEtat_" + type);
-  afficherTaches(type);
+function resetProprete() {
+  if (!confirm("Commencer une nouvelle semaine ? Toutes les cases seront décochées.")) return;
+  localStorage.removeItem("propreteEtat");
+  afficherProprete();
 }
 
 /* =========================
    BUDGET
 ========================= */
+let depenses = [];
 function afficherBudgetOnglet(onglet) {
   document.getElementById("budget-depenses").style.display = (onglet === 'depenses') ? 'block' : 'none';
   document.getElementById("budget-graphique").style.display = (onglet === 'graphique') ? 'block' : 'none';
@@ -1176,19 +935,14 @@ function afficherPage(page) {
     afficherSousPage("inventaire");
   }
    if(page === "proprete") {
-    afficherOngletProprete("menage");
+    afficherProprete();
   }
 }
 function afficherSousPage(id) { 
-  document.querySelectorAll("#page-alimentaire > div[id]").forEach(d => { 
+  document.querySelectorAll("#page-alimentaire > div[id]").forEach(d 
+    => { 
     d.style.display = "none"; }); 
   document.getElementById(id).style.display = "block"; 
-}
-function afficherOngletProprete(id) {
-  document.querySelectorAll(".proprete-page")
-    .forEach(p => p.style.display = "none");
-  document.getElementById("proprete-" + id).style.display = "block";
-  afficherTaches(id);
 }
 
 /* =========================
@@ -1203,201 +957,209 @@ afficherSousPage("inventaire");
 
 </script>
 <script>
+  
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js")
     .then(() => console.log("Service Worker enregistré"))
     .catch(err => console.error("SW erreur", err));
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-
-  // ---------------- VARIABLES GLOBALES ----------------
-  let indexEdition = -1;
-  let indexRecetteEnCours = -1;
-
-  // ---------------- POPUP MODIFIER ALIMENT ----------------
-  const popupEdit = document.getElementById("popupEdit");
-  const editNom = document.getElementById("editNom");
-  const editQuantite = document.getElementById("editQuantite");
-  const editUnite = document.getElementById("editUnite");
-  const editPeremption = document.getElementById("editPeremption");
-  const editSansDate = document.getElementById("editSansDate");
-  const editCategorie = document.getElementById("editCategorie");
-
-  function ouvrirPopup(index) {
-    const aliment = aliments[index];
-    indexEdition = index;
-
-    editNom.value = aliment.nom;
-    editQuantite.value = aliment.quantite;
-    editUnite.value = aliment.unite;
-
-    if (!aliment.peremption) {
-      editSansDate.checked = true;
-      editPeremption.disabled = true;
-      editPeremption.style.visibility = "hidden";
-      editPeremption.value = "";
+/* =========================
+   Pop-Up modifier aliment
+========================= */
+let indexEdition = -1;
+function ouvrirPopup(index) {
+  const aliment = aliments[index];
+  indexEdition = index;
+  document.getElementById("editNom").value = aliment.nom;
+  document.getElementById("editQuantite").value = aliment.quantite;
+  document.getElementById("editUnite").value = aliment.unite;
+  const checkbox = document.getElementById("editSansDate");
+  const dateInput = document.getElementById("editPeremption");
+  if (!aliment.peremption) {
+    checkbox.checked = true;
+    dateInput.disabled = true;
+    dateInput.style.visibility = "hidden";
+    dateInput.value = ""; 
+  } else {
+    checkbox.checked = false;
+    dateInput.disabled = false;
+    dateInput.style.visibility = "visible";
+    dateInput.value = aliment.peremption;
+  }
+  checkbox.addEventListener("change", function() {
+    if (this.checked) {
+      dateInput.disabled = true;
+      dateInput.style.visibility = "hidden";
     } else {
-      editSansDate.checked = false;
-      editPeremption.disabled = false;
-      editPeremption.style.visibility = "visible";
-      editPeremption.value = aliment.peremption;
+      dateInput.disabled = false;
+      dateInput.style.visibility = "visible";
+      if (aliment.peremption) dateInput.value = aliment.peremption;
     }
-
-    editSansDate.onchange = () => {
-      if (editSansDate.checked) {
-        editPeremption.disabled = true;
-        editPeremption.style.visibility = "hidden";
-      } else {
-        editPeremption.disabled = false;
-        editPeremption.style.visibility = "visible";
-      }
-    };
-
-    // Remplir les catégories
-    const options = ["Choisir Catégorie","Boisson","Produit laitier","Légume","Fruit","Viande","Poisson","Féculent","Sucré","Sauce","Epice","Sec",
-                     "Plat préparé","Hygiène"];
-    editCategorie.innerHTML = "";
-    options.forEach(cat => {
-      const o = document.createElement("option");
-      o.value = cat;
-      o.textContent = cat;
-      if (cat === aliment.categorie) o.selected = true;
-      editCategorie.appendChild(o);
-    });
-
-    popupEdit.style.display = "flex";
-  }
-
-  function fermerPopup() {
-    popupEdit.style.display = "none";
-    indexEdition = -1;
-  }
-
-  function sauvegarderEdition() {
-    if (indexEdition === -1) return;
-    aliments[indexEdition] = {
-      nom: editNom.value,
-      quantite: editQuantite.value,
-      unite: editUnite.value,
-      peremption: editSansDate.checked ? null : editPeremption.value,
-      categorie: editCategorie.value
-    };
+  });
+  const select = document.getElementById("editCategorie");
+  select.innerHTML = "";
+  const options = ["Choisir Catégorie","Boisson","Produit laitier","Légume","Fruit","Viande","Poisson","Féculent","Sucré","Sauce","Epice","Sec",
+                   "Plat préparé","Hygiène"];
+  options.forEach(cat => {
+    const o = document.createElement("option");
+    o.value = cat;
+    o.textContent = cat;
+    if(cat === aliment.categorie) o.selected = true;
+    select.appendChild(o);
+  });
+  document.getElementById("popupEdit").style.display = "flex";
+}
+function fermerPopup() {
+  document.getElementById("popupEdit").style.display = "none";
+}
+function sauvegarderEdition() {
+  if(indexEdition === -1) return;
+  const sansDate = document.getElementById("editSansDate").checked;
+  aliments[indexEdition] = {
+    nom: document.getElementById("editNom").value,
+    quantite: document.getElementById("editQuantite").value,
+    unite: document.getElementById("editUnite").value,
+    peremption: sansDate ? null : document.getElementById("editPeremption").value,
+    categorie: document.getElementById("editCategorie").value
+  };
+  sauvegarderAliments();
+  afficherAliments();
+  fermerPopup();
+}
+function supprimerDepuisPopup() {
+  if(confirm("Supprimer cet aliment ?")) {
+    aliments.splice(indexEdition, 1);
     sauvegarderAliments();
     afficherAliments();
     fermerPopup();
   }
+}
 
-  function supprimerDepuisPopup() {
-    if(indexEdition === -1) return;
-    if(confirm("Supprimer cet aliment ?")) {
-      aliments.splice(indexEdition, 1);
-      sauvegarderAliments();
-      afficherAliments();
-      fermerPopup();
-    }
-  }
-
-  document.querySelector("#popupEdit .popup-actions button:nth-child(1)").onclick = sauvegarderEdition;
-  document.querySelector("#popupEdit .popup-actions button:nth-child(2)").onclick = fermerPopup;
-  document.querySelector("#popupEdit .delete-btn").onclick = supprimerDepuisPopup;
-
-
-  // ---------------- POPUP AJOUTER RECETTE AU REPAS ----------------
-  const popupRecette = document.getElementById("popupRecette");
-  const recetteJour = document.getElementById("recetteJour");
-  const recetteTypeRepas = document.getElementById("recetteTypeRepas");
-
-  function ouvrirPopupRecette(index) {
-    indexRecetteEnCours = index;
-    popupRecette.style.display = "flex";
-  }
-
-  function fermerPopupRecette() {
-    popupRecette.style.display = "none";
-    indexRecetteEnCours = -1;
-  }
-
-  function confirmerAjoutRecette() {
-    if(indexRecetteEnCours === -1) return;
-    const recette = recettes[indexRecetteEnCours];
-    const jour = recetteJour.value;
-    const typeRepas = recetteTypeRepas.value;
-
-    const input = document.querySelector(`input[data-jour="${jour}"][data-repas="${typeRepas}"]`);
-    if(!input) {
-      alert("Champ de repas non trouvé !");
-      return;
-    }
-
-    input.value = recette.ingredients.join(", ");
+/* =========================
+   Pop-Up ajouter recette à repas
+========================= */ 
+function ouvrirPopupRecette(index) {
+  indexRecetteEnCours = index;
+  document.getElementById("popupRecette").style.display = "flex";
+}
+function fermerPopupRecette() {
+  document.getElementById("popupRecette").style.display = "none";
+}
+function confirmerAjoutRecette() {
+  if(indexRecetteEnCours === -1) return;
+  const recette = recettes[indexRecetteEnCours];
+  const jour = document.getElementById("recetteJour").value;
+  const typeRepas = document.getElementById("recetteTypeRepas").value;
+  const input = document.querySelector(`input[data-jour="${jour}"][data-repas="${typeRepas}"]`);
+  if(!input) {
+    alert("Le champ de repas correspondant n'a pas été trouvé !");
     fermerPopupRecette();
+    return;
   }
+  const valeursExistantes = input.value ? input.value.split(",").map(v => v.trim()) : [];
+  const nouvellesValeurs = [...valeursExistantes, ...recette.ingredients];
+  input.value = nouvellesValeurs.join(", ");
+  alert(`Recette "${recette.nom}" ajoutée à ${jour} - ${typeRepas} !`);
+  fermerPopupRecette();
+}
+//Initialisation
+chargerRecettes();
+afficherRecettes();
 
-  document.querySelector("#popupRecette .popup-actions button:nth-child(1)").onclick = confirmerAjoutRecette;
-  document.querySelector("#popupRecette .popup-actions button:nth-child(2)").onclick = fermerPopupRecette;
-
-  // ---------------- POPUP MODIFIER REPAS ----------------
-  const popupRepasEdit = document.getElementById("popupRepasEdit");
-  const repasTitre = document.getElementById("repasTitre");
-  const repasTexte = document.getElementById("repasTexte");
-  let inputRepasEnCours = null;
-
-  function ouvrirPopupRepas(input) {
-    inputRepasEnCours = input;
-    repasTitre.textContent = `${input.dataset.jour} - ${input.dataset.repas}`;
-    repasTexte.value = input.value;
-    popupRepasEdit.style.display = "flex";
-  }
-
-  function fermerPopupRepas() {
-    popupRepasEdit.style.display = "none";
-    inputRepasEnCours = null;
-  }
-
-  function sauvegarderRepasPopup() {
-    if(!inputRepasEnCours) return;
-    inputRepasEnCours.value = repasTexte.value;
-    fermerPopupRepas();
-  }
-
-  document.querySelector("#popupRepasEdit .popup-actions button:nth-child(1)").onclick = sauvegarderRepasPopup;
-  document.querySelector("#popupRepasEdit .popup-actions button:nth-child(2)").onclick = fermerPopupRepas;
-
-  // ---------------- ATTACHER LES INPUTS REPAS ----------------
-  document.querySelectorAll(".repas").forEach(input => {
-    input.addEventListener("click", () => ouvrirPopupRepas(input));
-  });
-
-  // ---------------- ATTACHER BOUTONS "AJOUTER AU REPAS" RECETTE ----------------
-  document.querySelectorAll("#listeRecettes button").forEach((btn, i) => {
-    btn.addEventListener("click", () => ouvrirPopupRecette(i));
-  });
-
-});
-
+/* =========================
+   Pop-Up modifier repas
+========================= */
+let inputRepasActif = null;
+function ouvrirPopupRepas(input) {
+  inputRepasActif = input;
+  const jour = input.dataset.jour;
+  const type = input.dataset.repas;
+  document.getElementById("repasTitre").textContent =`${jour} - ${type}`;
+  document.getElementById("repasTexte").value = input.value;
+  document.getElementById("popupRepasEdit").style.display = "flex";
+}
+function fermerPopupRepas() {
+  document.getElementById("popupRepasEdit").style.display = "none";
+}
+function sauvegarderRepasPopup() {
+  if (!inputRepasActif) return;
+  inputRepasActif.value =document.getElementById("repasTexte").value;
+  fermerPopupRepas();
+}
 </script>
+
+<!-- ==========================
+   POPUPS
+========================== -->
+<!-- Modifier un aliment -->
+<div id="popupEdit" class="popup">
+  <div class="popup-content">
+    <h2>Modifier l'aliment</h2>
+    <input id="editNom" placeholder="Nom">
+    <input id="editQuantite" type="number" placeholder="Quantité">
+    <input id="editUnite" placeholder="Unité">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <input id="editPeremption" type="date" style="flex:1;">
+      <label style="display:flex; align-items:center; gap:5px;">
+        <input type="checkbox" id="editSansDate">Pas de DLC</label>
+    </div>
+    <select id="editCategorie"></select>
+    <div class="popup-actions">
+      <button onclick="sauvegarderEdition()">💾 Sauvegarder</button>
+      <button onclick="fermerPopup()">Annuler</button>
+    </div>
+    <button class="delete-btn" onclick="supprimerDepuisPopup()">🗑 Supprimer</button>
+  </div>
+</div>
+
+<!-- Ajouter une recette au repas -->
+<div id="popupRecette" class="popup">
+  <div class="popup-content">
+    <h2>Ajouter la recette à un repas</h2>
+    <p>Sélectionnez le jour et le type de repas :</p>
+    <label>Jour :</label>
+    <select id="recetteJour">
+      <option value="Lundi">Lundi</option>
+      <option value="Mardi">Mardi</option>
+      <option value="Mercredi">Mercredi</option>
+      <option value="Jeudi">Jeudi</option>
+      <option value="Vendredi">Vendredi</option>
+      <option value="Samedi">Samedi</option>
+      <option value="Dimanche">Dimanche</option>
+    </select>
+    <label>Repas :</label>
+    <select id="recetteTypeRepas">
+      <option value="Petit-déjeuner">Petit-déjeuner</option>
+      <option value="Déjeuner">Déjeuner</option>
+      <option value="Dîner">Dîner</option>
+      <option value="Autre">Autre</option>
+    </select>
+    <div class="popup-actions">
+      <button onclick="confirmerAjoutRecette()">💾 Ajouter</button>
+      <button onclick="fermerPopupRecette()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- Ajouter un repas -->
+<div id="popupRepasEdit" class="popup">
+  <div class="popup-content">
+    <h2>Modifier le repas</h2>
+    <p id="repasTitre"></p>
+    <textarea id="repasTexte"
+              style="min-height:120px; font-size:1.2em;"
+              placeholder="Ex: Pâtes, Tomates, Fromage">
+    </textarea>
+    <div class="popup-actions">
+      <button onclick="sauvegarderRepasPopup()">💾 Sauvegarder</button>
+      <button onclick="fermerPopupRepas()">Annuler</button>
+    </div>
+  </div>
+</div>
   
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
