@@ -489,9 +489,11 @@ function afficherAliments() {
     }
     const li = document.createElement("li");
     li.style.cursor = "pointer";
-    li.onclick = (e) => {
-      if (e.target.tagName !== "BUTTON") ouvrirPopup(index);
-    };
+    li.addEventListener("click", function(e) {
+        if (e.target.tagName !== "BUTTON") {
+            ouvrirPopup(idx);
+        }
+    });
     const joursRestants = calculerJoursRestants(aliment.peremption);
     let texte = `${aliment.nom} - ${aliment.quantite} ${aliment.unite}`;
     if (aliment.peremption) {
@@ -1183,6 +1185,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
