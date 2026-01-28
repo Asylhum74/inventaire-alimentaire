@@ -15,9 +15,7 @@ html, body {height: 100%;}
 h1 { color: #2c3e50; text-align: center; }
 label { display: block; margin-top: 10px; }
 input, select, button { margin: 5px 0; padding: 10px; font-size: 1em; width: 100%; box-sizing: border-box; }
-
 button.small {padding: 6px 10px; font-size: 0.9em; min-width: 90px; }
-
 .nav {display: flex; gap: 10px; margin-bottom: 15px; }
 .nav button {flex: 1; }
   
@@ -36,13 +34,11 @@ button.small {padding: 6px 10px; font-size: 0.9em; min-width: 90px; }
    🍽 ALIMENTAIRE
 ========================== */
 ul { list-style: none; padding: 0; max-height: 400px; overflow-y: auto; margin-top: 10px; }
-li { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin:5px 0; border-bottom:1px solid #ccc; padding:5px; word-wrap:break-word; }
-
+li { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin:5px 0; border-bottom:1px solid #ccc; padding:5px;
+    word-wrap:break-word; }
 .actions {display: inline-flex; gap: 6px; margin-left: 10px; }
-  
 .urgent {color: red; font-weight: bold; display: flex; align-items: center; flex: 1; }
 .ok {color: black; display: flex; align-items: center; flex: 1; }
-
 .course-checkbox {width: 20px; height: 20px; cursor: pointer; }
 .form-section {margin-bottom: 25px; }
 #listeAliments {min-height: calc(100vh - 300px); overflow-y: auto; }
@@ -260,9 +256,10 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
     <div class="form-section">
       <button type="button" onclick="ajouterRecette()">Ajouter la recette</button>
     </div>
+    <h3>Liste des recettes :</h3>
+    <ul id="listeRecettes"></ul>
   </div>
-  <h3>Liste des recettes :</h3>
-  <ul id="listeRecettes"></ul>
+
 </div>
   
 <!-- ==========================
@@ -1159,6 +1156,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
