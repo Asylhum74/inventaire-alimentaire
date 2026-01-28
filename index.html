@@ -883,7 +883,6 @@ function supprimerDepense(index) {
 function afficherDepenses() {
   const ul = document.getElementById("budgetListe");
   ul.innerHTML = "";
-  const depenses = JSON.parse(localStorage.getItem("budgetDepenses")) || [];
   const depensesTriees = {};
   depenses.forEach((d, index) => {
     if (!depensesTriees[d.categorie]) depensesTriees[d.categorie] = [];
@@ -897,22 +896,15 @@ function afficherDepenses() {
       const li = document.createElement("li");
       li.style.display = "flex";
       li.style.justifyContent = "space-between";
-      li.style.alignItems = "center";
       const span = document.createElement("span");
       span.textContent = `${d.note} : ${d.montant} €`;
       const btnSupprimer = document.createElement("button");
       btnSupprimer.textContent = "Supprimer";
-      btnSupprimer.style.padding = "4px 8px";
-      btnSupprimer.style.marginLeft = "10px";
-      btnSupprimer.style.background = "#e74c3c";
-      btnSupprimer.style.color = "white";
-      btnSupprimer.style.border = "none";
-      btnSupprimer.style.borderRadius = "4px";
       btnSupprimer.onclick = () => {
         if (confirm("Supprimer cette dépense ?")) {
-          depenses.splice(d.index, 1);
-          localStorage.setItem("budgetDepenses", JSON.stringify(depenses));
-          afficherDepenses();
+          depenses.splice(d.index, 1);   // ✅ modifie la vraie liste
+          sauvegarderDepenses();         // ✅ sauvegarde
+          afficherDepenses();            // ✅ refresh
         }
       };
       li.appendChild(span);
@@ -1158,6 +1150,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
