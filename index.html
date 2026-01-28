@@ -56,8 +56,8 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 .room {margin-top: 20px; padding: 12px; border-radius: 10px; background: rgba(0,0,0,0.05); }
 .task {display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 1.1em; }
 .task input {width: 22px; height: 22px; }
-.progress-bar {height: 10px; background: #ddd; border-radius: 10px; overflow: hidden; margin: 6px 0 12px 0; }
 .progress-fill {height: 100%; width: 0%; background: #2ecc71; transition: width 0.3s ease; }
+.proprete-page {display: none; }
 
 /* ==========================
    🌙 MODE SOMBRE
@@ -67,7 +67,6 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 .dark li {border-bottom: 1px solid #333; }
 .dark strong, .dark li span, .dark h1, .dark h2 {color: #ffffff; }
 .dark .room {background: rgba(255,255,255,0.05); }
-.dark .progress-bar {background: #333;}
 .toggle {margin: 10px 0; }
 
 /* ==========================
@@ -277,28 +276,20 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
   
   <!-- Onglets -->
   <nav class="nav">
-    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherTaches('Menage')">🏠 Appartement</button>
-    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherTaches('Voiture')">🚗 Voiture</button>
+    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherOngletProprete('Menage')">🏠 Appartement</button>
+    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherOngletProprete('Voiture')">🚗 Voiture</button>
   </nav>
 
   <!-- ===== Appartement ===== -->
-  <div id="Appartement" style="margin-bottom:10px;">
-    <div class="progress">
-      <div id="progress-menage" class="progress-bar"></div>
-      <div style="margin-top:20px;">
-        <button onclick="resetTaches("Menage")">🔄 Nouvelle semaine</button>
-      </div>
-    </div>
+  <div id="proprete-menage" class="proprete-page">
+    <div id="liste-menage"></div>
+    <button onclick="resetProprete('menage')">🔄 Nouvelle semaine</button>
   </div>
 
   <!-- ===== Voiture ===== -->
-  <div id="Voiture" style="margin-bottom:10px;">
-    <div class="progress">
-      <div id="progress-voiture" class="progress-bar"></div>
-      <div style="margin-top:20px;">
-        <button onclick="resetTaches("Voiture")">🔄 Nouvelle semaine</button>
-      </div>
-    </div>
+  <div id="proprete-voiture" class="proprete-page">
+    <div id="liste-voiture"></div>
+    <button onclick="resetProprete('voiture')">🔄 Reset voiture</button>
   </div>
   
 </div>
@@ -766,49 +757,68 @@ function afficherRecettes() {
 /* =========================
    PROPRETÉ
 ========================= */
-const tachesMenage = {
-  "Cuisine": ["Plan de travail", "Plaques", "Sol", "Poubelle", "Nettoyer Frigo, Micro-onde,..."],
-  "Salle de bain": ["Lavabo", "Douche", "WC", "Miroir", "Sol"],
-  "Salon": ["Rangement", "Aspirateur", "Serpillère"],
-  "Chambre": ["Draps", "Rangement", "Aspirateur"]
-};
-const tachesVoiture = {
-  "Extérieur": ["Nettoyage", "Séchage", "Appliquer la cire"],
-  "Intérieur": ["Rangement", "Aspirateur", "Nettoyage", "Séchage"],
-};
-                
-function afficherTaches(type) {
-  const ul = document.getElementById("liste-" + type);
-  const barre = document.getElementById("progress-" + type);
-  if (!ul) return;
-  let taches = JSON.parse(localStorage.getItem("taches-" + type)) || [];
-  ul.innerHTML = "";
-  let faites = 0;
-  taches.forEach((tache, index) => {
-    const li = document.createElement("li");
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.checked = tache.fait;
-    if (tache.fait) faites++;
-    checkbox.onchange = () => {
-      taches[index].fait = checkbox.checked;
-      localStorage.setItem("taches-" + type, JSON.stringify(taches));
-      afficherTaches(type);
-    };
-    li.appendChild(checkbox);
-    li.append(" " + tache.nom);
-    ul.appendChild(li);
-  });
-  const total = taches.length || 1;
-  const pourcentage = Math.round((faites / total) * 100);
-  if (barre) {
-    barre.style.width = pourcentage + "%";
-    barre.textContent = pourcentage + "%";
+const tachesProprete = {
+  menage: {
+    "Cuisine": ["Plan de travail", "Plaques", "Sol", "Poubelle", "Nettoyage appareil"],
+    "Salle de bain": ["Lavabo", "Douche", "WC", "Miroir", "Sol"],
+    "Salon": ["Rangement", "Aspirateur", "Serpillère"],
+    "Chambre": ["Draps", "Rangement", "Aspirateur"]
+  },
+  voiture: {
+    "Intérieur": ["Rangement", "Aspirateur", "Tableau de bord", "Vitres"],
+    "Extérieur": ["Nettoyage", "Séchage", "Cire"],
   }
+};            
+function afficherTaches(type) {
+  const container = document.getElementById("liste-" + type);
+  container.innerHTML = "";
+  const data = JSON.parse(localStorage.getItem("propreteEtat_" + type)) || {};
+  const pieces = tachesProprete[type];
+  Object.keys(pieces).forEach(piece => {
+    const divRoom = document.createElement("div");
+    divRoom.className = "room";
+    const titre = document.createElement("h3");
+    titre.textContent = piece;
+    const progressBar = document.createElement("div");
+    progressBar.className = "progress-bar";
+    const progressFill = document.createElement("div");
+    progressFill.className = "progress-fill";
+    progressBar.appendChild(progressFill);
+    divRoom.appendChild(titre);
+    divRoom.appendChild(progressBar);
+    let total = pieces[piece].length;
+    let cochees = 0;
+    const majProgression = () => {
+      progressFill.style.width = Math.round((cochees / total) * 100) + "%";
+    };
+    pieces[piece].forEach(tache => {
+      const label = document.createElement("label");
+      label.className = "task";
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      const key = piece + "_" + tache;
+      checkbox.checked = data[key] || false;
+      if (checkbox.checked) cochees++;
+      checkbox.onchange = () => {
+        const etat = JSON.parse(localStorage.getItem("propreteEtat_" + type)) || {};
+        etat[key] = checkbox.checked;
+        localStorage.setItem("propreteEtat_" + type, JSON.stringify(etat));
+        cochees += checkbox.checked ? 1 : -1;
+        majProgression();
+      };
+      const span = document.createElement("span");
+      span.textContent = tache;
+      label.appendChild(checkbox);
+      label.appendChild(span);
+      divRoom.appendChild(label);
+    });
+    majProgression();
+    container.appendChild(divRoom);
+  });
 }
-function resetTaches(type) {
-  if (!confirm("Commencer une nouvelle semaine ? Toutes les cases seront décochées.")) return;
-  localStorage.removeItem("taches-" + type);
+function resetProprete(type) {
+  if (!confirm("Tout réinitialiser ?")) return;
+  localStorage.removeItem("propreteEtat_" + type);
   afficherTaches(type);
 }
 
@@ -949,13 +959,19 @@ function afficherPage(page) {
     afficherSousPage("inventaire");
   }
    if(page === "proprete") {
-    afficherTaches("Menage");
+    afficherOngletProprete("menage");
   }
 }
 function afficherSousPage(id) { 
   document.querySelectorAll("#page-alimentaire > div[id]").forEach(d => { 
     d.style.display = "none"; }); 
   document.getElementById(id).style.display = "block"; 
+}
+function afficherOngletProprete(id) {
+  document.querySelectorAll(".proprete-page")
+    .forEach(p => p.style.display = "none");
+  document.getElementById("proprete-" + id).style.display = "block";
+  afficherTaches(id);
 }
 
 /* =========================
@@ -1173,6 +1189,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
