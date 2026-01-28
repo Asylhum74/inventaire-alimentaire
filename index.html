@@ -15,9 +15,7 @@ html, body {height: 100%;}
 h1 { color: #2c3e50; text-align: center; }
 label { display: block; margin-top: 10px; }
 input, select, button { margin: 5px 0; padding: 10px; font-size: 1em; width: 100%; box-sizing: border-box; }
-
 button.small {padding: 6px 10px; font-size: 0.9em; min-width: 90px; }
-
 .nav {display: flex; gap: 10px; margin-bottom: 15px; }
 .nav button {flex: 1; }
   
@@ -71,7 +69,8 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 /* ==========================
    🖤 POPUPS
 ========================== */
-.popup {position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+.popup {position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.6);
+        z-index: 99999; }
 .popup-content {background: #1e1e1e; color: white; width: 100%; max-width: 500px; padding: 30px; border-radius: 15px; display: flex; 
                 flex-direction: column; gap: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); max-height: 90vh; overflow-y: auto; }
 .popup-content input,
@@ -1175,10 +1174,7 @@ function sauvegarderRepasPopup() {
   <div class="popup-content">
     <h2>Modifier le repas</h2>
     <p id="repasTitre"></p>
-    <textarea id="repasTexte"
-              style="min-height:120px; font-size:1.2em;"
-              placeholder="Ex: Pâtes, Tomates, Fromage">
-    </textarea>
+    <textarea id="repasTexte" style="min-height:120px; font-size:1.2em;" placeholder="Ex: Pâtes, Tomates, Fromage"></textarea>
     <div class="popup-actions">
       <button onclick="sauvegarderRepasPopup()">💾 Sauvegarder</button>
       <button onclick="fermerPopupRepas()">Annuler</button>
@@ -1188,6 +1184,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
