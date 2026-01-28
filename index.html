@@ -274,10 +274,33 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 <div id="page-proprete" class="page" style="display:none;">
   <h2>🧽 Propreté</h2>
   <button class="small" onclick="afficherPage('accueil')">⬅ Retour</button>
-  <div id="listeTachesProprete"></div>
-  <div style="margin-top:20px;">
-    <button onclick="resetProprete()">🔄 Nouvelle semaine</button>
+  
+  <!-- Onglets -->
+  <nav class="nav">
+    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherTaches('Menage')">🏠 Appartement</button>
+    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherTaches('Voiture')">🚗 Voiture</button>
+  </nav>
+
+  <!-- ===== Appartement ===== -->
+  <div id="Appartement" style="margin-bottom:10px;">
+    <div class="progress">
+      <div id="progress-menage" class="progress-bar"></div>
+      <div style="margin-top:20px;">
+        <button onclick="resetTaches("Menage")">🔄 Nouvelle semaine</button>
+      </div>
+    </div>
   </div>
+
+  <!-- ===== Voiture ===== -->
+  <div id="Voiture" style="margin-bottom:10px;">
+    <div class="progress">
+      <div id="progress-voiture" class="progress-bar"></div>
+      <div style="margin-top:20px;">
+        <button onclick="resetTaches("Voiture")">🔄 Nouvelle semaine</button>
+      </div>
+    </div>
+  </div>
+  
 </div>
 
 <!-- ==========================
@@ -293,7 +316,8 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
     <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherBudgetOnglet('graphique')" class="budget-tab">Graphique</button>
   </nav>
 
-  <!-- Contenu Dépenses -->
+  <!-- ===== Depense ===== -->
+  <div id="inventaire" style="margin-bottom:10px;">
   <div id="budget-depenses" style="margin-top: 20px;">
     <h3>Ajouter une dépense</h3>
     <label>Montant (€)</label>
@@ -320,7 +344,8 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
     <ul id="budgetListe"></ul>
   </div>
 
-  <!-- Contenu Graphique -->
+  <!-- ===== Graphique ===== -->
+  <div id="inventaire" style="margin-bottom:10px;">
   <div id="budget-graphique" style="display:none;">
     <canvas id="budgetPieChart" width="300" height="300"></canvas>
     <ul id="budgetLegend" style="list-style:none; padding:0; margin-top:10px;"></ul>
@@ -741,64 +766,50 @@ function afficherRecettes() {
 /* =========================
    PROPRETÉ
 ========================= */
-const tachesProprete = {
+const tachesMenage = {
   "Cuisine": ["Plan de travail", "Plaques", "Sol", "Poubelle", "Nettoyer Frigo, Micro-onde,..."],
   "Salle de bain": ["Lavabo", "Douche", "WC", "Miroir", "Sol"],
   "Salon": ["Rangement", "Aspirateur", "Serpillère"],
   "Chambre": ["Draps", "Rangement", "Aspirateur"]
 };
-function afficherProprete() {
-  const container = document.getElementById("listeTachesProprete");
-  container.innerHTML = "";
-  const data = JSON.parse(localStorage.getItem("propreteEtat")) || {};
-  Object.keys(tachesProprete).forEach(piece => {
-    const divRoom = document.createElement("div");
-    divRoom.className = "room";
-    const titre = document.createElement("h3");
-    titre.textContent = piece;
-    const progressBar = document.createElement("div");
-    progressBar.className = "progress-bar";
-    const progressFill = document.createElement("div");
-    progressFill.className = "progress-fill";
-    progressBar.appendChild(progressFill);
-    divRoom.appendChild(titre);
-    divRoom.appendChild(progressBar);
-    let total = tachesProprete[piece].length;
-    let cochees = 0;
-    const majProgression = () => {
-      const pourcentage = Math.round((cochees / total) * 100);
-      progressFill.style.width = pourcentage + "%";
+const tachesVoiture = {
+  "Extérieur": ["Nettoyage", "Séchage", "Appliquer la cire"],
+  "Intérieur": ["Rangement", "Aspirateur", "Nettoyage", "Séchage"],
+},
+                
+function afficherTaches(type) {
+  const ul = document.getElementById("liste-" + type);
+  const barre = document.getElementById("progress-" + type);
+  if (!ul) return;
+  let taches = JSON.parse(localStorage.getItem("taches-" + type)) || [];
+  ul.innerHTML = "";
+  let faites = 0;
+  taches.forEach((tache, index) => {
+    const li = document.createElement("li");
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = tache.fait;
+    if (tache.fait) faites++;
+    checkbox.onchange = () => {
+      taches[index].fait = checkbox.checked;
+      localStorage.setItem("taches-" + type, JSON.stringify(taches));
+      afficherTaches(type);
     };
-    tachesProprete[piece].forEach(tache => {
-      const label = document.createElement("label");
-      label.className = "task";
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      const key = piece + "_" + tache;
-      checkbox.checked = data[key] || false;
-      if (checkbox.checked) cochees++;
-      checkbox.onchange = () => {
-        const etat = JSON.parse(localStorage.getItem("propreteEtat")) || {};
-        etat[key] = checkbox.checked;
-        localStorage.setItem("propreteEtat", JSON.stringify(etat));
-        cochees += checkbox.checked ? 1 : -1;
-        majProgression();
-      };
-      const span = document.createElement("span");
-      span.textContent = tache;
-      label.appendChild(checkbox);
-      label.appendChild(span);
-
-      divRoom.appendChild(label);
-    });
-    majProgression();
-    container.appendChild(divRoom);
+    li.appendChild(checkbox);
+    li.append(" " + tache.nom);
+    ul.appendChild(li);
   });
+  const total = taches.length || 1;
+  const pourcentage = Math.round((faites / total) * 100);
+  if (barre) {
+    barre.style.width = pourcentage + "%";
+    barre.textContent = pourcentage + "%";
+  }
 }
-function resetProprete() {
+function resetTaches(type) {
   if (!confirm("Commencer une nouvelle semaine ? Toutes les cases seront décochées.")) return;
-  localStorage.removeItem("propreteEtat");
-  afficherProprete();
+  localStorage.removeItem("taches-" + type);
+  afficherTaches(type);
 }
 
 /* =========================
@@ -1162,6 +1173,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
