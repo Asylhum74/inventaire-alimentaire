@@ -938,7 +938,7 @@ function afficherDepenses() {
 
 function nouveauMois() {
   if (!confirm("Voulez-vous vraiment commencer un nouveau mois ? Toutes les dépenses seront effacées.")) return;
-  document.querySelectorAll('.page-budget').forEach(input => input.value = '');
+  document.querySelectorAll('.depenses').forEach(input => input.value = '');
   alert("Nouveau mois prêt ! Toutes les dépenses ont été vidées.");
 }
 
@@ -1176,6 +1176,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
