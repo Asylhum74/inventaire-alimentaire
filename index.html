@@ -323,7 +323,6 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
     <div style="display: flex; align-items: flex-end; gap: 10px; margin-top: 20px;">
       <h3>Dépenses :</h3>
       <div class="budget-actions">
-        <button ></button>
         <button onclick="nouveauMois()" style="background-color:#e74c3c; color:white; padding: 6px 12px; border:none; border-radius:5px; cursor:pointer; 
           font-size: 0.9em;height: fit-content;width: auto !important;"> Réinitialiser le budget</button>
       </div>
@@ -939,7 +938,7 @@ function afficherDepenses() {
 
 function nouveauMois() {
   if (!confirm("Voulez-vous vraiment commencer un nouveau mois ? Toutes les dépenses seront effacées.")) return;
-  document.querySelectorAll('.budget-depenses').forEach(input => input.value = '');
+  document.querySelectorAll('.page-budget').forEach(input => input.value = '');
   alert("Nouveau mois prêt ! Toutes les dépenses ont été vidées.");
 }
 
@@ -1177,6 +1176,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
