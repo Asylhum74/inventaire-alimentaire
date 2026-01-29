@@ -403,7 +403,6 @@ function afficherAliments() {
   let categorieActuelle = "";
   aliments.forEach((aliment, index) => {
     if(!aliment.nom.toLowerCase().includes(recherche)) return;
-    // Si on change de catégorie → afficher le titre
     if(aliment.categorie !== categorieActuelle) {
       categorieActuelle = aliment.categorie;
       const titre = document.createElement("li");
@@ -906,6 +905,12 @@ function afficherDepenses() {
       span.textContent = `${d.note} : ${d.montant} €`;
       const btnSupprimer = document.createElement("button");
       btnSupprimer.textContent = "Supprimer";
+      btnSupprimer.style.padding = "10px 16px";
+      btnSupprimer.style.fontSize = "1em";
+      btnSupprimer.style.background = "#e74c3c";
+      btnSupprimer.style.color = "white";
+      btnSupprimer.style.border = "none";
+      btnSupprimer.style.borderRadius = "6px";
       btnSupprimer.onclick = () => {
         if (confirm("Supprimer cette dépense ?")) {
           depenses.splice(d.index, 1);   // ✅ modifie la vraie liste
@@ -1156,6 +1161,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
