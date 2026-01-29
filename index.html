@@ -59,7 +59,8 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 ========================== */
 #page-budget {display: flex; flex-direction: column; height: 100vh; }
 #budgetListe {min-height: calc(100vh - 300px); overflow-y: auto; }
-#budgetListe .actions button {width: auto; }
+#budgetListe .actions {display: flex; gap: 12px; margin-top: 15px; }
+#budgetListe .actions button {flex: 1; padding: 12px; font-size: 1em; }
 
 /* ==========================
    🌙 MODE SOMBRE
@@ -1163,6 +1164,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
