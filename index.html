@@ -59,7 +59,7 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 ========================== */
 #page-budget {display: flex; flex-direction: column; height: 100vh; }
 #budgetListe {min-height: calc(100vh - 300px); overflow-y: auto; }
-#budgetListe .btnSupprimer {width: auto; }
+#budgetListe .actions button {width: auto; }
 
 /* ==========================
    🌙 MODE SOMBRE
@@ -917,6 +917,9 @@ function afficherDepenses() {
           afficherDepenses();            // ✅ refresh
         }
       };
+      const actions = document.createElement("span");
+      actions.className = "actions";
+      actions.appendChild(btnSupprimer);
       li.appendChild(span);
       li.appendChild(btnSupprimer);
       ul.appendChild(li);
@@ -1160,6 +1163,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
