@@ -59,6 +59,7 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 ========================== */
 #page-budget {display: flex; flex-direction: column; height: 100vh; }
 #budgetListe {min-height: calc(100vh - 300px); overflow-y: auto; }
+#budgetListe .delete-btn {width: auto; }
 
 /* ==========================
    🌙 MODE SOMBRE
@@ -899,8 +900,6 @@ function afficherDepenses() {
     ul.appendChild(titre);
     depensesTriees[categorie].forEach(d => {
       const li = document.createElement("li");
-      //li.style.display = "flex";
-      //li.style.justifyContent = "space-between";
       const span = document.createElement("span");
       span.textContent = `${d.note} : ${d.montant} €`;
       const btnSupprimer = document.createElement("button");
@@ -1161,6 +1160,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
