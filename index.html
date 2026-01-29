@@ -819,6 +819,10 @@ function resetProprete() {
    BUDGET
 ========================= */
 let depenses = [];
+function getMoisActuel() {
+  const d = new Date();
+  return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0");
+}
 function afficherBudgetOnglet(onglet) {
   document.getElementById("budget-depenses").style.display = "none";
   document.getElementById("budget-graphique").style.display = "none";
@@ -906,8 +910,10 @@ function ajouterDepense() {
 }
 // Supprimer
 function supprimerDepense(index) {
+  const depenseSupprimee = depenses[index];
   depenses.splice(index, 1);
   sauvegarderDepenses();
+  supprimerDeHistorique(depenseSupprimee);
   afficherDepenses();
 }
 // Afficher
@@ -954,18 +960,17 @@ function afficherDepenses() {
   document.getElementById("budgetTotal").textContent = total.toFixed(2) + " €";
 }
 function nouveauMois() {
-  if (!confirm("Voulez-vous vraiment commencer un nouveau mois ? Toutes les dépenses seront effacées.")) return;
-    depenses = []; // vide le tableau des dépenses
-    localStorage.removeItem("depenses"); // supprime de localStorage
-    afficherDepenses(); // met à jour l'affichage
-    alert("Nouveau mois prêt ! Toutes les dépenses ont été vidées.");
+  if (!confirm("Voulez-vous vraiment commencer un nouveau mois ?")) return;
+  depenses = [];
+  localStorage.removeItem("budgetDepenses");
+  afficherDepenses();
+  alert("Nouveau mois prêt !");
 }
 function sauvegarderDansHistorique(depense) {
   const historique = JSON.parse(localStorage.getItem("budgetHistorique")) || {};
-  const date = new Date(depense.date);
-  const cleMois = date.getFullYear() + "-" + String(date.getMonth()+1).padStart(2,"0");
-  if(!historique[cleMois]) historique[cleMois] = [];
-  historique[cleMois].push(depense);
+  const mois = getMoisActuel();
+  if(!historique[mois]) historique[mois] = [];
+  historique[mois].push(depense);
   localStorage.setItem("budgetHistorique", JSON.stringify(historique));
 }
 function afficherHistorique() {
@@ -1004,6 +1009,17 @@ function ouvrirPopupHistorique(mois) {
 }
 function fermerPopupHistorique() {
   document.getElementById("popupHistorique").style.display = "none";
+}
+function supprimerDeHistorique(depense) {
+  const historique = JSON.parse(localStorage.getItem("budgetHistorique")) || {};
+  const mois = getMoisActuel();
+  if(!historique[mois]) return;
+  historique[mois] = historique[mois].filter(d =>
+    !(d.montant === depense.montant &&
+      d.note === depense.note &&
+      d.date === depense.date)
+  );
+  localStorage.setItem("budgetHistorique", JSON.stringify(historique));
 }
 
 /* =========================
@@ -1252,6 +1268,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
