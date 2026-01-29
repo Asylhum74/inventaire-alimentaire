@@ -295,6 +295,7 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
   <nav class="nav">
     <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherBudgetOnglet('depenses')" class="budget-tab">Dépenses</button>
     <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherBudgetOnglet('graphique')" class="budget-tab">Graphique</button>
+    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherBudgetOnglet('historique')" class="budget-tab">Historique</button>
   </nav>
 
   <!-- Contenu Dépenses -->
@@ -334,9 +335,14 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
     <canvas id="budgetPieChart" width="300" height="300"></canvas>
     <ul id="budgetLegend" style="list-style:none; padding:0; margin-top:10px;"></ul>
   </div>
+  
+  <!-- Contenu Historique -->
+  <div id="budget-historique" style="display:none;">
+    <ul id="historiqueListe"></ul>
+  </div>
+  
 </div>
 
-  
 <script>
 // ------------------- MODE SOMBRE -------------------
 if (localStorage.getItem("darkMode") === "true") {
@@ -874,12 +880,14 @@ function ajouterDepense() {
     alert("Montant invalide");
     return;
   }
-  depenses.push({
+  const nouvelleDepense = {
     montant,
     categorie,
     note,
     date: new Date().toISOString()
-  });
+  };
+  depenses.push(nouvelleDepense);
+  sauvegarderDansHistorique(nouvelleDepense);
   document.getElementById("budgetMontant").value = "";
   document.getElementById("budgetNote").value = "";
   sauvegarderDepenses();
@@ -934,7 +942,6 @@ function afficherDepenses() {
   const total = depenses.reduce((s, d) => s + d.montant, 0);
   document.getElementById("budgetTotal").textContent = total.toFixed(2) + " €";
 }
-
 function nouveauMois() {
   if (!confirm("Voulez-vous vraiment commencer un nouveau mois ? Toutes les dépenses seront effacées.")) return;
     depenses = []; // vide le tableau des dépenses
@@ -942,6 +949,30 @@ function nouveauMois() {
     afficherDepenses(); // met à jour l'affichage
     alert("Nouveau mois prêt ! Toutes les dépenses ont été vidées.");
 }
+function sauvegarderDansHistorique(depense) {
+  const historique = JSON.parse(localStorage.getItem("budgetHistorique")) || {};
+  const date = new Date(depense.date);
+  const cleMois = date.getFullYear() + "-" + String(date.getMonth()+1).padStart(2,"0");
+  if(!historique[cleMois]) historique[cleMois] = [];
+  historique[cleMois].push(depense);
+  localStorage.setItem("budgetHistorique", JSON.stringify(historique));
+}
+
+/*function afficherHistorique() {
+  const historiqueListe = document.getElementById("historiqueListe");
+  historiqueListe.innerHTML = "";
+  const historique = JSON.parse(localStorage.getItem("historique")) || {};
+  for (const mois in historique) {
+    const li = document.createElement("li");
+    li.textContent = mois;
+    li.style.cursor = "pointer";
+    li.addEventListener("click", () => {
+      const details = historique[mois].map(d => `${d.nom} : ${d.montant}€`).join("\n");
+      alert(`Dépenses de ${mois} :\n\n${details}`);
+    });
+    historiqueListe.appendChild(li);
+  }
+}  
 
 /* =========================
    Navigation
@@ -1177,6 +1208,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
