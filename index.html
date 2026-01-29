@@ -910,9 +910,8 @@ function ajouterDepense() {
   afficherDepenses();
 }
 // Supprimer
-function supprimerDepense(index) {
-  const id = depenses[index].id;
-  depenses.splice(index, 1);
+function supprimerDepense(id) {
+  depenses = depenses.filter(d => d.id !== id);
   sauvegarderDepenses();
   supprimerDeHistorique(id);
   afficherDepenses();
@@ -944,9 +943,9 @@ function afficherDepenses() {
       btnSupprimer.style.borderRadius = "6px";
       btnSupprimer.onclick = () => {
         if (confirm("Supprimer cette dépense ?")) {
-          depenses.splice(d.index, 1);   // ✅ modifie la vraie liste
-          sauvegarderDepenses();         // ✅ sauvegarde
-          afficherDepenses();            // ✅ refresh
+          btnSupprimer.onclick = () => supprimerDepense(d.id);
+          sauvegarderDepenses();         
+          afficherDepenses();            
         }
       };
       const actions = document.createElement("span");
@@ -1011,14 +1010,27 @@ function ouvrirPopupHistorique(mois) {
 function fermerPopupHistorique() {
   document.getElementById("popupHistorique").style.display = "none";
 }
-function supprimerDeHistorique(id) {
+function supprimerDeHistorique(id){
   const historique = JSON.parse(localStorage.getItem("budgetHistorique")) || {};
-  const mois = getMoisActuel();
-  if(!historique[mois]) return;
-  historique[mois] = historique[mois].filter(d => d.id !== id);
+  Object.keys(historique).forEach(mois => {
+    historique[mois] = historique[mois].filter(d => d.id !== id);
+  });
   localStorage.setItem("budgetHistorique", JSON.stringify(historique));
 }
-
+function verifierChangementDeMois() {
+  const moisActuel = getMoisActuel();
+  const moisSauvegarde = localStorage.getItem("budgetMoisActuel");
+  if(!moisSauvegarde){
+    localStorage.setItem("budgetMoisActuel", moisActuel);
+    return;
+  }
+  if(moisSauvegarde !== moisActuel){
+    depenses = [];
+    localStorage.setItem("budgetDepenses", JSON.stringify(depenses));
+    localStorage.setItem("budgetMoisActuel", moisActuel);
+  }
+}
+  
 /* =========================
    Navigation
 ========================= */
@@ -1044,6 +1056,7 @@ function afficherSousPage(id) {
 chargerAliments();
 afficherAliments();
 chargerDepenses();
+verifierChangementDeMois();
 afficherDepenses();
 afficherPage("accueil");
 afficherSousPage("inventaire");
@@ -1265,6 +1278,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
