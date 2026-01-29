@@ -938,8 +938,10 @@ function afficherDepenses() {
 
 function nouveauMois() {
   if (!confirm("Voulez-vous vraiment commencer un nouveau mois ? Toutes les dépenses seront effacées.")) return;
-  localStorage.removeItem("depenses");
-  alert("Nouveau mois prêt ! Toutes les dépenses ont été vidées.");
+    depenses = []; // vide le tableau des dépenses
+    localStorage.removeItem("depenses"); // supprime de localStorage
+    afficherDepenses(); // met à jour l'affichage
+    alert("Nouveau mois prêt ! Toutes les dépenses ont été vidées.");
 }
 
 /* =========================
@@ -1176,6 +1178,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
