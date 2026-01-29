@@ -923,7 +923,7 @@ function afficherDepenses() {
   const depensesTriees = {};
   depenses.forEach((d, index) => {
     if (!depensesTriees[d.categorie]) depensesTriees[d.categorie] = [];
-    depensesTriees[d.categorie].push({ ...d, index });
+    depensesTriees[d.categorie].push(d);
   });
   Object.keys(depensesTriees).forEach(categorie => {
     const titre = document.createElement("li");
@@ -942,10 +942,9 @@ function afficherDepenses() {
       btnSupprimer.style.border = "none";
       btnSupprimer.style.borderRadius = "6px";
       btnSupprimer.onclick = () => {
+      btnSupprimer.onclick = () => {
         if (confirm("Supprimer cette dépense ?")) {
-          btnSupprimer.onclick = () => supprimerDepense(d.id);
-          sauvegarderDepenses();         
-          afficherDepenses();            
+          supprimerDepense(d.id);
         }
       };
       const actions = document.createElement("span");
@@ -1278,6 +1277,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
