@@ -899,8 +899,8 @@ function afficherDepenses() {
     ul.appendChild(titre);
     depensesTriees[categorie].forEach(d => {
       const li = document.createElement("li");
-      li.style.display = "flex";
-      li.style.justifyContent = "space-between";
+      //li.style.display = "flex";
+      //li.style.justifyContent = "space-between";
       const span = document.createElement("span");
       span.textContent = `${d.note} : ${d.montant} €`;
       const btnSupprimer = document.createElement("button");
@@ -1161,6 +1161,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
