@@ -820,9 +820,20 @@ function resetProprete() {
 ========================= */
 let depenses = [];
 function afficherBudgetOnglet(onglet) {
-  document.getElementById("budget-depenses").style.display = (onglet === 'depenses') ? 'block' : 'none';
-  document.getElementById("budget-graphique").style.display = (onglet === 'graphique') ? 'block' : 'none';
-  if(onglet === 'graphique') genererGraphique();
+  document.getElementById("budget-depenses").style.display = "none";
+  document.getElementById("budget-graphique").style.display = "none";
+  document.getElementById("budget-historique").style.display = "none";
+  if(onglet === "depenses") {
+    document.getElementById("budget-depenses").style.display = "block";
+  }
+  if(onglet === "graphique") {
+    document.getElementById("budget-graphique").style.display = "block";
+    genererGraphique();
+  }
+  if(onglet === "historique") {
+    document.getElementById("budget-historique").style.display = "block";
+    afficherHistorique();
+  }
 }
 function genererGraphique(){
   const ctx = document.getElementById("budgetPieChart").getContext("2d");
@@ -957,22 +968,43 @@ function sauvegarderDansHistorique(depense) {
   historique[cleMois].push(depense);
   localStorage.setItem("budgetHistorique", JSON.stringify(historique));
 }
-
-/*function afficherHistorique() {
-  const historiqueListe = document.getElementById("historiqueListe");
-  historiqueListe.innerHTML = "";
-  const historique = JSON.parse(localStorage.getItem("historique")) || {};
-  for (const mois in historique) {
-    const li = document.createElement("li");
-    li.textContent = mois;
-    li.style.cursor = "pointer";
-    li.addEventListener("click", () => {
-      const details = historique[mois].map(d => `${d.nom} : ${d.montant}€`).join("\n");
-      alert(`Dépenses de ${mois} :\n\n${details}`);
-    });
-    historiqueListe.appendChild(li);
+function afficherHistorique() {
+  const ul = document.getElementById("historiqueListe");
+  ul.innerHTML = "";
+  const historique = JSON.parse(localStorage.getItem("budgetHistorique")) || {};
+  const mois = Object.keys(historique).sort().reverse();
+  if(mois.length === 0){
+    ul.innerHTML = "<li>Aucun historique</li>";
+    return;
   }
-}  
+  mois.forEach(m => {
+    const li = document.createElement("li");
+    li.style.display = "flex";
+    li.style.justifyContent = "space-between";
+    li.style.cursor = "pointer";
+    li.style.padding = "8px 0";
+    const total = historique[m].reduce((s,d)=>s+d.montant,0);
+    li.textContent = `${m} — ${total.toFixed(2)} €`;
+    li.onclick = () => ouvrirPopupHistorique(m);
+    ul.appendChild(li);
+  });
+}
+function ouvrirPopupHistorique(mois) {
+  const historique = JSON.parse(localStorage.getItem("budgetHistorique")) || {};
+  const details = historique[mois];
+  document.getElementById("historiqueTitre").textContent = "Détails " + mois;
+  const ul = document.getElementById("historiqueDetails");
+  ul.innerHTML = "";
+  details.forEach(d => {
+    const li = document.createElement("li");
+    li.textContent = `${d.note} — ${d.montant} € (${d.categorie})`;
+    ul.appendChild(li);
+  });
+  document.getElementById("popupHistorique").style.display = "flex";
+}
+function fermerPopupHistorique() {
+  document.getElementById("popupHistorique").style.display = "none";
+}
 
 /* =========================
    Navigation
@@ -1205,9 +1237,22 @@ function sauvegarderRepasPopup() {
     </div>
   </div>
 </div>
+
+<!-- Historique budget -->
+<div id="popupHistorique" class="popup">
+  <div class="popup-content">
+    <h2 id="historiqueTitre"></h2>
+    <ul id="historiqueDetails"></ul>
+
+    <div class="popup-actions">
+      <button onclick="fermerPopupHistorique()">Fermer</button>
+    </div>
+  </div>
+</div>
   
 </body>
 </html>
+
 
 
 
