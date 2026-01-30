@@ -984,11 +984,20 @@ function afficherHistorique() {
     const li = document.createElement("li");
     li.style.display = "flex";
     li.style.justifyContent = "space-between";
-    li.style.cursor = "pointer";
+    li.style.alignItems = "center";
     li.style.padding = "8px 0";
     const total = historique[m].reduce((s,d)=>s+d.montant,0);
-    li.textContent = `${m} — ${total.toFixed(2)} €`;
-    li.onclick = () => ouvrirPopupHistorique(m);
+    const span = document.createElement("span");
+    span.textContent = `${m} — ${total.toFixed(2)} €`;
+    span.style.cursor = "pointer";
+    span.onclick = () => ouvrirPopupHistorique(m);
+    const btn = document.createElement("button");
+    btn.textContent = "🗑";
+    btn.className = "delete-btn";
+    btn.style.width = "auto";
+    btn.onclick = () => supprimerMoisHistorique(m);
+    li.appendChild(span);
+    li.appendChild(btn);
     ul.appendChild(li);
   });
 }
@@ -1028,7 +1037,18 @@ function verifierChangementDeMois() {
     localStorage.setItem("budgetMoisActuel", moisActuel);
   }
 }
-  
+function supprimerMoisHistorique(mois){
+  if(!confirm("Supprimer tout l'historique de " + mois + " ?")) return;
+
+  const historique = JSON.parse(localStorage.getItem("budgetHistorique")) || {};
+
+  delete historique[mois];
+
+  localStorage.setItem("budgetHistorique", JSON.stringify(historique));
+
+  afficherHistorique();
+}
+
 /* =========================
    Navigation
 ========================= */
@@ -1276,6 +1296,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
