@@ -124,6 +124,7 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
   <nav class="nav">
     <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherSousPage('inventaire')">📦 Inventaire</button>
     <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherSousPage('repas')">🍽️ Repas</button>
+    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherSousPage('courses')">📋 Courses</button>
     <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherSousPage('recettes')">📖 Recettes</button>
   </nav>
   
@@ -253,7 +254,12 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
       <button onclick="chargerRepas()">🔄 Charger la semaine</button>
       <button onclick="genererListeCourses()">🛒 Générer la liste de courses</button>
     </div>
-    <div id="repasSemaine"></div>
+  </div>
+
+  <!-- ===== COURSES ===== -->
+  <div id="courses">
+    <h2>🛒 Liste de courses</h2>
+    <div id="listeCoursesContainer"></div>
   </div>
 
   <!-- ===== RECETTES ===== -->
@@ -571,7 +577,7 @@ function genererListeCourses() {
       courses[nom] = besoin;
     }
   });
-  const container = document.getElementById("repasSemaine");
+ const container = document.getElementById("listeCoursesContainer");
   container.innerHTML = "";
   const headerWrapper = document.createElement("div");
   headerWrapper.style.display = "flex";
@@ -1296,6 +1302,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
