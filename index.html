@@ -132,48 +132,10 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
   <div id="inventaire" style="margin-bottom:10px;">
     <button onclick="exporterInventaire()">💾 Sauvegarder</button>
     <input type="file" id="importFile" accept=".json" onchange="importerInventaire(event)">
-   
-    <label>Nom :</label>
-    <input type="text" id="nom" placeholder="Nom de l'aliment">
-    
-    <label>Quantité :</label>
-    <input type="number" id="quantite" placeholder="Quantité">
-    
-    <label>Unité :</label>
-    <input type="text" id="unite" placeholder="Ex: g, litre, pcs">
-    
-    <label>Date de péremption :</label>
-    <div style="display: flex; align-items: center; gap: 10px;">
-      <input type="date" id="peremption">
-      <label style="display: flex; align-items: center; gap: 5px; margin: 0;">
-        <input type="checkbox" id="sansDate" style="transform: scale(1.5);">
-        <span style="white-space: nowrap;">Pas de DLC</span>
-      </label>
-    </div>
-    
-    <label>Catégorie :</label>
-    <select id="categorie">
-      <option value="Choisir catégorie">Choisir catégorie</option>
-      <option value="Boisson">Boisson</option>
-      <option value="Produit laitier">Produit laitier</option>
-      <option value="Légume">Légume</option>
-      <option value="Fruit">Fruit</option>
-      <option value="Viande">Viande</option>
-      <option value="Poisson">Poisson</option>
-      <option value="Féculent">Féculent</option>
-      <option value="Sucré">Sucré</option>
-      <option value="Sauce">Sauce</option>
-      <option value="Epice">Epice</option>
-      <option value="Sec">Sec</option>
-      <option value="Plat préparé">Plat préparé</option>
-      <option value="Hygiène">Hygiène</option>
-    </select>
-
-    <div class="form-section">
-      <button type="button" onclick="ajouterOuModifierAliment()">Ajouter</button>
-    </div>
-
-    <input type="text" id="recherche" placeholder="🔍 Rechercher un aliment..." oninput="afficherAliments()">
+    <select id="catalogueSelect"></select>
+    <input id="quantite" type="number" placeholder="Quantité">
+    <button onclick="ajouterInventaireCatalogue()">Ajouter</button>
+    <button onclick="ouvrirPopupCatalogue()">➕ Nouveau produit</button>
     <h2>Liste des aliments :</h2>
     <ul id="listeAliments"></ul>
   </div>
@@ -362,6 +324,44 @@ function toggleDarkMode() {
 /* =========================
    Alimentaire
 ========================= */
+
+/* =========================
+   CATALOGUE PRODUITS
+========================= */
+let catalogue = JSON.parse(localStorage.getItem("catalogue")) || [
+  // Féculents
+  {id:"pates", nom:"Pâtes", categorie:"Féculent", unite:"g", type:"poids"},
+  {id:"riz", nom:"Riz", categorie:"Féculent", unite:"g", type:"poids"},
+  {id:"semoule", nom:"Semoule", categorie:"Féculent", unite:"g", type:"poids"},
+  {id:"quinoa", nom:"Quinoa", categorie:"Féculent", unite:"g", type:"poids"},
+  {id:"lentilles", nom:"Lentilles", categorie:"Féculent", unite:"g", type:"poids"},
+  // Légumes
+  {id:"tomate", nom:"Tomates", categorie:"Légume", unite:"pièce", type:"portion", portionsParUnite:1},
+  {id:"carotte", nom:"Carottes", categorie:"Légume", unite:"pièce", type:"portion", portionsParUnite:1},
+  {id:"oignon", nom:"Oignons", categorie:"Légume", unite:"pièce", type:"portion", portionsParUnite:1},
+  {id:"courgette", nom:"Courgettes", categorie:"Légume", unite:"pièce", type:"portion", portionsParUnite:1},
+  {id:"salade", nom:"Salade", categorie:"Légume", unite:"pièce", type:"portion", portionsParUnite:2},
+  // Fruits
+  {id:"pomme", nom:"Pommes", categorie:"Fruit", unite:"pièce", type:"portion", portionsParUnite:1},
+  {id:"banane", nom:"Bananes", categorie:"Fruit", unite:"pièce", type:"portion", portionsParUnite:1},
+  {id:"orange", nom:"Oranges", categorie:"Fruit", unite:"pièce", type:"portion", portionsParUnite:1},
+  // Viandes/poissons (poids)
+  {id:"poulet", nom:"Poulet", categorie:"Viande", unite:"g", type:"poids"},
+  {id:"boeuf", nom:"Bœuf", categorie:"Viande", unite:"g", type:"poids"},
+  {id:"saumon", nom:"Saumon", categorie:"Poisson", unite:"g", type:"poids"},
+  // Portions pratiques ⭐
+  {id:"oeufs", nom:"Oeufs", categorie:"Produit laitier", unite:"boîte", type:"portion", portionsParUnite:12},
+  {id:"miel", nom:"Miel", categorie:"Sec", unite:"pot", type:"portion", portionsParUnite:20},
+  {id:"huile", nom:"Huile d'olive", categorie:"Sauce", unite:"bouteille", type:"portion", portionsParUnite:30},
+  {id:"beurre", nom:"Beurre", categorie:"Produit laitier", unite:"plaquette", type:"portion", portionsParUnite:25},
+  {id:"fromage", nom:"Fromage râpé", categorie:"Produit laitier", unite:"sachet", type:"portion", portionsParUnite:15}
+];
+function sauvegarderCatalogue(){
+  localStorage.setItem("catalogue", JSON.stringify(catalogue));
+}
+
+
+  
 let aliments = [];
 let indexEnCours = -1;
 
@@ -375,36 +375,26 @@ function sauvegarderAliments() {
   localStorage.setItem("aliments", JSON.stringify(aliments));
 }
 // Ajouter ou modifier un aliment
-function ajouterOuModifierAliment() {
-  const nom = document.getElementById("nom").value;
-  const quantite = document.getElementById("quantite").value;
-  const unite = document.getElementById("unite").value;
-  const sansDate = document.getElementById("sansDate").checked;
-  const peremption = sansDate ? null : document.getElementById("peremption").value;
-  const categorie = document.getElementById("categorie").value;
-  if(!nom || !quantite || !unite || !categorie) {
-    alert("Veuillez remplir tous les champs !");
-    return;
-  }
-  const nouvelAliment = {nom, quantite, unite, peremption, categorie};
-  if(indexEnCours === -1) {
-    aliments.push(nouvelAliment);
+function ajouterInventaireCatalogue(){
+  const id = document.getElementById("catalogueSelect").value;
+  const quantite = Number(document.getElementById("quantite").value);
+  const produit = catalogue.find(p=>p.id===id);
+  let stockAjoute;
+  if(produit.type === "portion"){
+    stockAjoute = quantite * produit.portionsParUnite;
   } else {
-    aliments[indexEnCours] = nouvelAliment;
-    indexEnCours = -1;
-    document.querySelector("button[onclick='ajouterOuModifierAliment()']").textContent = "Ajouter";
+    stockAjoute = quantite;
   }
-  // Réinitialiser le formulaire
-  document.getElementById("nom").value = "";
-  document.getElementById("quantite").value = "";
-  document.getElementById("unite").value = "";
-  document.getElementById("peremption").value = "";
-  document.getElementById("categorie").value = "Choisir catégorie";
-  document.getElementById("sansDate").checked = false; 
+  aliments.push({
+    id,
+    nom: produit.nom,
+    categorie: produit.categorie,
+    quantite: stockAjoute,
+    unite: produit.type === "portion" ? "portion(s)" : produit.unite
+  });
   sauvegarderAliments();
   afficherAliments();
 }
-
 // Affichage
 function calculerJoursRestants(dateString) {
   const aujourdHui = new Date();
@@ -510,6 +500,16 @@ function importerInventaire(event) {
   };
   reader.readAsText(file);
 }
+function chargerCatalogueSelect(){
+  const select = document.getElementById("catalogueSelect");
+  select.innerHTML = "";
+  catalogue.forEach(p=>{
+    const o = document.createElement("option");
+    o.value = p.id;
+    o.textContent = p.nom;
+    select.appendChild(o);
+  });
+}
 
 /* =========================
    Repas
@@ -572,22 +572,33 @@ function genererListeCourses() {
     );
     const stock = trouve ? Number(trouve.quantite) : 0;
     const besoin = Math.max(totalDemandes[nom] - stock, 0);
-
     if (besoin > 0) {
-      courses[nom] = besoin;
+      const produit = catalogue.find(p =>
+        p.nom.toLowerCase() === nom.toLowerCase()
+      );
+      if (produit) {
+        if (produit.type === "portion") {
+          const aAcheter = Math.ceil(besoin / produit.portionsParUnite);
+          if (aAcheter > 0) {
+            courses[nom] = aAcheter + " " + produit.unite;
+          }
+        }
+        else {
+          courses[nom] = besoin + " " + produit.unite;
+        }
+      }
+      else {
+        courses[nom] = besoin;
+      }
     }
-  });
- const container = document.getElementById("listeCoursesContainer");
+   });
+  const container = document.getElementById("listeCoursesContainer");
   container.innerHTML = "";
   const headerWrapper = document.createElement("div");
   headerWrapper.style.display = "flex";
   headerWrapper.style.alignItems = "center";
   headerWrapper.style.justifyContent = "space-between";
   headerWrapper.style.marginBottom = "10px";
-  const titre = document.createElement("h3");
-  titre.textContent = "🛒 Liste de courses";
-  titre.style.fontSize = "1.4em";
-  headerWrapper.appendChild(titre);
   const btnAjouterInventaire = document.createElement("button");
   btnAjouterInventaire.textContent = "➕ Ajouter à l'inventaire";
   btnAjouterInventaire.className = "small"; // même style que bouton supprimer
@@ -1084,6 +1095,7 @@ verifierChangementDeMois();
 afficherDepenses();
 afficherPage("accueil");
 afficherSousPage("inventaire");
+chargerCatalogueSelect();
 
 </script>
 <script>
@@ -1217,6 +1229,36 @@ function sauvegarderRepasPopup() {
   inputRepasActif.value =document.getElementById("repasTexte").value;
   fermerPopupRepas();
 }
+
+/* =========================
+   Pop-Up ajouter au catalogue
+========================= */
+function ouvrirPopupCatalogue(){
+  document.getElementById("popupCatalogue").style.display="flex";
+}
+function fermerPopupCatalogue(){
+  document.getElementById("popupCatalogue").style.display="none";
+}
+function ajouterProduitCatalogue(){
+  const nom = catNom.value;
+  const unite = catUnite.value;
+  const type = catType.value;
+  const portions = Number(catPortions.value);
+  const id = nom.toLowerCase().replace(/\s+/g,"-");
+  const produit = {
+    id, nom, unite,
+    categorie:"Autres",
+    type
+  };
+  if(type==="portion"){
+    produit.portionsParUnite = portions || 1;
+  }
+  catalogue.push(produit);
+  sauvegarderCatalogue();
+  chargerCatalogueSelect();
+  fermerPopupCatalogue();
+}
+  
 </script>
 
 <!-- ==========================
@@ -1299,42 +1341,24 @@ function sauvegarderRepasPopup() {
     </div>
   </div>
 </div>
+
+<!-- Ajouter au catalogue -->
+<div id="popupCatalogue" class="popup">
+  <div class="popup-content">
+    <h2>Nouveau produit</h2>
+    <input id="catNom" placeholder="Nom">
+    <input id="catUnite" placeholder="Unité (g, pot, pièce...)">
+    <select id="catType">
+      <option value="portion">Portions</option>
+      <option value="poids">Grammes / ml</option>
+    </select>
+    <input id="catPortions" type="number" placeholder="Portions par unité (si portions)">
+    <div class="popup-actions">
+      <button onclick="ajouterProduitCatalogue()">Ajouter</button>
+      <button onclick="fermerPopupCatalogue()">Annuler</button>
+    </div>
+  </div>
+</div>
   
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
