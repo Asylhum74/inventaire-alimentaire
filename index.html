@@ -137,6 +137,7 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
     <button onclick="ajouterInventaireCatalogue()">Ajouter</button>
     <button onclick="ouvrirPopupCatalogue()">➕ Nouveau produit</button>
     <h2>Liste des aliments :</h2>
+    <input id="recherche" placeholder="🔍 Rechercher..." oninput="afficherAliments()">
     <ul id="listeAliments"></ul>
   </div>
 
@@ -1362,3 +1363,4 @@ function ajouterProduitCatalogue(){
   
 </body>
 </html>
+
