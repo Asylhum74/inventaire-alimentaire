@@ -44,6 +44,11 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 #listeAliments {min-height: calc(100vh - 300px); overflow-y: auto; }
 .repas-actions {display: flex; gap: 12px; margin-top: 15px; }
 .repas-actions button {flex: 1; padding: 12px; font-size: 1em; }
+.inventaire-top{display:flex; gap:10px; margin-bottom:15px; }
+.add-btn{width:auto; padding:14px 18px; font-size:1.1em; }
+.liste-mobile{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:10px; max-height: calc(100vh - 220px); overflow-y:auto; }
+.liste-mobile li{background:#f5f5f5; border-radius:12px; padding:14px; display:flex; justify-content:space-between; align-items:center; font-size:1.05em; }
+.dark .liste-mobile li{background:#1e1e1e; }
 
 /* ==========================
    🧽 PROPRETÉ
@@ -129,16 +134,12 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
   </nav>
   
   <!-- ===== INVENTAIRE ===== -->
-  <div id="inventaire" style="margin-bottom:10px;">
-    <button onclick="exporterInventaire()">💾 Sauvegarder</button>
-    <input type="file" id="importFile" accept=".json" onchange="importerInventaire(event)">
-    <select id="catalogueSelect"></select>
-    <input id="quantite" type="number" placeholder="Quantité">
-    <button onclick="ajouterInventaireCatalogue()">Ajouter</button>
-    <button onclick="ouvrirPopupCatalogue()">➕ Nouveau produit</button>
-    <h2>Liste des aliments :</h2>
-    <input id="recherche" placeholder="🔍 Rechercher..." oninput="afficherAliments()">
-    <ul id="listeAliments"></ul>
+  <div id="inventaire" class="inventaire-mobile">
+    <div class="inventaire-top">
+      <input id="recherche" placeholder="🔍 Rechercher..." oninput="afficherAliments()">
+      <button onclick="ouvrirPopupAjout()" class="add-btn">➕ Ajouter</button>
+    </div>
+    <ul id="listeAliments" class="liste-mobile"></ul>
   </div>
 
   <!-- ===== REPAS ===== -->
@@ -396,6 +397,28 @@ function ajouterInventaireCatalogue(){
   sauvegarderAliments();
   afficherAliments();
 }
+function validerAjoutAliment(){
+  const nom = document.getElementById("popNom").value.trim();
+  const quantite = Number(document.getElementById("popQuantite").value);
+  const unite = document.getElementById("popUnite").value;
+  const peremption = document.getElementById("popPeremption").value;
+  const categorie = document.getElementById("popCategorie").value;
+  if(!nom || !quantite){
+    alert("Champs manquants");
+    return;
+  }
+  inventaire.push({
+    id: Date.now(),
+    nom,
+    quantite,
+    unite,
+    peremption,
+    categorie
+  });
+  sauvegarderInventaire();
+  afficherAliments();
+  fermerPopupAjout();
+}
 // Affichage
 function calculerJoursRestants(dateString) {
   const aujourdHui = new Date();
@@ -405,54 +428,48 @@ function calculerJoursRestants(dateString) {
   return diffDays < 0 ? 0 : diffDays;
 }
 function afficherAliments() {
-  const recherche = document.getElementById("recherche").value.toLowerCase();
+  const input = document.getElementById("recherche");
+  const recherche = input ? input.value.toLowerCase() : "";
   const ul = document.getElementById("listeAliments");
   ul.innerHTML = "";
-  const ordreCategorie = ["Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sec", "Sauce", "Epice", "Boisson", " Plat préparé", "Hygiène"];
-  aliments.sort((a,b) => ordreCategorie.indexOf(a.categorie) - ordreCategorie.indexOf(b.categorie));
+  const ordreCategorie = [
+    "Féculent","Produit laitier","Viande","Poisson",
+    "Fruit","Légume","Sucré","Sec","Sauce",
+    "Epice","Boisson","Plat préparé","Hygiène"
+  ];
+  aliments.sort((a,b) =>
+    ordreCategorie.indexOf(a.categorie) - ordreCategorie.indexOf(b.categorie)
+  );
   let categorieActuelle = "";
   aliments.forEach((aliment, index) => {
     if(!aliment.nom.toLowerCase().includes(recherche)) return;
-    if(aliment.categorie !== categorieActuelle) {
+    if(aliment.categorie !== categorieActuelle){
       categorieActuelle = aliment.categorie;
       const titre = document.createElement("li");
-      titre.innerHTML = `<strong style="font-size:1.2em; color:#2c3e50;">${categorieActuelle}</strong>`;
+      titre.innerHTML = `<strong style="font-size:1.1em">${categorieActuelle}</strong>`;
+      titre.style.background = "transparent";
       ul.appendChild(titre);
     }
     const li = document.createElement("li");
-    li.style.cursor = "pointer";
-    li.onclick = (e) => {
-      if (e.target.tagName !== "BUTTON") ouvrirPopup(index);
+    li.onclick = (e)=>{
+      if(e.target.tagName !== "BUTTON") ouvrirPopup(index);
     };
     const joursRestants = calculerJoursRestants(aliment.peremption);
-    let texte = `${aliment.nom} - ${aliment.quantite} ${aliment.unite}`;
-    if (aliment.peremption) {
-      texte += ` - ${joursRestants} jour(s) restant`;
-    } else {
-      texte += " - Durée illimitée";
-    }
-    if (aliment.peremption && calculerJoursRestants(aliment.peremption) <= 3) {
-      li.className = "urgent";
-      texte += " - URGENT !";
-    } else {
-      li.className = "ok";
-    }
     const spanTexte = document.createElement("span");
-    spanTexte.textContent = texte;
-    li.appendChild(spanTexte);
+    spanTexte.innerHTML = `
+      <strong>${aliment.nom}</strong><br>
+      ${aliment.quantite} ${aliment.unite}
+      ${aliment.peremption ? ` • 📅 ${joursRestants}j` : ""}
+    `;
+    if(aliment.peremption && joursRestants <= 3){
+      li.style.borderLeft = "6px solid #e74c3c";
+    }
     const btnSupprimer = document.createElement("button");
-    btnSupprimer.textContent = "Supprimer";
-    btnSupprimer.style.padding = "10px 16px";
-    btnSupprimer.style.fontSize = "1em";
-    btnSupprimer.style.background = "#e74c3c";
-    btnSupprimer.style.color = "white";
-    btnSupprimer.style.border = "none";
-    btnSupprimer.style.borderRadius = "6px";
+    btnSupprimer.textContent = "✕";
+    btnSupprimer.className = "delete-btn";
     btnSupprimer.onclick = () => supprimerAliment(index);
-    const actions = document.createElement("span");
-    actions.className = "actions";
-    actions.appendChild(btnSupprimer);
-    li.appendChild(actions);
+    li.appendChild(spanTexte);
+    li.appendChild(btnSupprimer);
     ul.appendChild(li);
   });
 }
@@ -1259,7 +1276,17 @@ function ajouterProduitCatalogue(){
   chargerCatalogueSelect();
   fermerPopupCatalogue();
 }
-  
+
+/* =========================
+   Pop-Up ajouter à l'inventaire
+========================= */
+function ouvrirPopupAjout(){
+  document.getElementById("popupAjoutAliment").style.display = "flex";
+}
+function fermerPopupAjout(){
+  document.getElementById("popupAjoutAliment").style.display = "none";
+}
+
 </script>
 
 <!-- ==========================
@@ -1361,6 +1388,40 @@ function ajouterProduitCatalogue(){
   </div>
 </div>
   
+<!-- Ajouter un aliment à l'inventaire -->
+<div id="popupAjoutAliment" class="popup">
+  <div class="popup-content">
+    <h2>➕ Ajouter un aliment</h2>
+    <input id="popNom" placeholder="Nom">
+    <input id="popQuantite" type="number" placeholder="Quantité">
+    <select id="popUnite">
+      <option value="pcs">pcs</option>
+      <option value="g">g</option>
+      <option value="kg">kg</option>
+      <option value="ml">ml</option>
+      <option value="L">L</option>
+    </select>
+    <input id="popPeremption" type="date">
+    <select id="popCategorie">
+      <option>Légume</option>
+      <option>Fruit</option>
+      <option>Viande</option>
+      <option>Poisson</option>
+      <option>Produit laitier</option>
+      <option>Féculent</option>
+      <option>Boisson</option>
+      <option>Autre</option>
+    </select>
+    <div class="popup-actions">
+      <button onclick="validerAjoutAliment()">Ajouter</button>
+      <button onclick="fermerPopupAjout()">Annuler</button>
+    </div>
+  </div>
+  
+</div>
+
+  
 </body>
 </html>
+
 
