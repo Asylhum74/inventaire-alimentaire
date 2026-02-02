@@ -742,9 +742,9 @@ function nouvelleSemaine() {
   alert("Nouvelle semaine prête ! Toutes les cases ont été vidées.");
 }
 function repasCuisiné() {
-  if (!inputRepasActuel) return;
   if (!confirm("Retirer les ingrédients du stock et marquer le repas comme fait ?")) return;
-  const texte = inputRepasActuel.value;
+  const input = document.activeElement;
+  const texte = input.value;
   if (!texte.trim()) return;
   const items = texte.split(',')
     .map(a => a.trim())
@@ -1389,6 +1389,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
