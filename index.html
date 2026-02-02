@@ -604,7 +604,7 @@ function genererListeCourses() {
       a.nom.toLowerCase() === nom.toLowerCase()
     );
     const stock = trouve
-    ? Number(trouve.quantite) * (trouve.portionsParUnite || 1)
+    ? Number(trouve.quantite) * (trouve.portions || 1)
     : 0;
     const besoin = Math.max(totalDemandes[nom] - stock, 0);
 
@@ -1336,6 +1336,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
