@@ -565,6 +565,7 @@ function importerInventaire(event) {
    Repas
 ========================= */
 let categoriesCourses = JSON.parse(localStorage.getItem("categoriesCourses")) || {};
+let inputRepasActuel = null;
 const toutesCategories = ["Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sauce", "Epice", "Boisson", "Conserve", 
                           "Produit du monde", "Hygiène"];
   
@@ -741,29 +742,43 @@ function nouvelleSemaine() {
   alert("Nouvelle semaine prête ! Toutes les cases ont été vidées.");
 }
 function repasCuisiné() {
+  if (!inputRepasActuel) return;
   if (!confirm("Retirer les ingrédients du stock et marquer le repas comme fait ?")) return;
-  repasSemaine.ingredients.forEach(ingredient => {
+  const texte = inputRepasActuel.value;
+  if (!texte.trim()) return;
+  const items = texte.split(',')
+    .map(a => a.trim())
+    .filter(a => a);
+  items.forEach(item => {
+    const match = item.match(/^(.+?)\s*(\d+)?$/);
+    if (!match) return;
+    const nom = match[1].trim();
+    const qte = Number(match[2]) || 1;
     const alim = aliments.find(a =>
-      a.nom.toLowerCase() === ingredient.nom.toLowerCase()
+      a.nom.toLowerCase() === nom.toLowerCase()
     );
     if (!alim) return;
     if (alim.portions) {
-      const portionsStock = alim.quantite * alim.portions;
-      const restantes = Math.max(portionsStock - ingredient.quantite, 0);
+      const total = alim.quantite * alim.portions;
+      const restantes = Math.max(total - qte, 0);
       alim.quantite = restantes / alim.portions;
     }
     else {
-      alim.quantite = Math.max(alim.quantite - ingredient.quantite, 0);
+      alim.quantite = Math.max(alim.quantite - qte, 0);
     }
   });
-  repasSemaine[index] = null;
-  sauvegarderAliments();
+  inputRepasActuel.value = "";
+  sauvegarderAliment();
   sauvegarderRepas();
   afficherAliments();
   chargerRepas();
+
+  // ferme popup
   document.getElementById("popupRepasEdit").style.display = "none";
+
   alert("Repas validé ✅ Stock mis à jour");
 }
+
 
 /* =========================
    Recette
@@ -1374,6 +1389,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
