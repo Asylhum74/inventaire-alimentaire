@@ -44,11 +44,6 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 #listeAliments {min-height: calc(100vh - 300px); overflow-y: auto; }
 .repas-actions {display: flex; gap: 12px; margin-top: 15px; }
 .repas-actions button {flex: 1; padding: 12px; font-size: 1em; }
-.inventaire-top{display:flex; gap:10px; margin-bottom:15px; }
-.add-btn{width:auto; padding:14px 18px; font-size:1.1em; }
-.liste-mobile{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:10px; max-height: calc(100vh - 220px); overflow-y:auto; }
-.liste-mobile li{background:#f5f5f5; border-radius:12px; padding:14px; display:flex; justify-content:space-between; align-items:center; font-size:1.05em; }
-.dark .liste-mobile li{background:#1e1e1e; }
 
 /* ==========================
    🧽 PROPRETÉ
@@ -134,12 +129,53 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
   </nav>
   
   <!-- ===== INVENTAIRE ===== -->
-  <div id="inventaire" class="inventaire-mobile">
-    <div class="inventaire-top">
-      <input id="recherche" placeholder="🔍 Rechercher..." oninput="afficherAliments()">
-      <button onclick="ouvrirPopupAjout()" class="add-btn">➕ Ajouter</button>
+  <div id="inventaire" style="margin-bottom:10px;">
+    <button onclick="exporterInventaire()">💾 Sauvegarder</button>
+    <input type="file" id="importFile" accept=".json" onchange="importerInventaire(event)">
+   
+    <label>Nom :</label>
+    <input type="text" id="nom" placeholder="Nom de l'aliment">
+    
+    <label>Quantité :</label>
+    <input type="number" id="quantite" placeholder="Quantité">
+    
+    <label>Unité :</label>
+    <input type="text" id="unite" placeholder="Ex: g, litre, pcs">
+    
+    <label>Date de péremption :</label>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <input type="date" id="peremption">
+      <label style="display: flex; align-items: center; gap: 5px; margin: 0;">
+        <input type="checkbox" id="sansDate" style="transform: scale(1.5);">
+        <span style="white-space: nowrap;">Pas de DLC</span>
+      </label>
     </div>
-    <ul id="listeAliments" class="liste-mobile"></ul>
+    
+    <label>Catégorie :</label>
+    <select id="categorie">
+      <option value="Choisir catégorie">Choisir catégorie</option>
+      <option value="Boisson">Boisson</option>
+      <option value="Produit laitier">Produit laitier</option>
+      <option value="Légume">Légume</option>
+      <option value="Fruit">Fruit</option>
+      <option value="Viande">Viande</option>
+      <option value="Poisson">Poisson</option>
+      <option value="Féculent">Féculent</option>
+      <option value="Sucré">Sucré</option>
+      <option value="Sauce">Sauce</option>
+      <option value="Epice">Epice</option>
+      <option value="Sec">Sec</option>
+      <option value="Plat préparé">Plat préparé</option>
+      <option value="Hygiène">Hygiène</option>
+    </select>
+
+    <div class="form-section">
+      <button type="button" onclick="ajouterOuModifierAliment()">Ajouter</button>
+    </div>
+
+    <input type="text" id="recherche" placeholder="🔍 Rechercher un aliment..." oninput="afficherAliments()">
+    <h2>Liste des aliments :</h2>
+    <ul id="listeAliments"></ul>
   </div>
 
   <!-- ===== REPAS ===== -->
@@ -326,44 +362,6 @@ function toggleDarkMode() {
 /* =========================
    Alimentaire
 ========================= */
-
-/* =========================
-   CATALOGUE PRODUITS
-========================= */
-let catalogue = JSON.parse(localStorage.getItem("catalogue")) || [
-  // Féculents
-  {id:"pates", nom:"Pâtes", categorie:"Féculent", unite:"g", type:"poids"},
-  {id:"riz", nom:"Riz", categorie:"Féculent", unite:"g", type:"poids"},
-  {id:"semoule", nom:"Semoule", categorie:"Féculent", unite:"g", type:"poids"},
-  {id:"quinoa", nom:"Quinoa", categorie:"Féculent", unite:"g", type:"poids"},
-  {id:"lentilles", nom:"Lentilles", categorie:"Féculent", unite:"g", type:"poids"},
-  // Légumes
-  {id:"tomate", nom:"Tomates", categorie:"Légume", unite:"pièce", type:"portion", portionsParUnite:1},
-  {id:"carotte", nom:"Carottes", categorie:"Légume", unite:"pièce", type:"portion", portionsParUnite:1},
-  {id:"oignon", nom:"Oignons", categorie:"Légume", unite:"pièce", type:"portion", portionsParUnite:1},
-  {id:"courgette", nom:"Courgettes", categorie:"Légume", unite:"pièce", type:"portion", portionsParUnite:1},
-  {id:"salade", nom:"Salade", categorie:"Légume", unite:"pièce", type:"portion", portionsParUnite:2},
-  // Fruits
-  {id:"pomme", nom:"Pommes", categorie:"Fruit", unite:"pièce", type:"portion", portionsParUnite:1},
-  {id:"banane", nom:"Bananes", categorie:"Fruit", unite:"pièce", type:"portion", portionsParUnite:1},
-  {id:"orange", nom:"Oranges", categorie:"Fruit", unite:"pièce", type:"portion", portionsParUnite:1},
-  // Viandes/poissons (poids)
-  {id:"poulet", nom:"Poulet", categorie:"Viande", unite:"g", type:"poids"},
-  {id:"boeuf", nom:"Bœuf", categorie:"Viande", unite:"g", type:"poids"},
-  {id:"saumon", nom:"Saumon", categorie:"Poisson", unite:"g", type:"poids"},
-  // Portions pratiques ⭐
-  {id:"oeufs", nom:"Oeufs", categorie:"Produit laitier", unite:"boîte", type:"portion", portionsParUnite:12},
-  {id:"miel", nom:"Miel", categorie:"Sec", unite:"pot", type:"portion", portionsParUnite:20},
-  {id:"huile", nom:"Huile d'olive", categorie:"Sauce", unite:"bouteille", type:"portion", portionsParUnite:30},
-  {id:"beurre", nom:"Beurre", categorie:"Produit laitier", unite:"plaquette", type:"portion", portionsParUnite:25},
-  {id:"fromage", nom:"Fromage râpé", categorie:"Produit laitier", unite:"sachet", type:"portion", portionsParUnite:15}
-];
-function sauvegarderCatalogue(){
-  localStorage.setItem("catalogue", JSON.stringify(catalogue));
-}
-
-
-  
 let aliments = [];
 let indexEnCours = -1;
 
@@ -377,48 +375,36 @@ function sauvegarderAliments() {
   localStorage.setItem("aliments", JSON.stringify(aliments));
 }
 // Ajouter ou modifier un aliment
-function ajouterInventaireCatalogue(){
-  const id = document.getElementById("catalogueSelect").value;
-  const quantite = Number(document.getElementById("quantite").value);
-  const produit = catalogue.find(p=>p.id===id);
-  let stockAjoute;
-  if(produit.type === "portion"){
-    stockAjoute = quantite * produit.portionsParUnite;
-  } else {
-    stockAjoute = quantite;
+function ajouterOuModifierAliment() {
+  const nom = document.getElementById("nom").value;
+  const quantite = document.getElementById("quantite").value;
+  const unite = document.getElementById("unite").value;
+  const sansDate = document.getElementById("sansDate").checked;
+  const peremption = sansDate ? null : document.getElementById("peremption").value;
+  const categorie = document.getElementById("categorie").value;
+  if(!nom || !quantite || !unite || !categorie) {
+    alert("Veuillez remplir tous les champs !");
+    return;
   }
-  aliments.push({
-    id,
-    nom: produit.nom,
-    categorie: produit.categorie,
-    quantite: stockAjoute,
-    unite: produit.type === "portion" ? "portion(s)" : produit.unite
-  });
+  const nouvelAliment = {nom, quantite, unite, peremption, categorie};
+  if(indexEnCours === -1) {
+    aliments.push(nouvelAliment);
+  } else {
+    aliments[indexEnCours] = nouvelAliment;
+    indexEnCours = -1;
+    document.querySelector("button[onclick='ajouterOuModifierAliment()']").textContent = "Ajouter";
+  }
+  // Réinitialiser le formulaire
+  document.getElementById("nom").value = "";
+  document.getElementById("quantite").value = "";
+  document.getElementById("unite").value = "";
+  document.getElementById("peremption").value = "";
+  document.getElementById("categorie").value = "Choisir catégorie";
+  document.getElementById("sansDate").checked = false; 
   sauvegarderAliments();
   afficherAliments();
 }
-function validerAjoutAliment(){
-  const nom = document.getElementById("popNom").value.trim();
-  const quantite = Number(document.getElementById("popQuantite").value);
-  const unite = document.getElementById("popUnite").value;
-  const peremption = document.getElementById("popPeremption").value;
-  const categorie = document.getElementById("popCategorie").value;
-  if(!nom || !quantite){
-    alert("Champs manquants");
-    return;
-  }
-  inventaire.push({
-    id: Date.now(),
-    nom,
-    quantite,
-    unite,
-    peremption,
-    categorie
-  });
-  sauvegarderInventaire();
-  afficherAliments();
-  fermerPopupAjout();
-}
+
 // Affichage
 function calculerJoursRestants(dateString) {
   const aujourdHui = new Date();
@@ -428,48 +414,54 @@ function calculerJoursRestants(dateString) {
   return diffDays < 0 ? 0 : diffDays;
 }
 function afficherAliments() {
-  const input = document.getElementById("recherche");
-  const recherche = input ? input.value.toLowerCase() : "";
+  const recherche = document.getElementById("recherche").value.toLowerCase();
   const ul = document.getElementById("listeAliments");
   ul.innerHTML = "";
-  const ordreCategorie = [
-    "Féculent","Produit laitier","Viande","Poisson",
-    "Fruit","Légume","Sucré","Sec","Sauce",
-    "Epice","Boisson","Plat préparé","Hygiène"
-  ];
-  aliments.sort((a,b) =>
-    ordreCategorie.indexOf(a.categorie) - ordreCategorie.indexOf(b.categorie)
-  );
+  const ordreCategorie = ["Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sec", "Sauce", "Epice", "Boisson", " Plat préparé", "Hygiène"];
+  aliments.sort((a,b) => ordreCategorie.indexOf(a.categorie) - ordreCategorie.indexOf(b.categorie));
   let categorieActuelle = "";
   aliments.forEach((aliment, index) => {
     if(!aliment.nom.toLowerCase().includes(recherche)) return;
-    if(aliment.categorie !== categorieActuelle){
+    if(aliment.categorie !== categorieActuelle) {
       categorieActuelle = aliment.categorie;
       const titre = document.createElement("li");
-      titre.innerHTML = `<strong style="font-size:1.1em">${categorieActuelle}</strong>`;
-      titre.style.background = "transparent";
+      titre.innerHTML = `<strong style="font-size:1.2em; color:#2c3e50;">${categorieActuelle}</strong>`;
       ul.appendChild(titre);
     }
     const li = document.createElement("li");
-    li.onclick = (e)=>{
-      if(e.target.tagName !== "BUTTON") ouvrirPopup(index);
+    li.style.cursor = "pointer";
+    li.onclick = (e) => {
+      if (e.target.tagName !== "BUTTON") ouvrirPopup(index);
     };
     const joursRestants = calculerJoursRestants(aliment.peremption);
-    const spanTexte = document.createElement("span");
-    spanTexte.innerHTML = `
-      <strong>${aliment.nom}</strong><br>
-      ${aliment.quantite} ${aliment.unite}
-      ${aliment.peremption ? ` • 📅 ${joursRestants}j` : ""}
-    `;
-    if(aliment.peremption && joursRestants <= 3){
-      li.style.borderLeft = "6px solid #e74c3c";
+    let texte = `${aliment.nom} - ${aliment.quantite} ${aliment.unite}`;
+    if (aliment.peremption) {
+      texte += ` - ${joursRestants} jour(s) restant`;
+    } else {
+      texte += " - Durée illimitée";
     }
-    const btnSupprimer = document.createElement("button");
-    btnSupprimer.textContent = "✕";
-    btnSupprimer.className = "delete-btn";
-    btnSupprimer.onclick = () => supprimerAliment(index);
+    if (aliment.peremption && calculerJoursRestants(aliment.peremption) <= 3) {
+      li.className = "urgent";
+      texte += " - URGENT !";
+    } else {
+      li.className = "ok";
+    }
+    const spanTexte = document.createElement("span");
+    spanTexte.textContent = texte;
     li.appendChild(spanTexte);
-    li.appendChild(btnSupprimer);
+    const btnSupprimer = document.createElement("button");
+    btnSupprimer.textContent = "Supprimer";
+    btnSupprimer.style.padding = "10px 16px";
+    btnSupprimer.style.fontSize = "1em";
+    btnSupprimer.style.background = "#e74c3c";
+    btnSupprimer.style.color = "white";
+    btnSupprimer.style.border = "none";
+    btnSupprimer.style.borderRadius = "6px";
+    btnSupprimer.onclick = () => supprimerAliment(index);
+    const actions = document.createElement("span");
+    actions.className = "actions";
+    actions.appendChild(btnSupprimer);
+    li.appendChild(actions);
     ul.appendChild(li);
   });
 }
@@ -517,16 +509,6 @@ function importerInventaire(event) {
     }
   };
   reader.readAsText(file);
-}
-function chargerCatalogueSelect(){
-  const select = document.getElementById("catalogueSelect");
-  select.innerHTML = "";
-  catalogue.forEach(p=>{
-    const o = document.createElement("option");
-    o.value = p.id;
-    o.textContent = p.nom;
-    select.appendChild(o);
-  });
 }
 
 /* =========================
@@ -590,27 +572,12 @@ function genererListeCourses() {
     );
     const stock = trouve ? Number(trouve.quantite) : 0;
     const besoin = Math.max(totalDemandes[nom] - stock, 0);
+
     if (besoin > 0) {
-      const produit = catalogue.find(p =>
-        p.nom.toLowerCase() === nom.toLowerCase()
-      );
-      if (produit) {
-        if (produit.type === "portion") {
-          const aAcheter = Math.ceil(besoin / produit.portionsParUnite);
-          if (aAcheter > 0) {
-            courses[nom] = aAcheter + " " + produit.unite;
-          }
-        }
-        else {
-          courses[nom] = besoin + " " + produit.unite;
-        }
-      }
-      else {
-        courses[nom] = besoin;
-      }
+      courses[nom] = besoin;
     }
-   });
-  const container = document.getElementById("listeCoursesContainer");
+  });
+ const container = document.getElementById("listeCoursesContainer");
   container.innerHTML = "";
   const headerWrapper = document.createElement("div");
   headerWrapper.style.display = "flex";
@@ -1113,7 +1080,6 @@ verifierChangementDeMois();
 afficherDepenses();
 afficherPage("accueil");
 afficherSousPage("inventaire");
-chargerCatalogueSelect();
 
 </script>
 <script>
@@ -1247,46 +1213,6 @@ function sauvegarderRepasPopup() {
   inputRepasActif.value =document.getElementById("repasTexte").value;
   fermerPopupRepas();
 }
-
-/* =========================
-   Pop-Up ajouter au catalogue
-========================= */
-function ouvrirPopupCatalogue(){
-  document.getElementById("popupCatalogue").style.display="flex";
-}
-function fermerPopupCatalogue(){
-  document.getElementById("popupCatalogue").style.display="none";
-}
-function ajouterProduitCatalogue(){
-  const nom = catNom.value;
-  const unite = catUnite.value;
-  const type = catType.value;
-  const portions = Number(catPortions.value);
-  const id = nom.toLowerCase().replace(/\s+/g,"-");
-  const produit = {
-    id, nom, unite,
-    categorie:"Autres",
-    type
-  };
-  if(type==="portion"){
-    produit.portionsParUnite = portions || 1;
-  }
-  catalogue.push(produit);
-  sauvegarderCatalogue();
-  chargerCatalogueSelect();
-  fermerPopupCatalogue();
-}
-
-/* =========================
-   Pop-Up ajouter à l'inventaire
-========================= */
-function ouvrirPopupAjout(){
-  document.getElementById("popupAjoutAliment").style.display = "flex";
-}
-function fermerPopupAjout(){
-  document.getElementById("popupAjoutAliment").style.display = "none";
-}
-
 </script>
 
 <!-- ==========================
@@ -1369,57 +1295,6 @@ function fermerPopupAjout(){
     </div>
   </div>
 </div>
-
-<!-- Ajouter au catalogue -->
-<div id="popupCatalogue" class="popup">
-  <div class="popup-content">
-    <h2>Nouveau produit</h2>
-    <input id="catNom" placeholder="Nom">
-    <input id="catUnite" placeholder="Unité (g, pot, pièce...)">
-    <select id="catType">
-      <option value="portion">Portions</option>
-      <option value="poids">Grammes / ml</option>
-    </select>
-    <input id="catPortions" type="number" placeholder="Portions par unité (si portions)">
-    <div class="popup-actions">
-      <button onclick="ajouterProduitCatalogue()">Ajouter</button>
-      <button onclick="fermerPopupCatalogue()">Annuler</button>
-    </div>
-  </div>
-</div>
-  
-<!-- Ajouter un aliment à l'inventaire -->
-<div id="popupAjoutAliment" class="popup">
-  <div class="popup-content">
-    <h2>➕ Ajouter un aliment</h2>
-    <input id="popNom" placeholder="Nom">
-    <input id="popQuantite" type="number" placeholder="Quantité">
-    <select id="popUnite">
-      <option value="pcs">pcs</option>
-      <option value="g">g</option>
-      <option value="kg">kg</option>
-      <option value="ml">ml</option>
-      <option value="L">L</option>
-    </select>
-    <input id="popPeremption" type="date">
-    <select id="popCategorie">
-      <option>Légume</option>
-      <option>Fruit</option>
-      <option>Viande</option>
-      <option>Poisson</option>
-      <option>Produit laitier</option>
-      <option>Féculent</option>
-      <option>Boisson</option>
-      <option>Autre</option>
-    </select>
-    <div class="popup-actions">
-      <button onclick="validerAjoutAliment()">Ajouter</button>
-      <button onclick="fermerPopupAjout()">Annuler</button>
-    </div>
-  </div>
-  
-</div>
-
   
 </body>
 </html>
