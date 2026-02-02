@@ -743,8 +743,27 @@ function nouvelleSemaine() {
   document.getElementById("repasSemaine").innerHTML = "";
   alert("Nouvelle semaine prête ! Toutes les cases ont été vidées.");
 }
+function repasCuisiné() {
+  if (!confirm("Retirer les ingrédients du stock ?")) return;
+  repasActuel.ingredients.forEach(ingredient => {
+    const alim = aliments.find(a =>
+      a.nom.toLowerCase() === ingredient.nom.toLowerCase()
+    );
+    if (!alim) return;
+    if (alim.portionsParUnite) {
+      const portionsTotales = alim.quantite * alim.portionsParUnite;
+      const restantes = Math.max(portionsTotales - ingredient.quantite, 0);
+      alim.quantite = restantes / alim.portionsParUnite;
+    }
+    else {
+      alim.quantite = Math.max(alim.quantite - ingredient.quantite, 0);
+    }
+  });
+  sauvegarderInventaire();
+  afficherAliments();
+  alert("Stock mis à jour ✅");
+}
 
-  
 /* =========================
    Recette
 ========================= */
@@ -1335,6 +1354,7 @@ function sauvegarderRepasPopup() {
     <div class="popup-actions">
       <button onclick="sauvegarderRepasPopup()">💾 Sauvegarder</button>
       <button onclick="fermerPopupRepas()">Annuler</button>
+      <button onclick="repasCuisiné()" style="background:#2ecc71;">✅ Repas cuisiné</button>
     </div>
   </div>
 </div>
@@ -1353,6 +1373,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
