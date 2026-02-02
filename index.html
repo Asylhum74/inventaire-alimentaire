@@ -742,7 +742,7 @@ function nouvelleSemaine() {
 }
 function repasCuisiné() {
   if (!confirm("Retirer les ingrédients du stock et marquer le repas comme fait ?")) return;
-  repasActuel.ingredients.forEach(ingredient => {
+  repasSemaine.ingredients.forEach(ingredient => {
     const alim = aliments.find(a =>
       a.nom.toLowerCase() === ingredient.nom.toLowerCase()
     );
@@ -1374,6 +1374,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
