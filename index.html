@@ -455,6 +455,8 @@ function afficherAliments() {
     blocQuantite.style.display = "flex";
     blocQuantite.style.alignItems = "center";
     blocQuantite.style.gap = "8px";
+    const spanTexte = document.createElement("span");
+    spanTexte.innerHTML = `<strong>${aliment.nom}</strong><br>${aliment.quantite} ${aliment.unite} (${aliment.portions} portions)`;
     const btnMoins = document.createElement("button");
     btnMoins.textContent = "−";
     btnMoins.style.width = "35px";
@@ -462,20 +464,18 @@ function afficherAliments() {
       e.stopPropagation();
       if(aliment.quantite > 0){
         aliment.quantite--;
+        spanTexte.innerHTML = `<strong>${aliment.nom}</strong><br>${aliment.quantite} ${aliment.unite} (${aliment.quantites*aliment.portions} portions)`;
         sauvegarderInventaire();
-        afficherAliments();
       }
     };
-    const spanTexte = document.createElement("span");
-    spanTexte.innerHTML = `<strong>${aliment.nom}</strong><br>${aliment.quantite} ${aliment.unite}`;
     const btnPlus = document.createElement("button");
     btnPlus.textContent = "+";
     btnPlus.style.width = "35px";
     btnPlus.onclick = (e) => {
       e.stopPropagation();
       aliment.quantite++;
+      spanTexte.innerHTML = `<strong>${aliment.nom}</strong><br>${aliment.quantite} ${aliment.unite} (${aliment.quantite*aliment.portions} portions)`;
       sauvegarderInventaire();
-      afficherAliments();
     };
     blocQuantite.appendChild(btnMoins);
     blocQuantite.appendChild(spanTexte);
@@ -1336,6 +1336,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
