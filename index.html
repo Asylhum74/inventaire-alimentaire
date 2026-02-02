@@ -453,7 +453,7 @@ function afficherAliments() {
     }
     let textePortions = "";
     if (aliment.portions) {
-      textePortions = ` (${aliment.quantite * aliment.portionsParUnite} portions)`;
+      textePortions = ` (${aliment.quantite * aliment.portions} portions)`;
     }
     const blocQuantite = document.createElement("div");
     blocQuantite.style.display = "flex";
@@ -467,7 +467,7 @@ function afficherAliments() {
     btnPlus.style.width = "35px";
     const spanTexte = document.createElement("span");
     function majTexte() {
-      let txtPortions = aliment.portionsParUnite ? ` (${aliment.quantite * aliment.portionsParUnite} portions)` : "";
+      let txtPortions = aliment.portions ? ` (${aliment.quantite * aliment.portions} portions)` : "";
       let txtPeremption = "";
       if (aliment.peremption) {
         const joursRestants = calculerJoursRestants(aliment.peremption);
@@ -1353,6 +1353,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
