@@ -757,14 +757,13 @@ function repasCuisiné() {
     }
   });
   repasSemaine[index] = null;
-  sauvegarderInventaire();
+  sauvegarderAliments();
   sauvegarderRepas();
   afficherAliments();
-  afficherRepas();
-  document.getElementById("popupRepas").style.display = "none";
+  chargerRepas();
+  document.getElementById("popupRepasEdit").style.display = "none";
   alert("Repas validé ✅ Stock mis à jour");
 }
-
 
 /* =========================
    Recette
@@ -1375,6 +1374,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
