@@ -735,34 +735,36 @@ function genererListeCourses() {
 }
 function nouvelleSemaine() {
   if (!confirm("Voulez-vous vraiment commencer une nouvelle semaine ? Toutes les cases seront vidées.")) return;
-  // Vider toutes les cases du tableau
   document.querySelectorAll('.repas').forEach(input => input.value = '');
-  // Supprimer les données de la semaine dans le localStorage
   localStorage.removeItem('repasSemaine');
-  // Supprimer aussi la liste de courses générée
   document.getElementById("repasSemaine").innerHTML = "";
   alert("Nouvelle semaine prête ! Toutes les cases ont été vidées.");
 }
 function repasCuisiné() {
-  if (!confirm("Retirer les ingrédients du stock ?")) return;
+  if (!confirm("Retirer les ingrédients du stock et marquer le repas comme fait ?")) return;
   repasActuel.ingredients.forEach(ingredient => {
     const alim = aliments.find(a =>
       a.nom.toLowerCase() === ingredient.nom.toLowerCase()
     );
     if (!alim) return;
-    if (alim.portionsParUnite) {
-      const portionsTotales = alim.quantite * alim.portionsParUnite;
-      const restantes = Math.max(portionsTotales - ingredient.quantite, 0);
-      alim.quantite = restantes / alim.portionsParUnite;
+    if (alim.portions) {
+      const portionsStock = alim.quantite * alim.portions;
+      const restantes = Math.max(portionsStock - ingredient.quantite, 0);
+      alim.quantite = restantes / alim.portions;
     }
     else {
       alim.quantite = Math.max(alim.quantite - ingredient.quantite, 0);
     }
   });
+  repasSemaine[index] = null;
   sauvegarderInventaire();
+  sauvegarderRepas();
   afficherAliments();
-  alert("Stock mis à jour ✅");
+  afficherRepas();
+  document.getElementById("popupRepas").style.display = "none";
+  alert("Repas validé ✅ Stock mis à jour");
 }
+
 
 /* =========================
    Recette
@@ -1373,6 +1375,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
