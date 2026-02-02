@@ -512,6 +512,7 @@ function preRemplirFormulaire(index) {
   document.getElementById("unite").value = aliment.unite;
   document.getElementById("peremption").value = aliment.peremption;
   document.getElementById("categorie").value = aliment.categorie;
+  document.getElementById("portions").value = aliment.portions;
   indexEnCours = index;
   document.querySelector("button[onclick='ajouterOuModifierAliment()']").textContent = "Modifier";
 }
@@ -1182,7 +1183,7 @@ function sauvegarderEdition() {
     quantite: document.getElementById("editQuantite").value,
     unite: document.getElementById("editUnite").value,
     peremption: sansDate ? null : document.getElementById("editPeremption").value,
-    categorie: document.getElementById("editCategorie").value
+    categorie: document.getElementById("editCategorie").value,
     portions: document.getElementById("editPortions").value
   };
   sauvegarderAliments();
@@ -1335,6 +1336,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
