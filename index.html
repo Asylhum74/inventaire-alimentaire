@@ -422,12 +422,12 @@ function afficherAliments() {
   const recherche = document.getElementById("recherche").value.toLowerCase();
   const ul = document.getElementById("listeAliments");
   ul.innerHTML = "";
-  const ordreCategorie = ["Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sec", "Sauce", "Epice", "Boisson", " Plat préparé", "Hygiène"];
-  aliments.sort((a,b) => ordreCategorie.indexOf(a.categorie) - ordreCategorie.indexOf(b.categorie));
+  const ordreCategorie = ["Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sec", "Sauce", "Epice", "Boisson", "Plat préparé", "Hygiène"];
+  aliments.sort((a, b) => ordreCategorie.indexOf(a.categorie) - ordreCategorie.indexOf(b.categorie));
   let categorieActuelle = "";
   aliments.forEach((aliment, index) => {
-    if(!aliment.nom.toLowerCase().includes(recherche)) return;
-    if(aliment.categorie !== categorieActuelle) {
+    if (!aliment.nom.toLowerCase().includes(recherche)) return;
+    if (aliment.categorie !== categorieActuelle) {
       categorieActuelle = aliment.categorie;
       const titre = document.createElement("li");
       titre.innerHTML = `<strong style="font-size:1.2em; color:#2c3e50;">${categorieActuelle}</strong>`;
@@ -438,43 +438,57 @@ function afficherAliments() {
     li.onclick = (e) => {
       if (e.target.tagName !== "BUTTON") ouvrirPopup(index);
     };
-    const joursRestants = calculerJoursRestants(aliment.peremption);
-    let texte = `${aliment.nom} - ${aliment.quantite} ${aliment.unite}`;
+    let textePeremption = "";
     if (aliment.peremption) {
-      texte += ` - ${joursRestants} jour(s) restant`;
-    } else {
-      texte += " - Durée illimitée";
-    }
-    if (aliment.peremption && calculerJoursRestants(aliment.peremption) <= 3) {
-      li.className = "urgent";
-      texte += " - URGENT !";
+      const joursRestants = calculerJoursRestants(aliment.peremption);
+      textePeremption = ` - ${joursRestants} jour(s) restant`;
+      if (joursRestants <= 3) {
+        li.className = "urgent";
+        textePeremption += " - URGENT !";
+      } else {
+        li.className = "ok";
+      }
     } else {
       li.className = "ok";
+    }
+    let textePortions = "";
+    if (aliment.portionsParUnite) {
+      textePortions = ` (${aliment.quantite * aliment.portionsParUnite} portions)`;
     }
     const blocQuantite = document.createElement("div");
     blocQuantite.style.display = "flex";
     blocQuantite.style.alignItems = "center";
     blocQuantite.style.gap = "8px";
-    const spanTexte = document.createElement("span");
-    spanTexte.innerHTML = `<strong>${aliment.nom}</strong><br>${aliment.quantite} ${aliment.unite} (${aliment.portions} portions)`;
     const btnMoins = document.createElement("button");
     btnMoins.textContent = "−";
     btnMoins.style.width = "35px";
-    btnMoins.onclick = (e) => {
-      e.stopPropagation();
-      if(aliment.quantite > 0){
-        aliment.quantite--;
-        spanTexte.innerHTML = `<strong>${aliment.nom}</strong><br>${aliment.quantite} ${aliment.unite} (${aliment.quantites*aliment.portions} portions)`;
-        sauvegarderInventaire();
-      }
-    };
     const btnPlus = document.createElement("button");
     btnPlus.textContent = "+";
     btnPlus.style.width = "35px";
+    const spanTexte = document.createElement("span");
+    function majTexte() {
+      let txtPortions = aliment.portionsParUnite ? ` (${aliment.quantite * aliment.portionsParUnite} portions)` : "";
+      let txtPeremption = "";
+      if (aliment.peremption) {
+        const joursRestants = calculerJoursRestants(aliment.peremption);
+        txtPeremption = ` - ${joursRestants} jour(s) restant`;
+        if (joursRestants <= 3) txtPeremption += " - URGENT !";
+      }
+      spanTexte.innerHTML = `<strong>${aliment.nom}</strong><br>${aliment.quantite} ${aliment.unite}${txtPortions}${txtPeremption}`;
+    }
+    majTexte();
+    btnMoins.onclick = (e) => {
+      e.stopPropagation();
+      if (aliment.quantite > 0) {
+        aliment.quantite--;
+        majTexte();
+        sauvegarderInventaire();
+      }
+    };
     btnPlus.onclick = (e) => {
       e.stopPropagation();
       aliment.quantite++;
-      spanTexte.innerHTML = `<strong>${aliment.nom}</strong><br>${aliment.quantite} ${aliment.unite} (${aliment.quantite*aliment.portions} portions)`;
+      majTexte();
       sauvegarderInventaire();
     };
     blocQuantite.appendChild(btnMoins);
@@ -489,7 +503,10 @@ function afficherAliments() {
     btnSupprimer.style.color = "white";
     btnSupprimer.style.border = "none";
     btnSupprimer.style.borderRadius = "6px";
-    btnSupprimer.onclick = () => supprimerAliment(index);
+    btnSupprimer.onclick = (e) => {
+      e.stopPropagation();
+      supprimerAliment(index);
+    };
     const actions = document.createElement("span");
     actions.className = "actions";
     actions.appendChild(btnSupprimer);
@@ -1336,6 +1353,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
