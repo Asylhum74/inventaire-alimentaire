@@ -452,7 +452,7 @@ function afficherAliments() {
       li.className = "ok";
     }
     let textePortions = "";
-    if (aliment.portionsParUnite) {
+    if (aliment.portions) {
       textePortions = ` (${aliment.quantite * aliment.portionsParUnite} portions)`;
     }
     const blocQuantite = document.createElement("div");
@@ -1353,6 +1353,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
