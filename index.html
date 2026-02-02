@@ -482,14 +482,14 @@ function afficherAliments() {
       if (aliment.quantite > 0) {
         aliment.quantite--;
         majTexte();
-        sauvegarderInventaire();
+        sauvegarderAliments();
       }
     };
     btnPlus.onclick = (e) => {
       e.stopPropagation();
       aliment.quantite++;
       majTexte();
-      sauvegarderInventaire();
+      sauvegarderAliments();
     };
     blocQuantite.appendChild(btnMoins);
     blocQuantite.appendChild(spanTexte);
@@ -1353,6 +1353,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
