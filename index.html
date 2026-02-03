@@ -766,24 +766,19 @@ function repasCuisiné() {
   ingredients.forEach(ingredient => {
     const alim = inventaire.find(a =>
       a.nom.toLowerCase() === ingredient.nom.toLowerCase()
-    );␊
-    if (!alim) return;␊
+    );
+    if (!alim) return;
     if (alim.portions) {
       let portionsStock = alim.quantite * alim.portions;
-      portionsStock -= ingredient.quantite;␊
-      alim.quantite = Math.max(␊
+      portionsStock -= ingredient.quantite;
+      alim.quantite = Math.max(
         portionsStock / alim.portions,
-        0␊
-      );␊
-    } else {␊
-      alim.quantite = Math.max(␊
-        alim.quantite - ingredient.quantite,␊
-        0␊
-      );␊
-    } else {␊
-      alim.quantite = Math.max(␊
-        alim.quantite - ingredient.quantite,␊
-        0␊
+        0
+      );
+    } else {
+      alim.quantite = Math.max(
+        alim.quantite - ingredient.quantite,
+        0
       );
     }
   });
@@ -796,7 +791,6 @@ function repasCuisiné() {
   fermerPopupRepas();
   alert("✅ Repas validé, stock mis à jour !");
 }
-
 
 /* =========================
    Recette
@@ -1407,25 +1401,3 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
