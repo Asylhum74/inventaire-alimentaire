@@ -752,12 +752,15 @@ function repasCuisiné() {
     .map(a => a.trim())
     .filter(a => a)
     .map(item => {
-      const match = item.match(/^(.+?)\s*(\d+)?$/);
+      const match = item.match(/^(.+?)(?:\s+(\d+(?:[.,]\d+)?))?\s*[a-zA-Z]*$/);
+      if (!match) return null;
+      const quantite = match[2] ? Number(match[2].replace(",", ".")) : 1;
       return {
         nom: match[1].trim(),
-        quantite: Number(match[2]) || 1
+        quantite: Number.isFinite(quantite) ? quantite : 1
       };
-    });
+    })
+    .filter(Boolean);
   ingredients.forEach(ingredient => {
     const alim = inventaire.find(a =>
       a.nom.toLowerCase() === ingredient.nom.toLowerCase()
@@ -774,17 +777,23 @@ function repasCuisiné() {
       alim.quantite = Math.max(␊
         alim.quantite - ingredient.quantite,␊
         0␊
+      );␊
+    } else {␊
+      alim.quantite = Math.max(␊
+        alim.quantite - ingredient.quantite,␊
+        0␊
       );
     }
   });
   localStorage.setItem("aliments", JSON.stringify(inventaire));
   inputRepasActif.value = "";
-  sauvegarderRepas();␊
-  afficherAliments();␊
-  genererListeCourses();␊
+  document.getElementById("repasTexte").value = "";
+  sauvegarderRepas();
+  afficherAliments();
+  genererListeCourses();
   fermerPopupRepas();
-  alert("✅ Repas validé, stock mis à jour !");␊
-}␊
+  alert("✅ Repas validé, stock mis à jour !");
+}
 
 /* =========================
    Recette
@@ -1395,6 +1404,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
