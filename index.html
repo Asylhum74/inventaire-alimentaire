@@ -743,9 +743,8 @@ function nouvelleSemaine() {
 }
 function repasCuisiné() {
   if (!confirm("Retirer les ingrédients du stock et marquer le repas comme fait ?")) return;
-  const input = document.activeElement;
-  if (!input || !input.classList.contains("repas")) return;
-  const texteRepas = input.value.trim();
+  if (!inputRepasActif) return;
+  const texteRepas = document.getElementById("repasTexte").value.trim();
   if (!texteRepas) return;
   let inventaire = JSON.parse(localStorage.getItem("aliments")) || [];
   const ingredients = texteRepas
@@ -762,30 +761,30 @@ function repasCuisiné() {
   ingredients.forEach(ingredient => {
     const alim = inventaire.find(a =>
       a.nom.toLowerCase() === ingredient.nom.toLowerCase()
-    );
-    if (!alim) return;
-    if (alim.portionsParUnite) {
-      let portionsStock = alim.quantite * alim.portionsParUnite;
-      portionsStock -= ingredient.quantite;
-      alim.quantite = Math.max(
-        portionsStock / alim.portionsParUnite,
-        0
-      );
-    } else {
-      alim.quantite = Math.max(
-        alim.quantite - ingredient.quantite,
-        0
+    );␊
+    if (!alim) return;␊
+    if (alim.portions) {
+      let portionsStock = alim.quantite * alim.portions;
+      portionsStock -= ingredient.quantite;␊
+      alim.quantite = Math.max(␊
+        portionsStock / alim.portions,
+        0␊
+      );␊
+    } else {␊
+      alim.quantite = Math.max(␊
+        alim.quantite - ingredient.quantite,␊
+        0␊
       );
     }
   });
   localStorage.setItem("aliments", JSON.stringify(inventaire));
-  input.value = "";
-  sauvegarderRepas();
-  afficherAliments();
-  genererListeCourses();
-  document.getElementById("popupRepasEdit").style.display = "none";
-  alert("✅ Repas validé, stock mis à jour !");
-}
+  inputRepasActif.value = "";
+  sauvegarderRepas();␊
+  afficherAliments();␊
+  genererListeCourses();␊
+  fermerPopupRepas();
+  alert("✅ Repas validé, stock mis à jour !");␊
+}␊
 
 /* =========================
    Recette
@@ -1396,6 +1395,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
