@@ -752,15 +752,17 @@ function repasCuisiné() {
     .map(a => a.trim())
     .filter(a => a)
     .map(item => {
-      const match = item.match(/^(.+?)(?:\s+(\d+(?:[.,]\d+)?))?\s*[a-zA-Z]*$/);
-      if (!match) return null;
-      const quantite = match[2] ? Number(match[2].replace(",", ".")) : 1;
+      const parts = item.split(/\s+/).filter(Boolean);
+      const last = parts[parts.length - 1] || "";
+      const parsed = Number(last.replace(",", "."));
+      const quantite = Number.isNaN(parsed) ? 1 : parsed;
+      const nom = Number.isNaN(parsed) ? item : parts.slice(0, -1).join(" ");
       return {
-        nom: match[1].trim(),
-        quantite: Number.isFinite(quantite) ? quantite : 1
+        nom: nom.trim(),
+        quantite
       };
     })
-    .filter(Boolean);
+    .filter(ingredient => ingredient.nom);
   ingredients.forEach(ingredient => {
     const alim = inventaire.find(a =>
       a.nom.toLowerCase() === ingredient.nom.toLowerCase()
@@ -794,6 +796,7 @@ function repasCuisiné() {
   fermerPopupRepas();
   alert("✅ Repas validé, stock mis à jour !");
 }
+
 
 /* =========================
    Recette
@@ -1404,6 +1407,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
