@@ -600,19 +600,21 @@ function genererListeCourses() {
   const repasData = JSON.parse(localStorage.getItem('repasSemaine')) || {};
   let categories = JSON.parse(localStorage.getItem("coursesCategories")) || {};
   const totalDemandes = {};
+  const achatsInputs = {}; // ← stocke les champs "acheté"
   Object.values(repasData).forEach(jour => {
     Object.values(jour).forEach(texteRepas => {
       if (!texteRepas) return;
-      const aliments = texteRepas.split(',').map(a => a.trim()).filter(a => a);
+      const aliments = texteRepas
+        .split(',')
+        .map(a => a.trim())
+        .filter(a => a);
       aliments.forEach(item => {
         const match = item.match(/^(.+?)\s*(\d+)?$/);
         if (!match) return;
         const nom = match[1].trim();
         const qte = Number(match[2]) || 1;
         totalDemandes[nom] = (totalDemandes[nom] || 0) + qte;
-        if (!categories[nom]) {
-          categories[nom] = "Autres";
-        }
+        if (!categories[nom]) categories[nom] = "Autres";
       });
     });
   });
@@ -622,48 +624,35 @@ function genererListeCourses() {
       a.nom.toLowerCase() === nom.toLowerCase()
     );
     const stock = trouve
-    ? Number(trouve.quantite) * (trouve.portions || 1)
-    : 0;
+      ? Number(trouve.quantite) * (trouve.portionsParUnite || 1)
+      : 0;
     const besoin = Math.max(totalDemandes[nom] - stock, 0);
-
-    if (besoin > 0) {
-      courses[nom] = besoin;
-    }
+    if (besoin > 0) courses[nom] = besoin;
   });
- const container = document.getElementById("listeCoursesContainer");
+  const container = document.getElementById("listeCoursesContainer");
   container.innerHTML = "";
-  const headerWrapper = document.createElement("div");
-  headerWrapper.style.display = "flex";
-  headerWrapper.style.alignItems = "center";
-  headerWrapper.style.justifyContent = "space-between";
-  headerWrapper.style.marginBottom = "10px";
   const btnAjouterInventaire = document.createElement("button");
   btnAjouterInventaire.textContent = "➕ Ajouter à l'inventaire";
-  btnAjouterInventaire.className = "small"; // même style que bouton supprimer
-  btnAjouterInventaire.style.padding = "6px 12px"; // même que supprimer
-  btnAjouterInventaire.style.flexShrink = "0";      // ne pas étirer
-  btnAjouterInventaire.style.width = "auto";       
   btnAjouterInventaire.onclick = () => {
     const checkedData = JSON.parse(localStorage.getItem("coursesChecked")) || {};
     Object.keys(checkedData).forEach(nom => {
-      if (checkedData[nom]) {
-        aliments.push({
-          nom: nom,
-          quantite: courses[nom],
-          unite: "",
-          peremption: null,
-          categorie: "Choisir catégorie"
-        });
-        delete checkedData[nom];
-      }
+      if (!checkedData[nom]) return;
+      const qteAchetee = Number(achatsInputs[nom]?.value) || 0;
+      if (qteAchetee <= 0) return;
+      aliments.push({
+        nom: nom,
+        quantite: qteAchetee,
+        unite: "",
+        peremption: null,
+        categorie: categories[nom] || "Autres"
+      });
     });
     localStorage.setItem("aliments", JSON.stringify(aliments));
-    localStorage.setItem("coursesChecked", JSON.stringify(checkedData));
+    localStorage.removeItem("coursesChecked");
     genererListeCourses();
     afficherAliments();
   };
-  headerWrapper.appendChild(btnAjouterInventaire);
-  container.appendChild(headerWrapper);
+  container.appendChild(btnAjouterInventaire);
   if (Object.keys(courses).length === 0) {
     container.innerHTML += "<p>✅ Tout est déjà dans l'inventaire.</p>";
     return;
@@ -675,58 +664,52 @@ function genererListeCourses() {
     "Epice", "Boisson", "Conserve", "Produit du monde", "Hygiène"
   ];
   ordreCategories.forEach(categorie => {
-    const alimentsDeCategorie = Object.keys(courses)
-      .filter(nom => categories[nom] === categorie);
+    const alimentsDeCategorie =
+      Object.keys(courses).filter(nom => categories[nom] === categorie);
     if (alimentsDeCategorie.length === 0) return;
-    const titreCat = document.createElement("p");
-    titreCat.textContent = categorie;
-    titreCat.style.fontWeight = "bold";
-    titreCat.style.fontSize = "1.25em";
-    titreCat.style.marginTop = "10px";
-    container.appendChild(titreCat);
+    const titre = document.createElement("p");
+    titre.textContent = categorie;
+    titre.style.fontWeight = "bold";
+    titre.style.fontSize = "1.2em";
+    titre.style.marginTop = "12px";
+    container.appendChild(titre);
     const ul = document.createElement("ul");
     alimentsDeCategorie.forEach(nom => {
       const li = document.createElement("li");
-      li.style.fontSize = "1.1em";
       li.style.display = "flex";
       li.style.alignItems = "center";
       li.style.gap = "10px";
-      const checkedData = JSON.parse(localStorage.getItem("coursesChecked")) || {};
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox";
       checkbox.className = "course-checkbox";
-      checkbox.checked = checkedData[nom] || false;
       const span = document.createElement("span");
-      span.textContent = `${nom} x${courses[nom]}`;
+      span.textContent = `${nom}  (besoin : ${courses[nom]})`;
       span.style.flex = "1";
-      if (checkbox.checked) {
-        span.classList.add("course-checked");
-      }
+      const inputAchat = document.createElement("input");
+      inputAchat.type = "number";
+      inputAchat.value = courses[nom];
+      inputAchat.style.width = "70px";
+      achatsInputs[nom] = inputAchat;
       checkbox.onchange = () => {
         const data = JSON.parse(localStorage.getItem("coursesChecked")) || {};
         data[nom] = checkbox.checked;
         localStorage.setItem("coursesChecked", JSON.stringify(data));
-        span.classList.toggle("course-checked", checkbox.checked);
       };
       const select = document.createElement("select");
-      const optionModifier = document.createElement("option");
-      optionModifier.textContent = "Modifier";
-      optionModifier.selected = true;
-      optionModifier.disabled = true;
-      select.appendChild(optionModifier);
       ordreCategories.forEach(cat => {
         const option = document.createElement("option");
         option.value = cat;
         option.textContent = cat;
+        if (cat === categorie) option.selected = true;
         select.appendChild(option);
       });
       select.onchange = () => {
         categories[nom] = select.value;
         localStorage.setItem("coursesCategories", JSON.stringify(categories));
-        genererListeCourses();
       };
       li.appendChild(checkbox);
       li.appendChild(span);
+      li.appendChild(inputAchat);
       li.appendChild(select);
       ul.appendChild(li);
     });
@@ -734,6 +717,7 @@ function genererListeCourses() {
   });
   localStorage.setItem("coursesCategories", JSON.stringify(categories));
 }
+
 function nouvelleSemaine() {
   if (!confirm("Voulez-vous vraiment commencer une nouvelle semaine ? Toutes les cases seront vidées.")) return;
   document.querySelectorAll('.repas').forEach(input => input.value = '');
@@ -1402,3 +1386,4 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
