@@ -624,7 +624,7 @@ function genererListeCourses() {
       a.nom.toLowerCase() === nom.toLowerCase()
     );
     const stock = trouve
-      ? Number(trouve.quantite) * (trouve.portionsParUnite || 1)
+      ? Number(trouve.quantite) * (trouve.portions || 1)
       : 0;
     const besoin = Math.max(totalDemandes[nom] - stock, 0);
     if (besoin > 0) courses[nom] = besoin;
@@ -706,6 +706,7 @@ function genererListeCourses() {
       select.onchange = () => {
         categories[nom] = select.value;
         localStorage.setItem("coursesCategories", JSON.stringify(categories));
+        genererListeCourses();
       };
       li.appendChild(checkbox);
       li.appendChild(span);
@@ -1386,4 +1387,5 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
