@@ -782,6 +782,7 @@ function repasCuisiné() {
       );
     }
   });
+  aliments = inventaire;
   localStorage.setItem("aliments", JSON.stringify(inventaire));
   inputRepasActif.value = "";
   document.getElementById("repasTexte").value = "";
