@@ -10,7 +10,11 @@
 /* ==========================
    🌟 STYLES GÉNÉRAUX
 ========================== */ 
-body {font-family: Arial, sans-serif; padding: 15px;  margin: 0; width: 100%; }
+:root {--bg: #f6f7fb; --card: #ffffff; --radius: 14px; --shadow: 0 6px 18px rgba(0,0,0,0.08); --text: #1f2937; --muted: #6b7280; --inv: #22c55e; --repas: #f59e0b;
+  --courses: #3b82f6;
+  --budget: #a855f7;
+}
+body {background: var(--bg); font-family: system-ui, -apple-system, Segoe UI, Roboto; color: var(--text); margin: 0;}
 html, body {height: 100%;}
 h1 { color: #2c3e50; text-align: center; }
 label { display: block; margin-top: 10px; }
@@ -18,6 +22,7 @@ input, select, button { margin: 5px 0; padding: 10px; font-size: 1em; width: 100
 button.small {padding: 6px 10px; font-size: 0.9em; min-width: 90px; }
 .nav {display: flex; gap: 10px; margin-bottom: 15px; }
 .nav button {flex: 1; }
+.card {background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px; margin-bottom: 18px;}
   
 /* ==========================
    ⚡ PAGES
@@ -62,6 +67,10 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 #budgetListe {min-height: calc(100vh - 300px); overflow-y: auto; }
 #budgetListe .actions {display: flex; gap: 12px; margin-top: 15px; }
 #budgetListe .actions button {flex: 1; padding: 12px; font-size: 1em; }
+.badge {display:inline-block; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:600;}
+.badge-nourriture { background:#dcfce7; color:#166534; }
+.badge-loisir { background:#ede9fe; color:#5b21b6; }
+.badge-transport { background:#dbeafe; color:#1e40af; }
 
 /* ==========================
    🌙 MODE SOMBRE
@@ -116,7 +125,8 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 
 <!-- ==========================
    🍽 ALIMENTAIRE
-========================== -->  
+========================== -->
+<div class ="card">
 <div id="page-alimentaire" class="page" style="display:none;">
   <h1>Gestion Alimentaire</h1>
   <button class="small" onclick="afficherPage('accueil')">⬅ Retour</button>
@@ -281,10 +291,12 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
   </div>
 
 </div>
+</div>
   
 <!-- ==========================
    🧽 PROPRETÉ
 ========================== -->
+<div class="card">
 <div id="page-proprete" class="page" style="display:none;">
   <h2>🧽 Propreté</h2>
   <button class="small" onclick="afficherPage('accueil')">⬅ Retour</button>
@@ -293,10 +305,12 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
     <button onclick="resetProprete()">🔄 Nouvelle semaine</button>
   </div>
 </div>
+</div>
 
 <!-- ==========================
    💰 BUDGET
 ========================== -->
+<div class="card">
 <div id="page-budget" class="page" style="display:none;">
   <h2>💰 Budget mensuel</h2>
   <button class="small" onclick="afficherPage('accueil')">⬅ Retour</button>
@@ -351,6 +365,7 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
     <ul id="historiqueListe"></ul>
   </div>
   
+</div>
 </div>
 
 <script>
@@ -565,7 +580,6 @@ function importerInventaire(event) {
    Repas
 ========================= */
 let categoriesCourses = JSON.parse(localStorage.getItem("categoriesCourses")) || {};
-let inputRepasActuel = null;
 const toutesCategories = ["Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sauce", "Epice", "Boisson", "Conserve", 
                           "Produit du monde", "Hygiène"];
   
@@ -1090,15 +1104,28 @@ function afficherHistorique() {
 }
 function ouvrirPopupHistorique(mois) {
   const historique = JSON.parse(localStorage.getItem("budgetHistorique")) || {};
-  const details = historique[mois];
-  document.getElementById("historiqueTitre").textContent = "Détails " + mois;
-  const ul = document.getElementById("historiqueDetails");
-  ul.innerHTML = "";
+  const details = historique[mois] || [];
+  const groupes = {};
   details.forEach(d => {
-    const li = document.createElement("li");
-    li.textContent = `${d.note} — ${d.montant} € (${d.categorie})`;
-    ul.appendChild(li);
+    if (!groupes[d.categorie]) groupes[d.categorie] = [];
+    groupes[d.categorie].push(d);
   });
+  let html = "";
+  Object.keys(groupes).sort().forEach(cat => {
+    groupes[cat].sort((a,b) => b.montant - a.montant);
+    const totalCat = groupes[cat].reduce((s,d) => s + d.montant, 0).toFixed(2);
+    html += `<h3>${cat} — ${totalCat} €</h3>`;
+    groupes[cat].forEach(d => {
+      html += `
+        <div class="list-item">
+          <span>${d.note}</span>
+          <strong>${d.montant.toFixed(2)} €</strong>
+        </div>
+      `;
+    });
+  });
+  document.getElementById("historiqueDetails").innerHTML = html;
+  document.getElementById("historiqueTitre").textContent = "Détails " + mois;
   document.getElementById("popupHistorique").style.display = "flex";
 }
 function fermerPopupHistorique() {
@@ -1134,6 +1161,14 @@ function supprimerMoisHistorique(mois){
   localStorage.setItem("budgetHistorique", JSON.stringify(historique));
 
   afficherHistorique();
+}
+function grouperParCategorie(depenses) {
+  const groupes = {};
+  depenses.forEach(d => {
+    if (!groupes[d.categorie]) groupes[d.categorie] = [];
+    groupes[d.categorie].push(d);
+  });
+  return groupes;
 }
 
 /* =========================
@@ -1387,5 +1422,6 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
