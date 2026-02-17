@@ -246,13 +246,13 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 <div class="layout">
   <aside class="sidebar">
     <div class="nav-title">Modules</div>
-    <button class="nav-btn active" onclick="afficherPage('inventaire')">📦 Inventaire</button>
+    <button class="nav-btn" onclick="afficherPage('inventaire')">📦 Inventaire</button>
     <button class="nav-btn" onclick="afficherPage('repas')">🍽 Repas </button>
     <button class="nav-btn" onclick="afficherPage('courses')">🛒 Courses</button>
     <button class="nav-btn" onclick="afficherPage('recettes')">📖 Recettes</button>
     <button class="nav-btn" onclick="afficherPage('budget')">💶 Budget</button>
     <button class="nav-btn" onclick="afficherPage('historique')">📋 Historique</button>
-    <button class="nav-btn" onclick="afficherPage('propete')">🧼 Ménage</button>
+    <button class="nav-btn" onclick="afficherPage('proprete')">🧼 Ménage</button>
   </aside>
   <main class="content">
 
@@ -381,7 +381,7 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 <!-- ==========================
    🍽 Recettes
 ========================== --> 
-    <div id="page-recettes" style="display:none;">
+    <div class="card" id="page-recettes" style="display:none;">
       <h2>📖 Mes Recettes</h2>
       <input id="recetteNom" placeholder="Nom de la recette">
       <input id="recetteIngredients" placeholder="Ex: Tomate, Lait, Oeuf">
@@ -393,7 +393,7 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 <!-- ==========================
    🧽 PROPRETÉ
 ========================== -->
-    <div id="page-proprete" class="card" style="display:none;">
+    <div class="card" id="page-proprete" style="display:none;">
       <h2>🧽 Propreté</h2>
       <div id="listeTachesProprete"></div>
       <button class="btn" onclick="resetProprete()">🔄 Nouvelle semaine</button>
@@ -402,7 +402,7 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 <!-- ==========================
    💰 BUDGET
 ========================== -->
-    <div id="page-budget" class="card" style="display:none;">
+    <div class="card" id="page-budget" style="display:none;">
       <h2>💰 Budget mensuel</h2>
       <div id="budget-depenses" style="margin-top: 20px;">
         <h3>Ajouter une dépense</h3>
@@ -428,10 +428,10 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 <!-- ==========================
    📋 HISTORIQUE
 ========================== -->
-      <div id="page-historique" class="card" style="display:none;">
-      <h2>📋 Historique</h2>
-        <ul id="historiqueListe"></ul>
-    </div>
+      <div class="card" id="page-historique" style="display:none;">
+      	<h2>📋 Historique</h2>
+        	<ul id="historiqueListe"></ul>
+      </div>
       
 	</main>
 </div>
@@ -1245,6 +1245,12 @@ function grouperParCategorie(depenses) {
 function afficherPage(page) {
   document.querySelectorAll(".card").forEach(p => p.style.display = "none");
   document.getElementById("page-" + page).style.display = "block";
+  if(page === "proprete") {
+    afficherProprete();
+  }
+  if(page === "historique") {
+    afficherHistorique();
+  }
 }
 
 /* =========================
@@ -1478,6 +1484,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
