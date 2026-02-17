@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#121212">
 <meta charset="UTF-8">
 <title>Mon Organisation</title>
   
@@ -10,160 +10,25 @@
 /* ==========================
    🌟 STYLES GÉNÉRAUX
 ========================== */ 
-:root{--bg:#f5f7fb; --card:#ffffff; --primary:#4f46e5; --primary-light:#eef2ff;--success:#22c55e;
-  --warning:#f59e0b; --danger:#ef4444; --text:#1f2937; --muted:#6b7280; --radius:16px; --shadow:0 8px 24px rgba(0,0,0,0.08); }
-*{box-sizing:border-box}
-body{margin:0; font-family:Inter, system-ui, sans-serif; background:var(--bg); color:var(--text);
-}
-.header{
-  background:var(--card);
-  box-shadow:var(--shadow);
-  padding:18px 28px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  position:sticky;
-  top:0;
-  z-index:10;
-}
-.header h1{
-  margin:0;
-  font-size:20px;
-}
-.header-actions{
-  display:flex;
-  gap:10px;
-}
-.layout{
-  display:grid;
-  grid-template-columns:260px 1fr;
-  min-height:calc(100vh - 70px);
-}
-.sidebar{
-  background:#0f172a;
-  color:white;
-  padding:22px 14px;
-}
-.nav-title{
-  font-size:12px;
-  text-transform:uppercase;
-  opacity:.6;
-  margin:18px 12px 8px;
-}
-.nav-btn{
-  width:100%;
-  border:none;
-  background:transparent;
-  color:white;
-  padding:12px 14px;
-  border-radius:12px;
-  text-align:left;
-  cursor:pointer;
-  font-weight:600;
-  opacity:.9;
-}
-.nav-btn:hover{
-  background:rgba(255,255,255,.08);
-}
-.nav-btn.active{
-  background:var(--primary);
-}
-.content{
-  padding:28px;
-}
-.card{
-  background:var(--card);
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  padding:20px;
-  margin-bottom:22px;
-}
-.card h2{
-  margin:0 0 14px 0;
-  font-size:18px;
-}
-.btn{
-  border:none;
-  border-radius:12px;
-  padding:10px 14px;
-  font-weight:600;
-  cursor:pointer;
-  background:var(--primary);
-  color:white;
-}
-.btn.secondary{
-  background:#e5e7eb;
-  color:#111827;
-}
-.btn.success{ background:var(--success); }
-.btn.warning{ background:var(--warning); }
-.btn.danger{ background:var(--danger); }
-.btn:hover{ filter:brightness(1.05); }
-.list{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-.row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:12px 14px;
-  background:#f9fafb;
-  border-radius:12px;
-}
-.row-left{
-  display:flex;
-  flex-direction:column;
-}
-.row-title{
-  font-weight:600;
-}
-.row-sub{
-  font-size:13px;
-  color:var(--muted);
-}
-.badge{
-  font-size:12px;
-  padding:4px 10px;
-  border-radius:999px;
-  font-weight:600;
-}
-.form-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-  gap:14px;
-}
-input, select{
-  width:100%;
-  padding:10px 12px;
-  border-radius:10px;
-  border:1px solid #e5e7eb;
-  font-size:14px;
-}
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.35);
-  display:none;
-  align-items:center;
-  justify-content:center;
-}
-.modal-box{
-  background:white;
-  width:420px;
-  max-width:95%;
-  border-radius:18px;
-  padding:22px;
-  box-shadow:var(--shadow);
-}
-.modal-box h3{
-  margin-top:0;
-}
+body {font-family: Arial, sans-serif; padding: 15px;  margin: 0; width: 100%; }
+html, body {height: 100%;}
+h1 { color: #2c3e50; text-align: center; }
+label { display: block; margin-top: 10px; }
+input, select, button { margin: 5px 0; padding: 10px; font-size: 1em; width: 100%; box-sizing: border-box; }
+button.small {padding: 6px 10px; font-size: 0.9em; min-width: 90px; }
+.nav {display: flex; gap: 10px; margin-bottom: 15px; }
+.nav button {flex: 1; }
+  
 /* ==========================
    ⚡ PAGES
 ========================== */
 .page {display: none; }
+
+  /* ==========================
+   🏠 PAGE ACCUEIL
+========================== */
+.home-grid {display: flex; flex-direction: column; gap: 20px; margin-top: 40px; }
+.home-btn {padding: 25px; font-size: 1.4em; border-radius: 15px; cursor: pointer; width: 100%; }
 
   /* ==========================
    🍽 ALIMENTAIRE
@@ -226,123 +91,104 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 /* ==========================
     TELEPHONE
 ========================== */
-@media (max-width: 600px){
-  .card{
-    padding:14px;
-    border-radius:12px;
-    margin-bottom:14px;
-    box-shadow:0 6px 16px rgba(0,0,0,0.08);
-  }
-  .btn{
-    padding:12px;
-    font-size:1em;
-    border-radius:12px;
-  }
-  .nav{
-    overflow-x:auto;
-    flex-wrap:nowrap;
-    gap:8px;
-    padding:6px;
-  }
-  .nav button{
-    flex:0 0 auto;
-    white-space:nowrap;
-    font-size:.95em;
-  }
-  li,
-  .list-row,
-  .list-item{
-    flex-direction:column;
-    align-items:flex-start;
-    gap:8px;
-  }
-  .actions{
-    width:100%;
-    justify-content:flex-end;
-  }
-  table{
-    display:block;
-    overflow-x:auto;
-    white-space:nowrap;
-    font-size:.9em;
-  }
-  table input{
-    min-width:120px;
-  }
+@media (max-width: 600px) {
+  .popup-content {width: 95%; height: auto; padding: 20px; border-radius: 10px; }
+  body { padding: 10px; }
+  input, select, button { width: 100%; }
 }
 </style>
 </head>
   
 <body>
+
 <!-- ==========================
-   🏠 BANDEAU PRINCIPALE
+   🏠 ACCUEIL
 ========================== -->
-<div class="header">
-  <h1>Gestion Maison</h1>
-  <div class="header-actions">
-    <button class="btn secondary" onclick="toggleDarkMode()">Mode sombre</button>
+<div id="page-accueil" class="page">
+  <h1 style="text-align:center;">🏠 Mon organisation</h1>
+  <div class="home-grid">
+  <button class="home-btn" onclick="afficherPage('alimentaire')">🥗 Alimentaire</button>
+  <button class="home-btn" onclick="afficherPage('proprete')">🧽 Propreté</button>
+  <button class="home-btn" onclick="afficherPage('budget')">💰 Budget</button>
   </div>
 </div>
-  
-<div class="layout">
-  <aside class="sidebar">
-    <div class="nav-title">Modules</div>
-    <button class="nav-btn" onclick="afficherPage('inventaire')">📦 Inventaire</button>
-    <button class="nav-btn" onclick="afficherPage('repas')">🍽 Repas </button>
-    <button class="nav-btn" onclick="afficherPage('courses')">🛒 Courses</button>
-    <button class="nav-btn" onclick="afficherPage('recettes')">📖 Recettes</button>
-    <button class="nav-btn" onclick="afficherPage('budget')">💶 Budget</button>
-    <button class="nav-btn" onclick="afficherPage('historique')">📋 Historique</button>
-    <button class="nav-btn" onclick="afficherPage('proprete')">🧼 Ménage</button>
-  </aside>
-  <main class="content">
+
+<button class="toggle" onclick="toggleDarkMode()">🌙 Mode sombre</button>
 
 <!-- ==========================
-   🍽 INVENTAIRE
+   🍽 ALIMENTAIRE
 ========================== -->  
-    <div class="card" id="page-inventaire" style="display:none;">
-      <h2>Inventaire</h2>
+<div id="page-alimentaire" class="page" style="display:none;">
+  <h1>Gestion Alimentaire</h1>
+  <button class="small" onclick="afficherPage('accueil')">⬅ Retour</button>
 
-      <div class="form-grid" style="margin-bottom:16px">
-        <input type="text" id="nom" placeholder="Nom produit">
-        <input type="number" id="quantite" placeholder="Quantité">
-        <input type="text" id="unite" placeholder="Ex: g, litre, pcs">
-        <input type="number" id="portions" placeholder="Portions par unité">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <input type="date" id="peremption">
-          <label style="display: flex; align-items: center; gap: 5px; margin: 0;">
-            <input type="checkbox" id="sansDate" style="transform: scale(1.5);">
-          </label>
-        </div>
-        <select id="categorie">
-          <option value="Choisir catégorie">Choisir catégorie</option>
-          <option value="Boisson">Boisson</option>
-          <option value="Produit laitier">Produit laitier</option>
-          <option value="Légume">Légume</option>
-          <option value="Fruit">Fruit</option>
-          <option value="Viande">Viande</option>
-          <option value="Poisson">Poisson</option>
-          <option value="Féculent">Féculent</option>
-          <option value="Sucré">Sucré</option>
-          <option value="Sauce">Sauce</option>
-          <option value="Epice">Epice</option>
-          <option value="Sec">Sec</option>
-          <option value="Plat préparé">Plat préparé</option>
-          <option value="Hygiène">Hygiène</option>
-        </select>
-        <button class="btn success" onclick="ajouterOuModifierAliment()">Ajouter</button>
-      </div>
-
-      <input type="text" id="recherche" placeholder="🔍 Rechercher un aliment..." oninput="afficherAliments()">
-      <ul class="list" id="listeAliments"></ul>
-  	</div>
-	
-<!-- ==========================
-   🍽 REPAS
-========================== -->  
-    <div class="card" id="page-repas" style="display:none;">
-      <h2>🍽️ Repas de la semaine</h2>
+  <!--Onglets-->
+  <nav class="nav">
+    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherSousPage('inventaire')">📦 Inventaire</button>
+    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherSousPage('repas')">🍽️ Repas</button>
+    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherSousPage('courses')">📋 Courses</button>
+    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherSousPage('recettes')">📖 Recettes</button>
+  </nav>
   
+  <!-- ===== INVENTAIRE ===== -->
+  <div id="inventaire" style="margin-bottom:10px;">
+    <button onclick="exporterInventaire()">💾 Sauvegarder</button>
+    <input type="file" id="importFile" accept=".json" onchange="importerInventaire(event)">
+   
+    <label>Nom :</label>
+    <input type="text" id="nom" placeholder="Nom de l'aliment">
+    
+    <label>Quantité :</label>
+    <input type="number" id="quantite" placeholder="Quantité">
+    
+    <label>Unité :</label>
+    <input type="text" id="unite" placeholder="Ex: g, litre, pcs">
+
+    <label>Portions par unité (optionnel)</label>
+    <input type="number" id="portions" placeholder="Portions par unité">
+    
+    <label>Date de péremption :</label>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <input type="date" id="peremption">
+      <label style="display: flex; align-items: center; gap: 5px; margin: 0;">
+        <input type="checkbox" id="sansDate" style="transform: scale(1.5);">
+        <span style="white-space: nowrap;">Pas de DLC</span>
+      </label>
+    </div>
+    
+    <label>Catégorie :</label>
+    <select id="categorie">
+      <option value="Choisir catégorie">Choisir catégorie</option>
+      <option value="Boisson">Boisson</option>
+      <option value="Produit laitier">Produit laitier</option>
+      <option value="Légume">Légume</option>
+      <option value="Fruit">Fruit</option>
+      <option value="Viande">Viande</option>
+      <option value="Poisson">Poisson</option>
+      <option value="Féculent">Féculent</option>
+      <option value="Sucré">Sucré</option>
+      <option value="Sauce">Sauce</option>
+      <option value="Epice">Epice</option>
+      <option value="Sec">Sec</option>
+      <option value="Plat préparé">Plat préparé</option>
+      <option value="Hygiène">Hygiène</option>
+    </select>
+
+    <div class="form-section">
+      <button type="button" onclick="ajouterOuModifierAliment()">Ajouter</button>
+    </div>
+
+    <input type="text" id="recherche" placeholder="🔍 Rechercher un aliment..." oninput="afficherAliments()">
+    <h2>Liste des aliments :</h2>
+    <ul id="listeAliments"></ul>
+  </div>
+
+  <!-- ===== REPAS ===== -->
+  <div id="repas" style="display:none;">
+    <h2>🍽️ Repas de la semaine</h2>
+    <p>Planifie les repas de la semaine :</p>
+  
+    <div style="display: flex; align-items: flex-end; gap: 10px; margin-top: 20px;">
       <table border="1" cellpadding="5" cellspacing="0">
           <thead>
             <tr>
@@ -403,78 +249,109 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
               <td><input type="text" class="repas" data-jour="Dimanche" data-repas="Dîner" onclick="ouvrirPopupRepas(this)" readonly></td>
               <td><input type="text" class="repas" data-jour="Dimanche" data-repas="Autre" onclick="ouvrirPopupRepas(this)" readonly></td>
             </tr>
-        </tbody>
-      </table>
-      <button class="btn" onclick="nouvelleSemaine()"> Nouvelle semaine</button>
-      <button class="btn" onclick="sauvegarderRepas()">💾 Sauvegarder la semaine</button>
-      <button class="btn" onclick="chargerRepas()">🔄 Charger la semaine</button>
-      <button class="btn" onclick="genererListeCourses()">🛒 Générer la liste de courses</button>
+          </tbody>
+        </table>
+        <button onclick="nouvelleSemaine()" style="background-color:#e74c3c; color:white; padding: 6px 12px; border:none; border-radius:5px; cursor:pointer; 
+          font-size: 0.9em;height: fit-content;width: auto !important;"> Nouvelle semaine</button>
     </div>
+    <div class="repas-actions">
+      <button onclick="sauvegarderRepas()">💾 Sauvegarder la semaine</button>
+      <button onclick="chargerRepas()">🔄 Charger la semaine</button>
+      <button onclick="genererListeCourses()">🛒 Générer la liste de courses</button>
+    </div>
+  </div>
 
-<!-- ==========================
-   🍽 Courses
-========================== -->  
-    <div class="card" id="page-courses" style="display:none;">
-      <h2>🛒 Liste de courses</h2>
-      <div id="listeCoursesContainer"></div>
-    </div>
+  <!-- ===== COURSES ===== -->
+  <div id="courses">
+    <h2>🛒 Liste de courses</h2>
+    <div id="listeCoursesContainer"></div>
+  </div>
 
-<!-- ==========================
-   🍽 Recettes
-========================== --> 
-    <div class="card" id="page-recettes" style="display:none;">
-      <h2>📖 Mes Recettes</h2>
-      <input id="recetteNom" placeholder="Nom de la recette">
-      <input id="recetteIngredients" placeholder="Ex: Tomate, Lait, Oeuf">
-      <button class="btn success" onclick="ajouterRecette()">Ajouter la recette</button>
-      <h3>Liste des recettes :</h3>
-      <ul class="list" id="listeRecettes"></ul>
+  <!-- ===== RECETTES ===== -->
+  <div id="recettes" style="display:none;">
+    <h2>📖 Mes Recettes</h2>
+    <label>Nom de la recette :</label>
+    <input type="text" id="recetteNom" placeholder="Nom de la recette">
+    <label>Ingrédients (séparés par des virgules) :</label>
+    <input type="text" id="recetteIngredients" placeholder="Ex: Tomate, Lait, Oeuf">
+    <div class="form-section">
+      <button type="button" onclick="ajouterRecette()">Ajouter la recette</button>
     </div>
+    <h3>Liste des recettes :</h3>
+    <ul id="listeRecettes"></ul>
+  </div>
+
+</div>
   
 <!-- ==========================
    🧽 PROPRETÉ
 ========================== -->
-    <div class="card" id="page-proprete" style="display:none;">
-      <h2>🧽 Propreté</h2>
-      <div id="listeTachesProprete"></div>
-      <button class="btn" onclick="resetProprete()">🔄 Nouvelle semaine</button>
-    </div>
+<div id="page-proprete" class="page" style="display:none;">
+  <h2>🧽 Propreté</h2>
+  <button class="small" onclick="afficherPage('accueil')">⬅ Retour</button>
+  <div id="listeTachesProprete"></div>
+  <div style="margin-top:20px;">
+    <button onclick="resetProprete()">🔄 Nouvelle semaine</button>
+  </div>
+</div>
 
 <!-- ==========================
    💰 BUDGET
 ========================== -->
-    <div class="card" id="page-budget" style="display:none;">
-      <h2>💰 Budget mensuel</h2>
-      <div id="budget-depenses" style="margin-top: 20px;">
-        <h3>Ajouter une dépense</h3>
-        <input id="budgetMontant" placeholder="Ex: 25">
-        <select id="budgetCategorie">
-          <option>Nourriture</option>
-          <option>Logement</option>
-          <option>Voiture</option>
-          <option>Loisir</option>
-          <option>Abonnement</option>
-        </select>
-        <input id="budgetNote" placeholder="Ex: courses lidl">
-        <button class="btn success" onclick="ajouterDepense()">Ajouter</button>
-        <h3>Total du mois : <span id="budgetTotal">0 €</span></h3>
-        <div style="display: flex; align-items: center; justifyContent: space-between; marginBottom: 10px;">
-          <h3>Dépenses :</h3>
-          <div class="budget-actions">
-            <button class="btn" onclick="nouveauMois()"> Réinitialiser le budget</button>
-          </div>
-        </div>
-        <ul class="list" id="budgetListe"></ul>
+<div id="page-budget" class="page" style="display:none;">
+  <h2>💰 Budget mensuel</h2>
+  <button class="small" onclick="afficherPage('accueil')">⬅ Retour</button>
+
+  <!-- Onglets -->
+  <nav class="nav">
+    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherBudgetOnglet('depenses')" class="budget-tab">Dépenses</button>
+    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherBudgetOnglet('graphique')" class="budget-tab">Graphique</button>
+    <button style="width:auto; padding:10px; font-size:1em;" onclick="afficherBudgetOnglet('historique')" class="budget-tab">Historique</button>
+  </nav>
+
+  <!-- Contenu Dépenses -->
+  <div id="budget-depenses" style="margin-top: 20px;">
+    <h3>Ajouter une dépense</h3>
+    <label>Montant (€)</label>
+    <input type="number" id="budgetMontant" placeholder="Ex: 25">
+
+    <label>Catégorie</label>
+    <select id="budgetCategorie">
+      <option>Nourriture</option>
+      <option>Logement</option>
+      <option>Voiture</option>
+      <option>Loisir</option>
+      <option>Santé</option>
+      <option>Abonnement</option>
+      <option>Autre</option>
+    </select>
+
+    <label>Description</label>
+    <input type="text" id="budgetNote" placeholder="Ex: courses lidl">
+
+    <button onclick="ajouterDepense()">Ajouter</button>
+    <hr>
+    <h3>Total du mois : <span id="budgetTotal">0 €</span></h3>
+    <div style="display: flex; align-items: center; justifyContent: space-between; marginBottom: 10px;">
+      <h3>Dépenses :</h3>
+      <div class="budget-actions">
+        <button onclick="nouveauMois()" style="background-color:#e74c3c; color:white; padding: 6px 12px; flexShrink:0; width: auto;"> Réinitialiser le budget</button>
       </div>
-<!-- ==========================
-   📋 HISTORIQUE
-========================== -->
-      <div class="card" id="page-historique" style="display:none;">
-      	<h2>📋 Historique</h2>
-        	<ul id="historiqueListe"></ul>
-      </div>
-      
-	</main>
+    </div>
+    <ul id="budgetListe"></ul>
+  </div>
+
+  <!-- Contenu Graphique -->
+  <div id="budget-graphique" style="display:none;">
+    <canvas id="budgetPieChart" width="300" height="300"></canvas>
+    <ul id="budgetLegend" style="list-style:none; padding:0; margin-top:10px;"></ul>
+  </div>
+  
+  <!-- Contenu Historique -->
+  <div id="budget-historique" style="display:none;">
+    <ul id="historiqueListe"></ul>
+  </div>
+  
 </div>
 
 <script>
@@ -1284,14 +1161,19 @@ function grouperParCategorie(depenses) {
    Navigation
 ========================= */
 function afficherPage(page) {
-  document.querySelectorAll(".card").forEach(p => p.style.display = "none");
+  document.querySelectorAll(".page").forEach(p => p.style.display = "none");
   document.getElementById("page-" + page).style.display = "block";
-  if(page === "proprete") {
+  if(page === "alimentaire") {
+    afficherSousPage("inventaire");
+  }
+   if(page === "proprete") {
     afficherProprete();
   }
-  if(page === "historique") {
-    afficherHistorique();
-  }
+}
+function afficherSousPage(id) { 
+  document.querySelectorAll("#page-alimentaire > div[id]").forEach(d => { 
+    d.style.display = "none"; }); 
+  document.getElementById(id).style.display = "block"; 
 }
 
 /* =========================
@@ -1302,7 +1184,8 @@ afficherAliments();
 chargerDepenses();
 verifierChangementDeMois();
 afficherDepenses();
-afficherPage("inventaire");
+afficherPage("accueil");
+afficherSousPage("inventaire");
 
 </script>
 <script>
@@ -1525,8 +1408,5 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
-
-
-
 
 
