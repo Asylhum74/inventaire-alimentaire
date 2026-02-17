@@ -226,9 +226,50 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 /* ==========================
     TELEPHONE
 ========================== */
-@media (max-width:900px){
-  .layout{ grid-template-columns:1fr; }
-  .sidebar{ display:none; }
+@media (max-width: 600px){
+  .card{
+    padding:14px;
+    border-radius:12px;
+    margin-bottom:14px;
+    box-shadow:0 6px 16px rgba(0,0,0,0.08);
+  }
+  .btn{
+    padding:12px;
+    font-size:1em;
+    border-radius:12px;
+  }
+  .nav{
+    overflow-x:auto;
+    flex-wrap:nowrap;
+    gap:8px;
+    padding:6px;
+  }
+  .nav button{
+    flex:0 0 auto;
+    white-space:nowrap;
+    font-size:.95em;
+  }
+  li,
+  .list-row,
+  .list-item{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:8px;
+  }
+  .actions{
+    width:100%;
+    justify-content:flex-end;
+  }
+  table{
+    display:block;
+    overflow-x:auto;
+    white-space:nowrap;
+    font-size:.9em;
+  }
+  table input{
+    min-width:120px;
+  }
+}
 </style>
 </head>
   
@@ -1484,6 +1525,7 @@ function sauvegarderRepasPopup() {
   
 </body>
 </html>
+
 
 
 
