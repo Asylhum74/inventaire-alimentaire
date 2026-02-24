@@ -1,0 +1,225 @@
+<style>
+/* ==========================
+   🌟 STYLES GÉNÉRAUX
+========================== */ 
+:root{--bg:#f5f7fb; --card:#ffffff; --primary:#4f46e5; --primary-light:#eef2ff;--success:#22c55e;
+  --warning:#f59e0b; --danger:#ef4444; --text:#1f2937; --muted:#6b7280; --radius:16px; --shadow:0 8px 24px rgba(0,0,0,0.08); }
+*{box-sizing:border-box}
+body{margin:0; font-family:Inter, system-ui, sans-serif; background:var(--bg); color:var(--text);
+}
+.header{
+  background:var(--card);
+  box-shadow:var(--shadow);
+  padding:18px 28px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+.header h1{
+  margin:0;
+  font-size:20px;
+}
+.header-actions{
+  display:flex;
+  gap:10px;
+}
+.layout{
+  display:grid;
+  grid-template-columns:260px 1fr;
+  min-height:calc(100vh - 70px);
+}
+.sidebar{
+  background:#0f172a;
+  color:white;
+  padding:22px 14px;
+}
+.nav-title{
+  font-size:12px;
+  text-transform:uppercase;
+  opacity:.6;
+  margin:18px 12px 8px;
+}
+.nav-btn{
+  width:100%;
+  border:none;
+  background:transparent;
+  color:white;
+  padding:12px 14px;
+  border-radius:12px;
+  text-align:left;
+  cursor:pointer;
+  font-weight:600;
+  opacity:.9;
+}
+.nav-btn:hover{
+  background:rgba(255,255,255,.08);
+}
+.nav-btn.active{
+  background:var(--primary);
+}
+.content{
+  padding:28px;
+}
+.card{
+  background:var(--card);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:20px;
+  margin-bottom:22px;
+}
+.card h2{
+  margin:0 0 14px 0;
+  font-size:18px;
+}
+.btn{
+  border:none;
+  border-radius:12px;
+  padding:10px 14px;
+  font-weight:600;
+  cursor:pointer;
+  background:var(--primary);
+  color:white;
+}
+.btn.secondary{
+  background:#e5e7eb;
+  color:#111827;
+}
+.btn.success{ background:var(--success); }
+.btn.warning{ background:var(--warning); }
+.btn.danger{ background:var(--danger); }
+.btn:hover{ filter:brightness(1.05); }
+.list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 14px;
+  background:#f9fafb;
+  border-radius:12px;
+}
+.row-left{
+  display:flex;
+  flex-direction:column;
+}
+.row-title{
+  font-weight:600;
+}
+.row-sub{
+  font-size:13px;
+  color:var(--muted);
+}
+.badge{
+  font-size:12px;
+  padding:4px 10px;
+  border-radius:999px;
+  font-weight:600;
+}
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:14px;
+}
+input, select{
+  width:100%;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid #e5e7eb;
+  font-size:14px;
+}
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.35);
+  display:none;
+  align-items:center;
+  justify-content:center;
+}
+.modal-box{
+  background:white;
+  width:420px;
+  max-width:95%;
+  border-radius:18px;
+  padding:22px;
+  box-shadow:var(--shadow);
+}
+.modal-box h3{
+  margin-top:0;
+}
+/* ==========================
+   ⚡ PAGES
+========================== */
+.page {display: none; }
+
+  /* ==========================
+   🍽 ALIMENTAIRE
+========================== */
+ul { list-style: none; padding: 0; max-height: 400px; overflow-y: auto; margin-top: 10px; }
+li { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin:5px 0; border-bottom:1px solid #ccc; padding:5px;
+    word-wrap:break-word; }
+.actions {display: inline-flex; gap: 6px; margin-left: 10px; }
+.urgent {color: red; font-weight: bold; display: flex; align-items: center; flex: 1; }
+.ok {color: black; display: flex; align-items: center; flex: 1; }
+.course-checkbox {width: 20px; height: 20px; cursor: pointer; }
+.form-section {margin-bottom: 25px; }
+#listeAliments {min-height: calc(100vh - 300px); overflow-y: auto; }
+.repas-actions {display: flex; gap: 12px; margin-top: 15px; }
+.repas-actions button {flex: 1; padding: 12px; font-size: 1em; }
+#listeAliments button {padding: 8px 12px; font-size: 1.1em; }
+
+/* ==========================
+   🧽 PROPRETÉ
+========================== */
+.room {margin-top: 20px; padding: 12px; border-radius: 10px; background: rgba(0,0,0,0.05); }
+.task {display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 1.1em; }
+.task input {width: 22px; height: 22px; }
+.progress-bar {height: 10px; background: #ddd; border-radius: 10px; overflow: hidden; margin: 6px 0 12px 0; }
+.progress-fill {height: 100%; width: 0%; background: #2ecc71; transition: width 0.3s ease; }
+
+/* ==========================
+   BUDGET
+========================== */
+#page-budget {display: flex; flex-direction: column; height: 100vh; }
+#budgetListe {min-height: calc(100vh - 300px); overflow-y: auto; }
+#budgetListe .actions {display: flex; gap: 12px; margin-top: 15px; }
+#budgetListe .actions button {flex: 1; padding: 12px; font-size: 1em; }
+.list-item {display:flex; justify-content:space-between; align-items:center; padding:12px; border-radius:10px; margin-bottom:8px; }
+
+/* ==========================
+   🌙 MODE SOMBRE
+========================== */
+.dark {background: #121212; color: #e0e0e0; }
+.dark input, .dark select, .dark button {background: #1e1e1e; color: #e0e0e0; border: 1px solid #444; }
+.dark li {border-bottom: 1px solid #333; }
+.dark strong, .dark li span, .dark h1, .dark h2 {color: #ffffff; }
+.dark .room {background: rgba(255,255,255,0.05); }
+.dark .progress-bar {background: #333;}
+.toggle {margin: 10px 0; }
+
+/* ==========================
+   🖤 POPUPS
+========================== */
+.popup {position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+.popup-content {background: #1e1e1e; color: white; width: 100%; max-width: 500px; padding: 30px; border-radius: 15px; display: flex; 
+                flex-direction: column; gap: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); max-height: 90vh; overflow-y: auto; }
+.popup-content input,
+.popup-content select,
+.popup-content button {font-size: 1.1em; padding: 12px; border-radius: 10px; }
+.popup-actions {display: flex; gap: 10px; }
+.popup-actions button {flex: 1; }
+.delete-btn {background: #c0392b; color: white; font-size: 1.2em; padding: 14px; }
+
+/* ==========================
+    TELEPHONE
+========================== */
+@media (max-width:900px){
+  .layout{flex-direction:column;}
+  .sidebar{width:100%;} 
+}
+</style>
