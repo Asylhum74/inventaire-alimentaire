@@ -238,12 +238,15 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
   .layout {
     flex-direction: column;  /* boutons en haut, contenu en bas */
     min-height: 100vh;       /* prend tout l'écran */
+	width:100%;
+	
   }
   .sidebar {
     width: 100%;              /* prend toute la largeur */
   }
   .content {
     flex: 1;                  /* prend le reste de la hauteur */
+	width:100%;
   }
 }
 </style>
@@ -1504,6 +1507,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
