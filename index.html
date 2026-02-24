@@ -44,7 +44,7 @@ html, body {height: 100%;}
 }
 .sidebar {
   display: flex;
-  gap: 5px;
+  gap: 10px;
   background: #0f172a;
   padding: 12px;
   border-radius: 12px;
@@ -257,14 +257,14 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 <!-- ==========================
    🏠 BANDEAU PRINCIPALE
 ========================== -->
-<div class="header">
+  
+<div class="layout">
+  <div class="header">
   <h1>Gestion Maison</h1>
   <div class="header-actions">
     <button class="btn secondary" onclick="toggleDarkMode()">Mode sombre</button>
   </div>
-</div>
-  
-<div class="layout">
+  </div>
   <div class="sidebar">
     <button class="nav-btn" onclick="afficherPage('inventaire')">📦 Inventaire</button>
     <button class="nav-btn" onclick="afficherPage('repas')">🍽 Repas </button>
@@ -1507,6 +1507,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
