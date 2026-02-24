@@ -34,15 +34,18 @@ body{margin:0; font-family:Inter, system-ui, sans-serif; background:var(--bg); c
   display:flex;
   gap:10px;
 }
-.layout{
-  display: flex;        /* active le flexbox */
-  flex-direction: row;  /* les enfants sont en ligne (horizontal) */
-  gap: 20px;            /* espace entre les enfants */
+.layout {
+  display: flex;
+  flex-direction: column; /* tout empilé verticalement */
+  gap: 20px;
 }
-.sidebar{
-  background:#0f172a;
-  color:white;
-  padding:22px 14px;
+.sidebar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap; /* les boutons passent à la ligne si besoin */
+  background: #0f172a;
+  padding: 12px;
+  border-radius: 12px;
 }
 .nav-title{
   font-size:12px;
@@ -1489,6 +1492,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
