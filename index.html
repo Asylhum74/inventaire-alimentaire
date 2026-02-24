@@ -2,8 +2,7 @@
 <html lang="fr">
 <head>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./styles.css" />
-<link rel="stylesheet" href="./script.js" />	
+<link rel="stylesheet" href="./styles.css" />	
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="UTF-8">
 <title>Mon Organisation</title>
@@ -213,6 +212,968 @@
       
 	</main>
 </div>
+<script>
+// ------------------- MODE SOMBRE -------------------
+if (localStorage.getItem("darkMode") === "true") {
+  document.body.classList.add("dark");
+}
+function toggleDarkMode() {
+  document.body.classList.toggle("dark");
+  localStorage.setItem("darkMode", document.body.classList.contains("dark"));
+}
+
+/* =========================
+   Alimentaire
+========================= */
+let aliments = [];
+let indexEnCours = -1;
+
+// Charger les aliments depuis localStorage
+function chargerAliments() {
+  const data = localStorage.getItem("aliments");
+  if(data) aliments = JSON.parse(data);
+}
+// Sauvegarder les aliments dans localStorage
+function sauvegarderAliments() {
+  localStorage.setItem("aliments", JSON.stringify(aliments));
+}
+// Ajouter ou modifier un aliment
+function ajouterOuModifierAliment() {
+  const nom = document.getElementById("nom").value;
+  const quantite = document.getElementById("quantite").value;
+  const unite = document.getElementById("unite").value;
+  const sansDate = document.getElementById("sansDate").checked;
+  const peremption = sansDate ? null : document.getElementById("peremption").value;
+  const categorie = document.getElementById("categorie").value;
+  const portions = parseInt(document.getElementById("portions").value) || 1;
+  if(!nom || !quantite || !unite || !categorie) {
+    alert("Veuillez remplir tous les champs !");
+    return;
+  }
+  const nouvelAliment = {nom, quantite, unite, peremption, categorie, portions};
+  if(indexEnCours === -1) {
+    aliments.push(nouvelAliment);
+  } else {
+    aliments[indexEnCours] = nouvelAliment;
+    indexEnCours = -1;
+    document.querySelector("button[onclick='ajouterOuModifierAliment()']").textContent = "Ajouter";
+  }
+  // Réinitialiser le formulaire
+  document.getElementById("nom").value = "";
+  document.getElementById("quantite").value = "";
+  document.getElementById("unite").value = "";
+  document.getElementById("peremption").value = "";
+  document.getElementById("categorie").value = "Choisir catégorie";
+  document.getElementById("portions").value = "";
+  document.getElementById("sansDate").checked = false; 
+  sauvegarderAliments();
+  afficherAliments();
+}
+// Affichage
+function calculerJoursRestants(dateString) {
+  const aujourdHui = new Date();
+  const peremption = new Date(dateString);
+  const diffTime = peremption - aujourdHui;
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays < 0 ? 0 : diffDays;
+}
+function afficherAliments() {
+  const recherche = document.getElementById("recherche").value.toLowerCase();
+  const ul = document.getElementById("listeAliments");
+  ul.innerHTML = "";
+  const ordreCategorie = ["Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sec", "Sauce", "Epice", "Boisson", "Plat préparé", "Hygiène"];
+  aliments.sort((a, b) => ordreCategorie.indexOf(a.categorie) - ordreCategorie.indexOf(b.categorie));
+  let categorieActuelle = "";
+  aliments.forEach((aliment, index) => {
+    if (!aliment.nom.toLowerCase().includes(recherche)) return;
+    if (aliment.categorie !== categorieActuelle) {
+      categorieActuelle = aliment.categorie;
+      const titre = document.createElement("li");
+      titre.innerHTML = `<strong style="font-size:1.2em; color:#2c3e50;">${categorieActuelle}</strong>`;
+      ul.appendChild(titre);
+    }
+    const li = document.createElement("li");
+    li.style.cursor = "pointer";
+    li.onclick = (e) => {
+      if (e.target.tagName !== "BUTTON") ouvrirPopup(index);
+    };
+    let textePeremption = "";
+    if (aliment.peremption) {
+      const joursRestants = calculerJoursRestants(aliment.peremption);
+      textePeremption = ` - ${joursRestants} jour(s) restant`;
+      if (joursRestants <= 3) {
+        li.className = "urgent";
+        textePeremption += " - URGENT !";
+      } else {
+        li.className = "ok";
+      }
+    } else {
+      li.className = "ok";
+    }
+    let textePortions = "";
+    if (aliment.portions) {
+      textePortions = ` (${aliment.quantite * aliment.portions} portions)`;
+    }
+    const blocQuantite = document.createElement("div");
+    blocQuantite.style.display = "flex";
+    blocQuantite.style.alignItems = "center";
+    blocQuantite.style.gap = "8px";
+    const btnMoins = document.createElement("button");
+    btnMoins.textContent = "−";
+    btnMoins.style.width = "35px";
+    const btnPlus = document.createElement("button");
+    btnPlus.textContent = "+";
+    btnPlus.style.width = "35px";
+    const spanTexte = document.createElement("span");
+    function majTexte() {
+      let txtPortions = aliment.portions ? ` (${aliment.quantite * aliment.portions} portions)` : "";
+      let txtPeremption = "";
+      if (aliment.peremption) {
+        const joursRestants = calculerJoursRestants(aliment.peremption);
+        txtPeremption = ` - ${joursRestants} jour(s) restant`;
+        if (joursRestants <= 3) txtPeremption += " - URGENT !";
+      }
+      spanTexte.innerHTML = `<strong>${aliment.nom}</strong><br>${aliment.quantite} ${aliment.unite}${txtPortions}${txtPeremption}`;
+    }
+    majTexte();
+    btnMoins.onclick = (e) => {
+      e.stopPropagation();
+      if (aliment.quantite > 0) {
+        aliment.quantite--;
+        majTexte();
+        sauvegarderAliments();
+      }
+    };
+    btnPlus.onclick = (e) => {
+      e.stopPropagation();
+      aliment.quantite++;
+      majTexte();
+      sauvegarderAliments();
+    };
+    blocQuantite.appendChild(btnMoins);
+    blocQuantite.appendChild(spanTexte);
+    blocQuantite.appendChild(btnPlus);
+    li.appendChild(blocQuantite);
+    const btnSupprimer = document.createElement("button");
+    btnSupprimer.textContent = "Supprimer";
+    btnSupprimer.style.padding = "10px 16px";
+    btnSupprimer.style.fontSize = "1em";
+    btnSupprimer.style.background = "#e74c3c";
+    btnSupprimer.style.color = "white";
+    btnSupprimer.style.border = "none";
+    btnSupprimer.style.borderRadius = "6px";
+    btnSupprimer.onclick = (e) => {
+      e.stopPropagation();
+      supprimerAliment(index);
+    };
+    const actions = document.createElement("span");
+    actions.className = "actions";
+    actions.appendChild(btnSupprimer);
+    li.appendChild(actions);
+    ul.appendChild(li);
+  });
+}
+function supprimerAliment(index) {
+  if(confirm("Voulez-vous vraiment supprimer cet aliment ?")) {
+    aliments.splice(index, 1);
+    sauvegarderAliments();
+    afficherAliments();
+  }
+}
+// Pré-remplir le formulaire pour modifier
+function preRemplirFormulaire(index) {
+  const aliment = aliments[index];
+  document.getElementById("nom").value = aliment.nom;
+  document.getElementById("quantite").value = aliment.quantite;
+  document.getElementById("unite").value = aliment.unite;
+  document.getElementById("peremption").value = aliment.peremption;
+  document.getElementById("categorie").value = aliment.categorie;
+  document.getElementById("portions").value = aliment.portions;
+  indexEnCours = index;
+  document.querySelector("button[onclick='ajouterOuModifierAliment()']").textContent = "Modifier";
+}
+// Sauvegarde inventaire
+function exporterInventaire() {
+  const dataStr = JSON.stringify(aliments, null, 2);
+  const blob = new Blob([dataStr], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "inventaire.json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+function importerInventaire(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      aliments = JSON.parse(e.target.result);
+      sauvegarderAliments();
+      afficherAliments();
+      alert("Inventaire restauré avec succès !");
+    } catch {
+      alert("Fichier invalide");
+    }
+  };
+  reader.readAsText(file);
+}
+
+/* =========================
+   Repas
+========================= */
+let categoriesCourses = JSON.parse(localStorage.getItem("categoriesCourses")) || {};
+const toutesCategories = ["Féculent", "Produit laitier", "Viande", "Poisson", "Fruit", "Légume", "Sucré", "Sauce", "Epice", "Boisson", "Conserve", 
+                          "Produit du monde", "Hygiène"];
+  
+function sauvegarderRepas() {
+  const repasData = {};
+  document.querySelectorAll('.repas').forEach(input => {
+    const jour = input.dataset.jour;
+    const typeRepas = input.dataset.repas;
+    if (!repasData[jour]) repasData[jour] = {};
+    repasData[jour][typeRepas] = input.value;
+  });
+  localStorage.setItem('repasSemaine', JSON.stringify(repasData));
+  alert("Repas sauvegardés !");
+}
+function chargerRepas() {
+  const repasData = JSON.parse(localStorage.getItem('repasSemaine'));
+  if (!repasData) return;
+
+  document.querySelectorAll('.repas').forEach(input => {
+    const jour = input.dataset.jour;
+    const typeRepas = input.dataset.repas;
+    input.value = repasData[jour] ? repasData[jour][typeRepas] || '' : '';
+  });
+}
+function genererListeCourses() {
+  let inventaire = [];
+  try {
+    inventaire = JSON.parse(localStorage.getItem('aliments')) || [];
+  } catch {
+    inventaire = [];
+  }
+  const repasData = JSON.parse(localStorage.getItem('repasSemaine')) || {};
+  let categories = JSON.parse(localStorage.getItem("coursesCategories")) || {};
+  const totalDemandes = {};
+  const achatsInputs = {}; // ← stocke les champs "acheté"
+  Object.values(repasData).forEach(jour => {
+    Object.values(jour).forEach(texteRepas => {
+      if (!texteRepas) return;
+      const aliments = texteRepas
+        .split(',')
+        .map(a => a.trim())
+        .filter(a => a);
+      aliments.forEach(item => {
+        const match = item.match(/^(.+?)\s*(\d+)?$/);
+        if (!match) return;
+        const nom = match[1].trim();
+        const qte = Number(match[2]) || 1;
+        totalDemandes[nom] = (totalDemandes[nom] || 0) + qte;
+        if (!categories[nom]) categories[nom] = "Autres";
+      });
+    });
+  });
+  const courses = {};
+  Object.keys(totalDemandes).forEach(nom => {
+    const trouve = inventaire.find(a =>
+      a.nom.toLowerCase() === nom.toLowerCase()
+    );
+    const stock = trouve
+      ? Number(trouve.quantite) * (trouve.portions || 1)
+      : 0;
+    const besoin = Math.max(totalDemandes[nom] - stock, 0);
+    if (besoin > 0) courses[nom] = besoin;
+  });
+  const container = document.getElementById("listeCoursesContainer");
+  container.innerHTML = "";
+  const btnAjouterInventaire = document.createElement("button");
+  btnAjouterInventaire.textContent = "➕ Ajouter à l'inventaire";
+  btnAjouterInventaire.onclick = () => {
+    const checkedData = JSON.parse(localStorage.getItem("coursesChecked")) || {};
+    Object.keys(checkedData).forEach(nom => {
+      if (!checkedData[nom]) return;
+      const qteAchetee = Number(achatsInputs[nom]?.value) || 0;
+      if (qteAchetee <= 0) return;
+      aliments.push({
+        nom: nom,
+        quantite: qteAchetee,
+        unite: "",
+        peremption: null,
+        categorie: categories[nom] || "Autres"
+      });
+    });
+    localStorage.setItem("aliments", JSON.stringify(aliments));
+    localStorage.removeItem("coursesChecked");
+    genererListeCourses();
+    afficherAliments();
+  };
+  container.appendChild(btnAjouterInventaire);
+  if (Object.keys(courses).length === 0) {
+    container.innerHTML += "<p>✅ Tout est déjà dans l'inventaire.</p>";
+    return;
+  }
+  const ordreCategories = [
+    "Autres",
+    "Féculent", "Produit laitier", "Viande", "Poisson",
+    "Fruit", "Légume", "Sucré", "Sauce",
+    "Epice", "Boisson", "Conserve", "Produit du monde", "Hygiène"
+  ];
+  ordreCategories.forEach(categorie => {
+    const alimentsDeCategorie =
+      Object.keys(courses).filter(nom => categories[nom] === categorie);
+    if (alimentsDeCategorie.length === 0) return;
+    const titre = document.createElement("p");
+    titre.textContent = categorie;
+    titre.style.fontWeight = "bold";
+    titre.style.fontSize = "1.2em";
+    titre.style.marginTop = "12px";
+    container.appendChild(titre);
+    const ul = document.createElement("ul");
+    alimentsDeCategorie.forEach(nom => {
+      const li = document.createElement("li");
+      li.style.display = "flex";
+      li.style.alignItems = "center";
+      li.style.gap = "10px";
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.className = "course-checkbox";
+      const span = document.createElement("span");
+      span.textContent = `${nom}  (besoin : ${courses[nom]})`;
+      span.style.flex = "1";
+      const inputAchat = document.createElement("input");
+      inputAchat.type = "number";
+      inputAchat.value = courses[nom];
+      inputAchat.style.width = "70px";
+      achatsInputs[nom] = inputAchat;
+      checkbox.onchange = () => {
+        const data = JSON.parse(localStorage.getItem("coursesChecked")) || {};
+        data[nom] = checkbox.checked;
+        localStorage.setItem("coursesChecked", JSON.stringify(data));
+      };
+      const select = document.createElement("select");
+      ordreCategories.forEach(cat => {
+        const option = document.createElement("option");
+        option.value = cat;
+        option.textContent = cat;
+        if (cat === categorie) option.selected = true;
+        select.appendChild(option);
+      });
+      select.onchange = () => {
+        categories[nom] = select.value;
+        localStorage.setItem("coursesCategories", JSON.stringify(categories));
+        genererListeCourses();
+      };
+      li.appendChild(checkbox);
+      li.appendChild(span);
+      li.appendChild(inputAchat);
+      li.appendChild(select);
+      ul.appendChild(li);
+    });
+    container.appendChild(ul);
+  });
+  localStorage.setItem("coursesCategories", JSON.stringify(categories));
+}
+
+function nouvelleSemaine() {
+  if (!confirm("Voulez-vous vraiment commencer une nouvelle semaine ? Toutes les cases seront vidées.")) return;
+  document.querySelectorAll('.repas').forEach(input => input.value = '');
+  localStorage.removeItem('repasSemaine');
+  document.getElementById("repasSemaine").innerHTML = "";
+  alert("Nouvelle semaine prête ! Toutes les cases ont été vidées.");
+}
+function repasCuisiné() {
+  if (!confirm("Retirer les ingrédients du stock et marquer le repas comme fait ?")) return;
+  if (!inputRepasActif) return;
+  const texteRepas = document.getElementById("repasTexte").value.trim();
+  if (!texteRepas) return;
+  let inventaire = JSON.parse(localStorage.getItem("aliments")) || [];
+  const ingredients = texteRepas
+    .split(',')
+    .map(a => a.trim())
+    .filter(a => a)
+    .map(item => {
+      const parts = item.split(/\s+/).filter(Boolean);
+      const last = parts[parts.length - 1] || "";
+      const parsed = Number(last.replace(",", "."));
+      const quantite = Number.isNaN(parsed) ? 1 : parsed;
+      const nom = Number.isNaN(parsed) ? item : parts.slice(0, -1).join(" ");
+      return {
+        nom: nom.trim(),
+        quantite
+      };
+    })
+    .filter(ingredient => ingredient.nom);
+  ingredients.forEach(ingredient => {
+    const alim = inventaire.find(a =>
+      a.nom.toLowerCase() === ingredient.nom.toLowerCase()
+    );
+    if (!alim) return;
+    if (alim.portions) {
+      let portionsStock = alim.quantite * alim.portions;
+      portionsStock -= ingredient.quantite;
+      alim.quantite = Math.max(
+        portionsStock / alim.portions,
+        0
+      );
+    } else {
+      alim.quantite = Math.max(
+        alim.quantite - ingredient.quantite,
+        0
+      );
+    }
+  });
+  aliments = inventaire;
+  localStorage.setItem("aliments", JSON.stringify(inventaire));
+  inputRepasActif.value = "";
+  document.getElementById("repasTexte").value = "";
+  sauvegarderRepas();
+  afficherAliments();
+  genererListeCourses();
+  fermerPopupRepas();
+  alert("✅ Repas validé, stock mis à jour !");
+}
+
+/* =========================
+   Recette
+========================= */
+let recettes = [];
+let indexRecetteEnCours = -1;
+
+function chargerRecettes() {
+  const data = localStorage.getItem("recettes");
+  if(data) recettes = JSON.parse(data);
+}
+function sauvegarderRecettes() {
+  localStorage.setItem("recettes", JSON.stringify(recettes));
+}
+function ajouterRecette() {
+  const nom = document.getElementById("recetteNom").value.trim();
+  const ingredients = document.getElementById("recetteIngredients").value.split(",").map(i => i.trim()).filter(i => i);
+  if(!nom || ingredients.length === 0) {
+    alert("Veuillez remplir le nom et les ingrédients !");
+    return;
+  }
+  recettes.push({nom, ingredients});
+  document.getElementById("recetteNom").value = "";
+  document.getElementById("recetteIngredients").value = "";
+  sauvegarderRecettes();
+  afficherRecettes();
+}
+function afficherRecettes() {
+  const ul = document.getElementById("listeRecettes");
+  ul.innerHTML = "";
+  recettes.forEach((recette, index) => {
+    const li = document.createElement("li");
+    li.style.display = "flex";
+    li.style.justifyContent = "space-between";
+    li.style.alignItems = "center";
+    li.style.marginBottom = "5px";
+    const span = document.createElement("span");
+    span.textContent = `${recette.nom} (${recette.ingredients.join(", ")})`;
+    li.appendChild(span);
+    const btnAjouterRepas = document.createElement("button");
+    btnAjouterRepas.textContent = "➡️ Ajouter au repas";
+    btnAjouterRepas.style.padding = "6px 12px";
+    btnAjouterRepas.onclick = () => ouvrirPopupRecette(index);
+    li.appendChild(btnAjouterRepas);
+    const btnSupprimer = document.createElement("button");
+    btnSupprimer.textContent = "Supprimer";
+    btnSupprimer.style.padding = "6px 12px";
+    btnSupprimer.style.marginLeft = "5px";
+    btnSupprimer.style.background = "#e74c3c";
+    btnSupprimer.style.color = "white";
+    btnSupprimer.onclick = () => {
+      if(confirm(`Supprimer la recette "${recette.nom}" ?`)) {
+        recettes.splice(index, 1);
+        sauvegarderRecettes();
+        afficherRecettes();
+      }
+    };
+    li.appendChild(btnSupprimer);
+    ul.appendChild(li);
+  });
+}
+
+/* =========================
+   PROPRETÉ
+========================= */
+const tachesProprete = {
+  "Cuisine": ["Plan de travail", "Plaques", "Sol", "Poubelle", "Nettoyer Frigo, Micro-onde,..."],
+  "Salle de bain": ["Lavabo", "Douche", "WC", "Miroir", "Sol"],
+  "Salon": ["Rangement", "Aspirateur", "Serpillère"],
+  "Chambre": ["Draps", "Rangement", "Aspirateur"]
+};
+function afficherProprete() {
+  const container = document.getElementById("listeTachesProprete");
+  container.innerHTML = "";
+  const data = JSON.parse(localStorage.getItem("propreteEtat")) || {};
+  Object.keys(tachesProprete).forEach(piece => {
+    const divRoom = document.createElement("div");
+    divRoom.className = "room";
+    const titre = document.createElement("h3");
+    titre.textContent = piece;
+    const progressBar = document.createElement("div");
+    progressBar.className = "progress-bar";
+    const progressFill = document.createElement("div");
+    progressFill.className = "progress-fill";
+    progressBar.appendChild(progressFill);
+    divRoom.appendChild(titre);
+    divRoom.appendChild(progressBar);
+    let total = tachesProprete[piece].length;
+    let cochees = 0;
+    const majProgression = () => {
+      const pourcentage = Math.round((cochees / total) * 100);
+      progressFill.style.width = pourcentage + "%";
+    };
+    tachesProprete[piece].forEach(tache => {
+      const label = document.createElement("label");
+      label.className = "task";
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      const key = piece + "_" + tache;
+      checkbox.checked = data[key] || false;
+      if (checkbox.checked) cochees++;
+      checkbox.onchange = () => {
+        const etat = JSON.parse(localStorage.getItem("propreteEtat")) || {};
+        etat[key] = checkbox.checked;
+        localStorage.setItem("propreteEtat", JSON.stringify(etat));
+        cochees += checkbox.checked ? 1 : -1;
+        majProgression();
+      };
+      const span = document.createElement("span");
+      span.textContent = tache;
+      label.appendChild(checkbox);
+      label.appendChild(span);
+
+      divRoom.appendChild(label);
+    });
+    majProgression();
+    container.appendChild(divRoom);
+  });
+}
+function resetProprete() {
+  if (!confirm("Commencer une nouvelle semaine ? Toutes les cases seront décochées.")) return;
+  localStorage.removeItem("propreteEtat");
+  afficherProprete();
+}
+
+/* =========================
+   BUDGET
+========================= */
+let depenses = [];
+function getMoisActuel() {
+  const d = new Date();
+  return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0");
+}
+function afficherBudgetOnglet(onglet) {
+  document.getElementById("budget-depenses").style.display = "none";
+  document.getElementById("budget-graphique").style.display = "none";
+  document.getElementById("budget-historique").style.display = "none";
+  if(onglet === "depenses") {
+    document.getElementById("budget-depenses").style.display = "block";
+  }
+  if(onglet === "graphique") {
+    document.getElementById("budget-graphique").style.display = "block";
+    genererGraphique();
+  }
+  if(onglet === "historique") {
+    document.getElementById("budget-historique").style.display = "block";
+    afficherHistorique();
+  }
+}
+function genererGraphique(){
+  const ctx = document.getElementById("budgetPieChart").getContext("2d");
+  const legend = document.getElementById("budgetLegend");
+  legend.innerHTML = "";
+  const data = {};
+  depenses.forEach(d => {
+    const cat = d.categorie;
+    const montant = parseFloat(d.montant) || 0;
+    if(!data[cat]) data[cat] = 0;
+    data[cat] += montant;
+  });
+  const total = Object.values(data).reduce((a, b) => a + b, 0);
+  if(total === 0){
+    ctx.clearRect(0, 0, 300, 300);
+    legend.innerHTML = "<li>Aucune dépense enregistrée</li>";
+    return;
+  }
+  const colors = ["#e74c3c","#3498db","#2ecc71","#f1c40f","#9b59b6","#1abc9c","#e67e22","#9e9e9e","#ff69b4","#8b4513"];
+  ctx.clearRect(0, 0, 300, 300);
+  let startAngle = 0;
+  let i = 0;
+  for(const cat in data){
+    const sliceAngle = (data[cat] / total) * 2 * Math.PI;
+    ctx.fillStyle = colors[i % colors.length];
+    ctx.beginPath();
+    ctx.moveTo(150, 150);
+    ctx.arc(150, 150, 150, startAngle, startAngle + sliceAngle);
+    ctx.closePath();
+    ctx.fill();
+    const li = document.createElement("li");
+    li.textContent = `${cat} : ${data[cat].toFixed(2)} €`;
+    li.style.color = colors[i % colors.length];
+    li.style.fontWeight = "bold";
+    legend.appendChild(li);
+    startAngle += sliceAngle;
+    i++;
+  }
+}
+// Charger
+function chargerDepenses() {
+  const data = localStorage.getItem("budgetDepenses");
+  if(data) depenses = JSON.parse(data);
+}
+// Sauvegarder
+function sauvegarderDepenses() {
+  localStorage.setItem("budgetDepenses", JSON.stringify(depenses));
+}
+// Ajouter
+function ajouterDepense() {
+  const montant = parseFloat(document.getElementById("budgetMontant").value);
+  const categorie = document.getElementById("budgetCategorie").value;
+  const note = document.getElementById("budgetNote").value;
+  if(!montant || montant <= 0) {
+    alert("Montant invalide");
+    return;
+  }
+  const nouvelleDepense = {
+    id: Date.now(),
+    montant: Number(montant),
+    categorie,
+    note,
+    date: new Date().toISOString()
+  };
+  depenses.push(nouvelleDepense);
+  sauvegarderDansHistorique(nouvelleDepense);
+  document.getElementById("budgetMontant").value = "";
+  document.getElementById("budgetNote").value = "";
+  sauvegarderDepenses();
+  afficherDepenses();
+}
+// Supprimer
+function supprimerDepense(id) {
+  depenses = depenses.filter(d => d.id !== id);
+  sauvegarderDepenses();
+  supprimerDeHistorique(id);
+  afficherDepenses();
+}
+// Afficher
+function afficherDepenses() {
+  const ul = document.getElementById("budgetListe");
+  ul.innerHTML = "";
+  const depensesTriees = {};
+  depenses.forEach((d, index) => {
+    if (!depensesTriees[d.categorie]) depensesTriees[d.categorie] = [];
+    depensesTriees[d.categorie].push(d);
+  });
+  Object.keys(depensesTriees).forEach(categorie => {
+    const titre = document.createElement("li");
+    titre.innerHTML = `<strong>${categorie}</strong>`;
+    ul.appendChild(titre);
+    depensesTriees[categorie].forEach(d => {
+      const li = document.createElement("li");
+      const span = document.createElement("span");
+      span.textContent = `${d.note} : ${d.montant} €`;
+      const btnSupprimer = document.createElement("button");
+      btnSupprimer.textContent = "Supprimer";
+      btnSupprimer.style.padding = "10px 16px";
+      btnSupprimer.style.fontSize = "1em";
+      btnSupprimer.style.background = "#e74c3c";
+      btnSupprimer.style.color = "white";
+      btnSupprimer.style.border = "none";
+      btnSupprimer.style.borderRadius = "6px";
+      btnSupprimer.onclick = () => {
+        if (confirm("Supprimer cette dépense ?")) {
+          supprimerDepense(d.id);
+        }
+      };
+      const actions = document.createElement("span");
+      actions.className = "actions";
+      actions.appendChild(btnSupprimer);
+      li.appendChild(span);
+      li.appendChild(actions);
+      ul.appendChild(li);
+    });
+  });
+  const total = depenses.reduce((s, d) => s + d.montant, 0);
+  document.getElementById("budgetTotal").textContent = total.toFixed(2) + " €";
+}
+function nouveauMois() {
+  if (!confirm("Voulez-vous vraiment commencer un nouveau mois ?")) return;
+  depenses = [];
+  localStorage.removeItem("budgetDepenses");
+  afficherDepenses();
+  alert("Nouveau mois prêt !");
+}
+function sauvegarderDansHistorique(depense) {
+  const historique = JSON.parse(localStorage.getItem("budgetHistorique")) || {};
+  const mois = getMoisActuel();
+  if(!historique[mois]) historique[mois] = [];
+  historique[mois].push(depense);
+  localStorage.setItem("budgetHistorique", JSON.stringify(historique));
+}
+function afficherHistorique() {
+  const ul = document.getElementById("historiqueListe");
+  ul.innerHTML = "";
+  const historique = JSON.parse(localStorage.getItem("budgetHistorique")) || {};
+  const mois = Object.keys(historique).sort().reverse();
+  if(mois.length === 0){
+    ul.innerHTML = "<li>Aucun historique</li>";
+    return;
+  }
+  mois.forEach(m => {
+    const li = document.createElement("li");
+    li.style.display = "flex";
+    li.style.justifyContent = "space-between";
+    li.style.alignItems = "center";
+    li.style.padding = "8px 0";
+    const total = historique[m].reduce((s,d)=>s+d.montant,0);
+    const span = document.createElement("span");
+    span.textContent = `${m} — ${total.toFixed(2)} €`;
+    span.style.cursor = "pointer";
+    span.onclick = () => ouvrirPopupHistorique(m);
+    const btn = document.createElement("button");
+    btn.textContent = "🗑";
+    btn.className = "delete-btn";
+    btn.style.width = "auto";
+    btn.onclick = () => supprimerMoisHistorique(m);
+    li.appendChild(span);
+    li.appendChild(btn);
+    ul.appendChild(li);
+  });
+}
+function ouvrirPopupHistorique(mois) {
+  const historique = JSON.parse(localStorage.getItem("budgetHistorique")) || {};
+  const details = historique[mois] || [];
+  const groupes = {};
+  details.forEach(d => {
+    if (!groupes[d.categorie]) groupes[d.categorie] = [];
+    groupes[d.categorie].push(d);
+  });
+  let html = "";
+  Object.keys(groupes).sort().forEach(cat => {
+    groupes[cat].sort((a,b) => b.montant - a.montant);
+    const totalCat = groupes[cat].reduce((s,d) => s + d.montant, 0).toFixed(2);
+    html += `<h3>${cat} — ${totalCat} €</h3>`;
+    groupes[cat].forEach(d => {
+      html += `
+        <div class="list-item">
+          <span>${d.note}</span>
+          <strong>${d.montant.toFixed(2)} €</strong>
+        </div>
+      `;
+    });
+  });
+  document.getElementById("historiqueDetails").innerHTML = html;
+  document.getElementById("historiqueTitre").textContent = "Détails " + mois;
+  document.getElementById("popupHistorique").style.display = "flex";
+}
+function fermerPopupHistorique() {
+  document.getElementById("popupHistorique").style.display = "none";
+}
+function supprimerDeHistorique(id){
+  const historique = JSON.parse(localStorage.getItem("budgetHistorique")) || {};
+  Object.keys(historique).forEach(mois => {
+    historique[mois] = historique[mois].filter(d => d.id !== id);
+  });
+  localStorage.setItem("budgetHistorique", JSON.stringify(historique));
+}
+function verifierChangementDeMois() {
+  const moisActuel = getMoisActuel();
+  const moisSauvegarde = localStorage.getItem("budgetMoisActuel");
+  if(!moisSauvegarde){
+    localStorage.setItem("budgetMoisActuel", moisActuel);
+    return;
+  }
+  if(moisSauvegarde !== moisActuel){
+    depenses = [];
+    localStorage.setItem("budgetDepenses", JSON.stringify(depenses));
+    localStorage.setItem("budgetMoisActuel", moisActuel);
+  }
+}
+function supprimerMoisHistorique(mois){
+  if(!confirm("Supprimer tout l'historique de " + mois + " ?")) return;
+
+  const historique = JSON.parse(localStorage.getItem("budgetHistorique")) || {};
+
+  delete historique[mois];
+
+  localStorage.setItem("budgetHistorique", JSON.stringify(historique));
+
+  afficherHistorique();
+}
+function grouperParCategorie(depenses) {
+  const groupes = {};
+  depenses.forEach(d => {
+    if (!groupes[d.categorie]) groupes[d.categorie] = [];
+    groupes[d.categorie].push(d);
+  });
+  return groupes;
+}
+
+/* =========================
+   Navigation
+========================= */
+function afficherPage(page) {
+  document.querySelectorAll(".card").forEach(p => p.style.display = "none");
+  document.getElementById("page-" + page).style.display = "block";
+  if(page === "proprete") {
+    afficherProprete();
+  }
+  if(page === "historique") {
+    afficherHistorique();
+  }
+}
+
+/* =========================
+   Initialisation
+========================= */
+chargerAliments();
+afficherAliments();
+chargerDepenses();
+verifierChangementDeMois();
+afficherDepenses();
+afficherPage("inventaire");
+
+</script>
+<script>
+  
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js")
+    .then(() => console.log("Service Worker enregistré"))
+    .catch(err => console.error("SW erreur", err));
+}
+
+/* =========================
+   Pop-Up modifier aliment
+========================= */
+let indexEdition = -1;
+function ouvrirPopup(index) {
+  const aliment = aliments[index];
+  indexEdition = index;
+  document.getElementById("editNom").value = aliment.nom;
+  document.getElementById("editQuantite").value = aliment.quantite;
+  document.getElementById("editUnite").value = aliment.unite;
+  document.getElementById("editPortions").value = aliment.portions;
+  const checkbox = document.getElementById("editSansDate");
+  const dateInput = document.getElementById("editPeremption");
+  if (!aliment.peremption) {
+    checkbox.checked = true;
+    dateInput.disabled = true;
+    dateInput.style.visibility = "hidden";
+    dateInput.value = ""; 
+  } else {
+    checkbox.checked = false;
+    dateInput.disabled = false;
+    dateInput.style.visibility = "visible";
+    dateInput.value = aliment.peremption;
+  }
+  checkbox.addEventListener("change", function() {
+    if (this.checked) {
+      dateInput.disabled = true;
+      dateInput.style.visibility = "hidden";
+    } else {
+      dateInput.disabled = false;
+      dateInput.style.visibility = "visible";
+      if (aliment.peremption) dateInput.value = aliment.peremption;
+    }
+  });
+  const select = document.getElementById("editCategorie");
+  select.innerHTML = "";
+  const options = ["Choisir Catégorie","Boisson","Produit laitier","Légume","Fruit","Viande","Poisson","Féculent","Sucré","Sauce","Epice","Sec",
+                   "Plat préparé","Hygiène"];
+  options.forEach(cat => {
+    const o = document.createElement("option");
+    o.value = cat;
+    o.textContent = cat;
+    if(cat === aliment.categorie) o.selected = true;
+    select.appendChild(o);
+  });
+  document.getElementById("popupEdit").style.display = "flex";
+}
+function fermerPopup() {
+  document.getElementById("popupEdit").style.display = "none";
+}
+function sauvegarderEdition() {
+  if(indexEdition === -1) return;
+  const sansDate = document.getElementById("editSansDate").checked;
+  aliments[indexEdition] = {
+    nom: document.getElementById("editNom").value,
+    quantite: document.getElementById("editQuantite").value,
+    unite: document.getElementById("editUnite").value,
+    peremption: sansDate ? null : document.getElementById("editPeremption").value,
+    categorie: document.getElementById("editCategorie").value,
+    portions: document.getElementById("editPortions").value
+  };
+  sauvegarderAliments();
+  afficherAliments();
+  fermerPopup();
+}
+function supprimerDepuisPopup() {
+  if(confirm("Supprimer cet aliment ?")) {
+    aliments.splice(indexEdition, 1);
+    sauvegarderAliments();
+    afficherAliments();
+    fermerPopup();
+  }
+}
+
+/* =========================
+   Pop-Up ajouter recette à repas
+========================= */ 
+function ouvrirPopupRecette(index) {
+  indexRecetteEnCours = index;
+  document.getElementById("popupRecette").style.display = "flex";
+}
+function fermerPopupRecette() {
+  document.getElementById("popupRecette").style.display = "none";
+}
+function confirmerAjoutRecette() {
+  if(indexRecetteEnCours === -1) return;
+  const recette = recettes[indexRecetteEnCours];
+  const jour = document.getElementById("recetteJour").value;
+  const typeRepas = document.getElementById("recetteTypeRepas").value;
+  const input = document.querySelector(`input[data-jour="${jour}"][data-repas="${typeRepas}"]`);
+  if(!input) {
+    alert("Le champ de repas correspondant n'a pas été trouvé !");
+    fermerPopupRecette();
+    return;
+  }
+  const valeursExistantes = input.value ? input.value.split(",").map(v => v.trim()) : [];
+  const nouvellesValeurs = [...valeursExistantes, ...recette.ingredients];
+  input.value = nouvellesValeurs.join(", ");
+  alert(`Recette "${recette.nom}" ajoutée à ${jour} - ${typeRepas} !`);
+  fermerPopupRecette();
+}
+//Initialisation
+chargerRecettes();
+afficherRecettes();
+
+/* =========================
+   Pop-Up modifier repas
+========================= */
+let inputRepasActif = null;
+function ouvrirPopupRepas(input) {
+  inputRepasActif = input;
+  const jour = input.dataset.jour;
+  const type = input.dataset.repas;
+  document.getElementById("repasTitre").textContent =`${jour} - ${type}`;
+  document.getElementById("repasTexte").value = input.value;
+  document.getElementById("popupRepasEdit").style.display = "flex";
+}
+function fermerPopupRepas() {
+  document.getElementById("popupRepasEdit").style.display = "none";
+}
+function sauvegarderRepasPopup() {
+  if (!inputRepasActif) return;
+  inputRepasActif.value =document.getElementById("repasTexte").value;
+  fermerPopupRepas();
+}
+</script>
 
 
 
@@ -301,6 +1262,7 @@
   
 </body>
 </html>
+
 
 
 
