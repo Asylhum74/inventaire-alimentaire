@@ -227,7 +227,7 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
     TELEPHONE
 ========================== */
 @media (max-width:900px){
-  .layout{flex-direction:column;}
+  .layout{flex-direction:row;}
   .sidebar{width:100%;} 
 }
 </style>
@@ -246,7 +246,7 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 </div>
   
 <div class="layout">
-  <aside class="sidebar">
+  <div class="sidebar">
     <div class="nav-title">Modules</div>
     <button class="nav-btn" onclick="afficherPage('inventaire')">📦 Inventaire</button>
     <button class="nav-btn" onclick="afficherPage('repas')">🍽 Repas </button>
@@ -255,7 +255,7 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
     <button class="nav-btn" onclick="afficherPage('budget')">💶 Budget</button>
     <button class="nav-btn" onclick="afficherPage('historique')">📋 Historique</button>
     <button class="nav-btn" onclick="afficherPage('proprete')">🧼 Ménage</button>
-  </aside>
+  </div>
   <main class="content">
 
 <!-- ==========================
@@ -1489,6 +1489,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
