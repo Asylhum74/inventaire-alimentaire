@@ -16,158 +16,37 @@
 body{margin:0; font-family:Inter, system-ui, sans-serif; padding: 15px;  margin: 0; width: 100%; background:var(--bg); color:var(--text);
 }
 html, body {height: 100%;}
-.header{
-  background:var(--card);
-  box-shadow:var(--shadow);
-  padding:18px 28px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  position:sticky;
-  top:0;
-  z-index:10;
-}
-.header h1{
-  margin:0;
-  font-size:20px;
-}
-.header-actions{
-  display:flex;
-  gap:10px;
-}
-.layout {
-  display: flex;
-  flex-direction: column; /* tout empilé verticalement */
-  gap: 20px;
-  min-height: 100vh;
-  width:100%;
-}
-.sidebar {
-  display: flex;
-  gap: 10px;
-  background: #0f172a;
-  padding: 12px;
-  border-radius: 12px;
-  width:100%;
-}
-.nav-title{
-  font-size:12px;
-  text-transform:uppercase;
-  opacity:.6;
-  margin:18px 12px 8px;
-}
-.nav-btn{
-  width:100%;
-  border:none;
-  background:transparent;
-  color:white;
-  padding:12px 14px;
-  border-radius:12px;
-  text-align:left;
-  cursor:pointer;
-  font-weight:600;
-  opacity:.9;
-}
-.nav-btn:hover{
-  background:rgba(255,255,255,.08);
-}
-.nav-btn.active{
-  background:var(--primary);
-}
-.content{
-  padding:28px;
-  flex: 1;
-  width:100%;
-}
-.card{
-  background:var(--card);
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  padding:20px;
-  margin-bottom:22px;
-}
-.card h2{
-  margin:0 0 14px 0;
-  font-size:18px;
-}
-.btn{
-  border:none;
-  border-radius:12px;
-  padding:10px 14px;
-  font-weight:600;
-  cursor:pointer;
-  background:var(--primary);
-  color:white;
-}
-.btn.secondary{
-  background:#e5e7eb;
-  color:#111827;
-}
+.header{background:var(--card); box-shadow:var(--shadow); padding:18px 28px; display:flex; align-items:center; justify-content:space-between; position:sticky;
+  top:0; z-index:10; }
+.header h1{margin:0; font-size:20px; }
+.header-actions{display:flex; gap:10px; }
+.layout {display: flex; flex-direction: column; gap: 20px; min-height: 100vh; width:100%; }
+.sidebar {display: flex; gap: 10px; background: #0f172a; padding: 12px; border-radius: 12px; width:100%; }
+.nav-title{font-size:12px; text-transform:uppercase; opacity:.6; margin:18px 12px 8px; }
+.nav-btn{width:100%; border:none; background:transparent; color:white; padding:12px 14px; border-radius:12px; text-align:left; cursor:pointer; font-weight:600;
+  opacity:.9; }
+.nav-btn:hover{background:rgba(255,255,255,.08); }
+.nav-btn.active{background:var(--primary); }
+.content{padding:28px; flex: 1; width:100%; }
+.card{background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px; margin-bottom:22px; }
+.card h2{margin:0 0 14px 0; font-size:18px; }
+.btn{border:none; border-radius:12px; padding:10px 14px; font-weight:600; cursor:pointer; background:var(--primary); color:white; }
+.btn.secondary{background:#e5e7eb; color:#111827; }
 .btn.success{ background:var(--success); }
 .btn.warning{ background:var(--warning); }
 .btn.danger{ background:var(--danger); }
 .btn:hover{ filter:brightness(1.05); }
-.list{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-.row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:12px 14px;
-  background:#f9fafb;
-  border-radius:12px;
-}
-.row-left{
-  display:flex;
-  flex-direction:column;
-}
-.row-title{
-  font-weight:600;
-}
-.row-sub{
-  font-size:13px;
-  color:var(--muted);
-}
-.badge{
-  font-size:12px;
-  padding:4px 10px;
-  border-radius:999px;
-  font-weight:600;
-}
-.form-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-  gap:14px;
-}
-input, select{
-  width:100%;
-  padding:10px 12px;
-  border-radius:10px;
-  border:1px solid #e5e7eb;
-  font-size:14px;
-}
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.35);
-  display:none;
-  align-items:center;
-  justify-content:center;
-}
-.modal-box{
-  background:white;
-  width:420px;
-  max-width:95%;
-  border-radius:18px;
-  padding:22px;
-  box-shadow:var(--shadow);
-}
-.modal-box h3{
-  margin-top:0;
-}
+.list{display:flex; flex-direction:column; gap:10px; }
+.row{display:flex; justify-content:space-between; align-items:center; padding:12px 14px; background:#f9fafb; border-radius:12px; }
+.row-left{display:flex; flex-direction:column; }
+.row-title{font-weight:600; }
+.row-sub{font-size:13px; color:var(--muted); }
+.badge{font-size:12px; padding:4px 10px; border-radius:999px; font-weight:600; }
+.form-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; }
+input, select{width:100%; padding:10px 12px; border-radius:10px; border:1px solid #e5e7eb; font-size:14px; }
+.modal{position:fixed; inset:0; background:rgba(0,0,0,.35); display:none; align-items:center; justify-content:center; }
+.modal-box{background:white; width:420px; max-width:95%; border-radius:18px; padding:22px; box-shadow:var(--shadow); }
+.modal-box h3{margin-top:0; }
 /* ==========================
    ⚡ PAGES
 ========================== */
@@ -214,7 +93,7 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 .dark input, .dark select, .dark button {background: #1e1e1e; color: #e0e0e0; border: 1px solid #444; }
 .dark li {border-bottom: 1px solid #333; }
 .dark strong, .dark li span, .dark h1, .dark h2 {color: #ffffff; }
-.dark .room {background: rgba(255,255,255,0.05); }
+.dark .room .header .sidebar .content {background: rgba(255,255,255,0.05); }
 .dark .progress-bar {background: #333;}
 .toggle {margin: 10px 0; }
 
@@ -235,19 +114,9 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
     TELEPHONE
 ========================== */
 @media (max-width: 900px) {
-  .layout {
-    flex-direction: column;  /* boutons en haut, contenu en bas */
-    min-height: 100vh;       /* prend tout l'écran */
-	width:100%;
-	
-  }
-  .sidebar {
-    width: 100%;              /* prend toute la largeur */
-  }
-  .content {
-    flex: 1;                  /* prend le reste de la hauteur */
-	width:100%;
-  }
+  .layout {flex-direction: column; min-height: 100vh; width:100%; }
+  .sidebar {width: 100%; }
+  .content {flex: 1; width:100%; }
 }
 </style>
 
@@ -257,7 +126,6 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 <!-- ==========================
    🏠 BANDEAU PRINCIPALE
 ========================== -->
-  
 <div class="layout">
 	<div class="header">
   		<h1>Gestion Maison</h1>
@@ -1507,6 +1375,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
