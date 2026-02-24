@@ -47,6 +47,7 @@ body{margin:0; font-family:Inter, system-ui, sans-serif; background:var(--bg); c
   background: #0f172a;
   padding: 12px;
   border-radius: 12px;
+  width: 220px;
 }
 .nav-title{
   font-size:12px;
@@ -231,9 +232,18 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 /* ==========================
     TELEPHONE
 ========================== */
- @media (max-width:2000px){
-
-/
+@media (max-width: 900px) {
+  .layout {
+    flex-direction: column;  /* boutons en haut, contenu en bas */
+    min-height: 100vh;       /* prend tout l'écran */
+  }
+  .sidebar {
+    width: 100%;              /* prend toute la largeur */
+  }
+  .content {
+    flex: 1;                  /* prend le reste de la hauteur */
+  }
+}
 </style>
 
 </head>
@@ -1492,6 +1502,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
