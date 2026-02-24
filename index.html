@@ -612,14 +612,22 @@ function genererListeCourses() {
       if (!checkedData[nom]) return;
       const qteAchetee = Number(achatsInputs[nom]?.value) || 0;
       if (qteAchetee <= 0) return;
-      aliments.push({
-        nom: nom,
-        quantite: qteAchetee,
-        unite: "",
-        peremption: null,
-        categorie: categories[nom] || "Autres"
-      });
-    });
+		const existant = aliments.find(a =>
+      	a.nom.toLowerCase() === nom.toLowerCase()
+   		);
+		if (existant) {
+      	// ✅ On additionne la quantité
+      		existant.quantite = Number(existant.quantite) + qteAchetee;
+    	} else {
+      		aliments.push({
+        		nom: nom,
+        		quantite: qteAchetee,
+        		unite: "",
+        		peremption: null,
+        		categorie: categories[nom] || "Autres"
+      		});
+    	}
+	});
     localStorage.setItem("aliments", JSON.stringify(aliments));
     localStorage.removeItem("coursesChecked");
     genererListeCourses();
@@ -1379,6 +1387,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
