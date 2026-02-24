@@ -1253,9 +1253,18 @@ function sauvegarderRepasPopup() {
     </div>
   </div>
 </div>
-  
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(reg => console.log('Service Worker enregistré :', reg))
+      .catch(err => console.log('Erreur enregistrement SW :', err));
+  });
+}
+</script>
 </body>
 </html>
+
 
 
 
