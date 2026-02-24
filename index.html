@@ -90,10 +90,13 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
    🌙 MODE SOMBRE
 ========================== */
 .dark {background: #121212; color: #e0e0e0; }
-.dark input, .dark select, .dark button, .dark header, .dark sidebar, .dark content {background: #1e1e1e; color: #e0e0e0; border: 1px solid #444; }
+.dark input, .dark select{background: #1e1e1e; color: #e0e0e0; border: 1px solid #444; }
 .dark li {border-bottom: 1px solid #333; }
 .dark strong, .dark li span, .dark h1, .dark h2 {color: #ffffff; }
 .dark .room {background: rgba(255,255,255,0.05); }
+.dark .header {background: rgba(255,255,255,0.05); }
+.dark .sidebar {background: rgba(255,255,255,0.05); }
+.dark .content {background: rgba(255,255,255,0.05); }
 .dark .progress-bar {background: #333;}
 .toggle {margin: 10px 0; }
 
@@ -1375,6 +1378,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
