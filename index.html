@@ -38,6 +38,7 @@ body{margin:0; font-family:Inter, system-ui, sans-serif; background:var(--bg); c
   display: flex;
   flex-direction: column; /* tout empilé verticalement */
   gap: 20px;
+  min-height: 100vh;
 }
 .sidebar {
   display: flex;
@@ -73,6 +74,7 @@ body{margin:0; font-family:Inter, system-ui, sans-serif; background:var(--bg); c
 }
 .content{
   padding:28px;
+  flex: 1; 
 }
 .card{
   background:var(--card);
@@ -1490,6 +1492,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
