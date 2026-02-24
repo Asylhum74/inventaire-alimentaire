@@ -1,8 +1,10 @@
 
-const CACHE_NAME = "inventaire-cache-v915";
+const CACHE_NAME = "inventaire-cache-v920";
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
+  "./script.js",
+  "./styles.css",
   "./manifest.json",
   "./icon-192.png",
   "./icon-512.png"
