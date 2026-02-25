@@ -802,7 +802,6 @@ function afficherRecettes() {
     btnAjouterRepas.textContent = "➡️ Ajouter au repas";
 	btnAjouterRepas.style.padding = "6px 12px";
 	btnAjouterRepas.style.marginLeft = "auto";
-	btnAjouterRepas.style.gap = "500px";
     btnAjouterRepas.onclick = () => ouvrirPopupRecette(index);
     li.appendChild(btnAjouterRepas);
     const btnSupprimer = document.createElement("button");
@@ -1390,6 +1389,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
