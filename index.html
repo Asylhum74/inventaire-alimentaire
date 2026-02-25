@@ -299,15 +299,15 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
       <div id="budget-depenses" style="margin-top: 20px;">
         <h3>Ajouter une dépense</h3>
         <input id="budgetMontant" placeholder="Ex: 25">
-        <select id="budgetCategorie">
+        <p><select id="budgetCategorie">
           <option>Nourriture</option>
           <option>Logement</option>
           <option>Voiture</option>
           <option>Loisir</option>
           <option>Abonnement</option>
-        </select>
+        </select></p>
         <input id="budgetNote" placeholder="Ex: courses lidl">
-        <button class="btn success" onclick="ajouterDepense()">Ajouter</button>
+        <p><button class="btn success" onclick="ajouterDepense()">Ajouter</button></p>
         <h3>Total du mois : <span id="budgetTotal">0 €</span></h3>
         <div style="display: flex; align-items: center; justifyContent: space-between; marginBottom: 10px;">
           <h3>Dépenses :</h3>
@@ -1387,6 +1387,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
