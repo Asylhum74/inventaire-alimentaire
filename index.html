@@ -470,6 +470,9 @@ function afficherAliments() {
         	sauvegarderAliments();
       	}
 	  }
+	  if (aliment.quantite === 0) {
+		  supprimerAliment(index);
+	  }
     };
     btnPlus.onclick = (e) => {
       e.stopPropagation();
@@ -505,7 +508,7 @@ function afficherAliments() {
     actions.appendChild(btnSupprimer);
     li.appendChild(actions);
     ul.appendChild(li);
-  });
+  }); 
 }
 function supprimerAliment(index) {
   if(confirm("Voulez-vous vraiment supprimer cet aliment ?")) {
@@ -1409,6 +1412,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
