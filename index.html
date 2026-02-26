@@ -1127,7 +1127,7 @@ function genererId(nom) {
 }
 async function rechercherAlimentsOpenFood(term) {
   if (!term) return [];
-  const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(term)}&search_simple=1&action=process&json=1`;
+  const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(term)}&search_simple=1&action=process&json=1&fields=product_name,brands,nutriments`;
   try {
     const response = await fetch(url);
     const data = await response.json();
@@ -1143,6 +1143,7 @@ async function rechercherAlimentsOpenFood(term) {
     return [];
   }
 }
+	
 const inputRecherche = document.getElementById("rechercheAliment");
 const containerResultats = document.getElementById("resultatsRecherche");
 inputRecherche.addEventListener("input", async () => {
@@ -1163,6 +1164,7 @@ inputRecherche.addEventListener("input", async () => {
   });
   if (aliments.length === 0) containerResultats.innerHTML = "Aucun résultat";
 });
+	
 function ajouterAlimentDepuisAPI(aliment) {
   const aliments = JSON.parse(localStorage.getItem("aliments")) || [];
   const existant = aliments.find(a => a.id === aliment.id);
@@ -1432,6 +1434,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
