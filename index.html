@@ -1127,34 +1127,53 @@ function genererId(nom) {
 }
 async function rechercherAlimentsOpenFood(term) {
   if (!term) return [];
+
   const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(term)}&search_simple=1&action=process&json=1&fields=product_name,brands,nutriments`;
+
   try {
     const response = await fetch(url);
     const data = await response.json();
-    return data.products
+
+    let aliments = data.products
       .filter(p => p.product_name)
       .map(p => ({
         nom: p.product_name,
         id: genererId(p.product_name),
         nutriments: p.nutriments || {}
       }));
+
+    // filtrer pour garder les produits contenant le mot recherché
+    aliments = aliments.filter(a => a.nom.toLowerCase().includes(term.toLowerCase()));
+
+    return aliments.slice(0, 10); // limiter à 10 résultats
   } catch (err) {
     console.error("Erreur API Open Food Facts", err);
     return [];
   }
 }
-	
+
+// Affichage dynamique et ajout à l'inventaire
 const inputRecherche = document.getElementById("rechercheAliment");
 const containerResultats = document.getElementById("resultatsRecherche");
+
 inputRecherche.addEventListener("input", async () => {
   const term = inputRecherche.value.trim();
   containerResultats.innerHTML = "Recherche en cours...";
+
   const aliments = await rechercherAlimentsOpenFood(term);
+
   containerResultats.innerHTML = "";
-  aliments.slice(0, 10).forEach(a => { // on limite à 10 résultats
+
+  if (aliments.length === 0) {
+    containerResultats.innerHTML = "Aucun résultat";
+    return;
+  }
+
+  aliments.forEach(a => {
     const div = document.createElement("div");
     div.textContent = a.nom;
     div.style.cursor = "pointer";
+    div.style.padding = "2px 0";
     div.onclick = () => {
       ajouterAlimentDepuisAPI(a);
       containerResultats.innerHTML = "";
@@ -1162,14 +1181,15 @@ inputRecherche.addEventListener("input", async () => {
     };
     containerResultats.appendChild(div);
   });
-  if (aliments.length === 0) containerResultats.innerHTML = "Aucun résultat";
 });
-	
+
+// Ajouter un aliment à l'inventaire
 function ajouterAlimentDepuisAPI(aliment) {
   const aliments = JSON.parse(localStorage.getItem("aliments")) || [];
+
   const existant = aliments.find(a => a.id === aliment.id);
   if (existant) {
-    existant.quantite += 1; 
+    existant.quantite += 1; // tu peux modifier la quantité si tu veux
   } else {
     aliments.push({
       id: aliment.id,
@@ -1181,8 +1201,9 @@ function ajouterAlimentDepuisAPI(aliment) {
       portions: 1
     });
   }
+
   localStorage.setItem("aliments", JSON.stringify(aliments));
-  afficherAliments(); // ta fonction existante
+  afficherAliments(); // ta fonction existante pour mettre à jour l'affichage
 }
 	
 /* =========================
@@ -1434,6 +1455,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
