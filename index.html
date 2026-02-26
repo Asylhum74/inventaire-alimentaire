@@ -153,7 +153,8 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 ========================== -->  
     <div class="card" id="page-inventaire" style="display:none;">
       <h2>📦 Inventaire</h2>
-
+	  <input type="text" id="rechercheAliment" placeholder="Rechercher un aliment...">
+	  <div id="resultatsRecherche"></div>
       <div class="form-grid" style="margin-bottom:16px">
         <input type="text" id="nom" placeholder="Nom produit">
         <input type="number" id="quantite" placeholder="Quantité">
@@ -1114,7 +1115,7 @@ function grouperParCategorie(depenses) {
 }
 
 /* =========================
-   Autre
+   Gestion API
 ========================= */
 function genererId(nom) {
   return nom
@@ -1124,6 +1125,64 @@ function genererId(nom) {
     .replace(/\s+/g, "-")
     .trim();
 }
+async function rechercherAlimentsOpenFood(term) {
+  if (!term) return [];
+  const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(term)}&search_simple=1&action=process&json=1`;
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    return data.products
+      .filter(p => p.product_name)
+      .map(p => ({
+        nom: p.product_name,
+        id: genererId(p.product_name),
+        nutriments: p.nutriments || {}
+      }));
+  } catch (err) {
+    console.error("Erreur API Open Food Facts", err);
+    return [];
+  }
+}
+const inputRecherche = document.getElementById("rechercheAliment");
+const containerResultats = document.getElementById("resultatsRecherche");
+inputRecherche.addEventListener("input", async () => {
+  const term = inputRecherche.value.trim();
+  containerResultats.innerHTML = "Recherche en cours...";
+  const aliments = await rechercherAlimentsOpenFood(term);
+  containerResultats.innerHTML = "";
+  aliments.slice(0, 10).forEach(a => { // on limite à 10 résultats
+    const div = document.createElement("div");
+    div.textContent = a.nom;
+    div.style.cursor = "pointer";
+    div.onclick = () => {
+      ajouterAlimentDepuisAPI(a);
+      containerResultats.innerHTML = "";
+      inputRecherche.value = "";
+    };
+    containerResultats.appendChild(div);
+  });
+  if (aliments.length === 0) containerResultats.innerHTML = "Aucun résultat";
+});
+function ajouterAlimentDepuisAPI(aliment) {
+  const aliments = JSON.parse(localStorage.getItem("aliments")) || [];
+  const existant = aliments.find(a => a.id === aliment.id);
+  if (existant) {
+    existant.quantite += 1; 
+  } else {
+    aliments.push({
+      id: aliment.id,
+      nom: aliment.nom,
+      quantite: 1,
+      unite: "",
+      peremption: null,
+      categorie: "Autres",
+      portions: 1
+    });
+  }
+  localStorage.setItem("aliments", JSON.stringify(aliments));
+  afficherAliments(); // ta fonction existante
+}
+	
 /* =========================
    Navigation
 ========================= */
@@ -1373,6 +1432,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
