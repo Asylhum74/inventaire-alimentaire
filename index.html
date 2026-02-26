@@ -153,8 +153,7 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 ========================== -->  
     <div class="card" id="page-inventaire" style="display:none;">
       <h2>📦 Inventaire</h2>
-	  <input type="text" id="rechercheAliment" placeholder="Rechercher un aliment...">
-	  <div id="resultatsRecherche"></div>
+
       <div class="form-grid" style="margin-bottom:16px">
         <input type="text" id="nom" placeholder="Nom produit">
         <input type="number" id="quantite" placeholder="Quantité">
@@ -369,8 +368,7 @@ function ajouterOuModifierAliment() {
     alert("Veuillez remplir tous les champs !");
     return;
   }
-  const id = genererId(nom);
-  const nouvelAliment = {id, nom, quantite: Number(quantite), unite, peremption, categorie, portions };
+  const nouvelAliment = {nom, quantite, unite, peremption, categorie, portions};
   if(indexEnCours === -1) {
     aliments.push(nouvelAliment);
   } else {
@@ -569,54 +567,80 @@ function chargerRepas() {
   });
 }
 function genererListeCourses() {
-  if (confirm("Voulez-vous vous rendre sur la liste de course ?")) {
-    afficherPage('courses');
+  if (confirm("Voulez-vous vous rendre sur la liste de course ?")) afficherPage('courses');
+	
+  let inventaire = [];
+  try {
+    inventaire = JSON.parse(localStorage.getItem('aliments')) || [];
+  } catch {
+    inventaire = [];
   }
-  // ===== 1️⃣ Récupération des données =====
-  const inventaire = JSON.parse(localStorage.getItem('aliments')) || [];
   const repasData = JSON.parse(localStorage.getItem('repasSemaine')) || {};
   let categories = JSON.parse(localStorage.getItem("coursesCategories")) || {};
   const totalDemandes = {};
-  const courses = {};
-  const achatsInputs = {};
-  // ===== 2️⃣ Calcul des besoins totaux depuis les repas =====
+  const achatsInputs = {}; // ← stocke les champs "acheté"
   Object.values(repasData).forEach(jour => {
     Object.values(jour).forEach(texteRepas => {
       if (!texteRepas) return;
-      texteRepas.split(',').forEach(item => {
-        const match = item.trim().match(/^(.+?)\s*(\d+)?$/);
+      const aliments = texteRepas
+        .split(',')
+        .map(a => a.trim())
+        .filter(a => a);
+      aliments.forEach(item => {
+        const match = item.match(/^(.+?)\s*(\d+)?$/);
         if (!match) return;
         const nom = match[1].trim();
-        const id = genererId(nom);
         const qte = Number(match[2]) || 1;
-        if (!totalDemandes[id]) {
-          totalDemandes[id] = { nom, quantite: 0 };
-        }
-        totalDemandes[id].quantite += qte;
-        if (!categories[id]) categories[id] = "Autres";
+        totalDemandes[nom] = (totalDemandes[nom] || 0) + qte;
+        if (!categories[nom]) categories[nom] = "Autres";
       });
     });
   });
-  // ===== 3️⃣ Comparaison avec l’inventaire =====
-  Object.keys(totalDemandes).forEach(id => {
-    const demande = totalDemandes[id];
-    const alimentStock = inventaire.find(a => a.id === id);
-    const stock = alimentStock
-      ? Number(alimentStock.quantite) * (alimentStock.portions || 1)
+  const courses = {};
+  Object.keys(totalDemandes).forEach(nom => {
+    const trouve = inventaire.find(a =>
+      a.nom.toLowerCase() === nom.toLowerCase()
+    );
+    const stock = trouve
+      ? Number(trouve.quantite) * (trouve.portions || 1)
       : 0;
-    const besoin = Math.max(demande.quantite - stock, 0);
-    if (besoin > 0) {
-      courses[id] = {
-        nom: demande.nom,
-        quantite: besoin
-      };
-    }
+    const besoin = Math.max(totalDemandes[nom] - stock, 0);
+    if (besoin > 0) courses[nom] = besoin;
   });
-  // ===== 4️⃣ Affichage =====
   const container = document.getElementById("listeCoursesContainer");
   container.innerHTML = "";
+  const btnAjouterInventaire = document.createElement("button");
+  btnAjouterInventaire.textContent = "➕ Ajouter à l'inventaire";
+  btnAjouterInventaire.onclick = () => {
+    const checkedData = JSON.parse(localStorage.getItem("coursesChecked")) || {};
+    Object.keys(checkedData).forEach(nom => {
+      if (!checkedData[nom]) return;
+      const qteAchetee = Number(achatsInputs[nom]?.value) || 0;
+      if (qteAchetee <= 0) return;
+		const existant = aliments.find(a =>
+      	a.nom.toLowerCase() === nom.toLowerCase()
+   		);
+		if (existant) {
+      	// ✅ On additionne la quantité
+      		existant.quantite = Number(existant.quantite) + qteAchetee;
+    	} else {
+      		aliments.push({
+        		nom: nom,
+        		quantite: qteAchetee,
+        		unite: "",
+        		peremption: null,
+        		categorie: categories[nom] || "Autres"
+      		});
+    	}
+	});
+    localStorage.setItem("aliments", JSON.stringify(aliments));
+    localStorage.removeItem("coursesChecked");
+    genererListeCourses();
+    afficherAliments();
+  };
+  container.appendChild(btnAjouterInventaire);
   if (Object.keys(courses).length === 0) {
-    container.innerHTML = "<p>✅ Tout est déjà dans l'inventaire.</p>";
+    container.innerHTML += "<p>✅ Tout est déjà dans l'inventaire.</p>";
     return;
   }
   const ordreCategories = [
@@ -626,8 +650,8 @@ function genererListeCourses() {
     "Epice", "Boisson", "Conserve", "Produit du monde", "Hygiène"
   ];
   ordreCategories.forEach(categorie => {
-    const alimentsDeCategorie = Object.keys(courses)
-      .filter(id => categories[id] === categorie);
+    const alimentsDeCategorie =
+      Object.keys(courses).filter(nom => categories[nom] === categorie);
     if (alimentsDeCategorie.length === 0) return;
     const titre = document.createElement("p");
     titre.textContent = categorie;
@@ -636,21 +660,27 @@ function genererListeCourses() {
     titre.style.marginTop = "12px";
     container.appendChild(titre);
     const ul = document.createElement("ul");
-    alimentsDeCategorie.forEach(id => {
+    alimentsDeCategorie.forEach(nom => {
       const li = document.createElement("li");
       li.style.display = "flex";
       li.style.alignItems = "center";
       li.style.gap = "10px";
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox";
+      checkbox.className = "course-checkbox";
       const span = document.createElement("span");
-      span.textContent = `${courses[id].nom} (besoin : ${courses[id].quantite})`;
+      span.textContent = `${nom}  (besoin : ${courses[nom]})`;
       span.style.flex = "1";
       const inputAchat = document.createElement("input");
       inputAchat.type = "number";
-      inputAchat.value = courses[id].quantite;
+      inputAchat.value = courses[nom];
       inputAchat.style.width = "70px";
-      achatsInputs[id] = inputAchat;
+      achatsInputs[nom] = inputAchat;
+      checkbox.onchange = () => {
+        const data = JSON.parse(localStorage.getItem("coursesChecked")) || {};
+        data[nom] = checkbox.checked;
+        localStorage.setItem("coursesChecked", JSON.stringify(data));
+      };
       const select = document.createElement("select");
       ordreCategories.forEach(cat => {
         const option = document.createElement("option");
@@ -660,7 +690,7 @@ function genererListeCourses() {
         select.appendChild(option);
       });
       select.onchange = () => {
-        categories[id] = select.value;
+        categories[nom] = select.value;
         localStorage.setItem("coursesCategories", JSON.stringify(categories));
         genererListeCourses();
       };
@@ -1115,98 +1145,6 @@ function grouperParCategorie(depenses) {
 }
 
 /* =========================
-   Gestion API
-========================= */
-function genererId(nom) {
-  return nom
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/\s+/g, "-")
-    .trim();
-}
-async function rechercherAlimentsOpenFood(term) {
-  if (!term) return [];
-
-  const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(term)}&search_simple=1&action=process&json=1&fields=product_name,brands,nutriments`;
-
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
-
-    let aliments = data.products
-      .filter(p => p.product_name)
-      .map(p => ({
-        nom: p.product_name,
-        id: genererId(p.product_name),
-        nutriments: p.nutriments || {}
-      }));
-
-    // filtrer pour garder les produits contenant le mot recherché
-    aliments = aliments.filter(a => a.nom.toLowerCase().includes(term.toLowerCase()));
-
-    return aliments.slice(0, 10); // limiter à 10 résultats
-  } catch (err) {
-    console.error("Erreur API Open Food Facts", err);
-    return [];
-  }
-}
-
-// Affichage dynamique et ajout à l'inventaire
-const inputRecherche = document.getElementById("rechercheAliment");
-const containerResultats = document.getElementById("resultatsRecherche");
-
-inputRecherche.addEventListener("input", async () => {
-  const term = inputRecherche.value.trim();
-  containerResultats.innerHTML = "Recherche en cours...";
-
-  const aliments = await rechercherAlimentsOpenFood(term);
-
-  containerResultats.innerHTML = "";
-
-  if (aliments.length === 0) {
-    containerResultats.innerHTML = "Aucun résultat";
-    return;
-  }
-
-  aliments.forEach(a => {
-    const div = document.createElement("div");
-    div.textContent = a.nom;
-    div.style.cursor = "pointer";
-    div.style.padding = "2px 0";
-    div.onclick = () => {
-      ajouterAlimentDepuisAPI(a);
-      containerResultats.innerHTML = "";
-      inputRecherche.value = "";
-    };
-    containerResultats.appendChild(div);
-  });
-});
-
-// Ajouter un aliment à l'inventaire
-function ajouterAlimentDepuisAPI(aliment) {
-  const aliments = JSON.parse(localStorage.getItem("aliments")) || [];
-
-  const existant = aliments.find(a => a.id === aliment.id);
-  if (existant) {
-    existant.quantite += 1; // tu peux modifier la quantité si tu veux
-  } else {
-    aliments.push({
-      id: aliment.id,
-      nom: aliment.nom,
-      quantite: 1,
-      unite: "",
-      peremption: null,
-      categorie: "Autres",
-      portions: 1
-    });
-  }
-
-  localStorage.setItem("aliments", JSON.stringify(aliments));
-  afficherAliments(); // ta fonction existante pour mettre à jour l'affichage
-}
-	
-/* =========================
    Navigation
 ========================= */
 function afficherPage(page) {
@@ -1455,83 +1393,4 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
