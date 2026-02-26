@@ -567,7 +567,8 @@ function chargerRepas() {
   });
 }
 function genererListeCourses() {
-  alert("Liste de course générer");
+  if (confirm("Voulez-vous vous rendre sur la liste de course ?")) afficherPage('courses');
+	
   let inventaire = [];
   try {
     inventaire = JSON.parse(localStorage.getItem('aliments')) || [];
@@ -1392,6 +1393,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
