@@ -456,17 +456,33 @@ function afficherAliments() {
     majTexte();
     btnMoins.onclick = (e) => {
       e.stopPropagation();
-      if (aliment.portions > 0) {
-        aliment.portions--;
-        majTexte();
-        sauvegarderAliments();
-      }
+	  if (aliment.portions > aliment.quantite) {
+      	if (aliment.portions > 0) {
+        	aliment.portions--;
+        	majTexte();
+        	sauvegarderAliments();
+      	}
+	  }
+	  else {
+		if (aliment.quantite > 0) {
+        	aliment.quantite--;
+        	majTexte();
+        	sauvegarderAliments();
+      	}
+	  }
     };
     btnPlus.onclick = (e) => {
       e.stopPropagation();
-      aliment.portions++;
-      majTexte();
-      sauvegarderAliments();
+      if (aliment.portions > aliment.quantite) {
+        	aliment.portions++;
+        	majTexte();
+        	sauvegarderAliments();
+	  }
+	  else {
+        	aliment.quantite++;
+        	majTexte();
+        	sauvegarderAliments();
+	  }
     };
     blocQuantite.appendChild(btnMoins);
     blocQuantite.appendChild(spanTexte);
@@ -1393,5 +1409,6 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
