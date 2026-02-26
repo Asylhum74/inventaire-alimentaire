@@ -759,12 +759,16 @@ function repasCuisiné() {
     );
     if (!alim) return;
     if (alim.portions) {
-      let portionsStock = alim.quantite * alim.portions;
-      portionsStock -= ingredient.quantite;
+      //let portionsStock = alim.quantite * alim.portions;
+      //portionsStock -= ingredient.quantite;
       //alim.quantite = Math.max(
         //portionsStock / alim.portions,
         //0
       //);
+	 alim.portions = Math.max(
+        alim.portions - ingredient.portions,
+        0
+      );
     } else {
       alim.quantite = Math.max(
         alim.quantite - ingredient.quantite,
@@ -1412,6 +1416,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
