@@ -456,15 +456,15 @@ function afficherAliments() {
     majTexte();
     btnMoins.onclick = (e) => {
       e.stopPropagation();
-      if (aliment.quantite > 0) {
-        aliment.quantite--;
+      if (aliment.portions > 0) {
+        aliment.portions--;
         majTexte();
         sauvegarderAliments();
       }
     };
     btnPlus.onclick = (e) => {
       e.stopPropagation();
-      aliment.quantite++;
+      aliment.portions++;
       majTexte();
       sauvegarderAliments();
     };
@@ -1393,4 +1393,5 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
