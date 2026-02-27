@@ -509,9 +509,6 @@ function afficherAliments() {
     li.appendChild(actions);
     ul.appendChild(li);
   }); 
-	if (aliments.quantite > 0 && aliments.quantite < 1) {
-	  aliments.quantite = 1;
-	}
 }
 function supprimerAliment(index) {
   if(confirm("Voulez-vous vraiment supprimer cet aliment ?")) {
@@ -775,6 +772,9 @@ function repasCuisiné() {
       );
     }
   });
+   	if (quantite > 0 && quantite < 1) {
+	  quantite = 1;
+	}
   aliments = inventaire;
   localStorage.setItem("aliments", JSON.stringify(inventaire));
   inputRepasActif.value = "";
@@ -1415,6 +1415,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
