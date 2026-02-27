@@ -763,7 +763,7 @@ function repasCuisiné() {
       portionsStock -= ingredient.quantite;
       alim.quantite = Math.max(
         portionsStock / alim.portions,
-        0
+        1
       );
     } else {
       alim.quantite = Math.max(
@@ -772,9 +772,6 @@ function repasCuisiné() {
       );
     }
   });
-   	if (inventaire.quantite > 0 && inventaire.quantite < 1) {
-	  inventaire.quantite = 1;
-	}
   aliments = inventaire;
   localStorage.setItem("aliments", JSON.stringify(inventaire));
   inputRepasActif.value = "";
@@ -1415,6 +1412,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
