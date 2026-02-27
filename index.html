@@ -451,9 +451,9 @@ function afficherAliments() {
         txtPeremption = ` - ${joursRestants} jour(s) restant`;
         if (joursRestants <= 3) txtPeremption += " - URGENT !";
       }
-	  if (aliment.quantite > 0 && aliment.quantite < 1) {
-		  aliment.quantite = 1;
-	  }
+	  //if (aliment.quantite > 0 && aliment.quantite < 1) {
+		//  aliment.quantite = 1;
+	  //}
       spanTexte.innerHTML = `<strong>${aliment.nom}</strong><br>${aliment.quantite} ${aliment.unite}${txtPortions}${txtPeremption}`;
     }
     majTexte();
@@ -1415,6 +1415,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
