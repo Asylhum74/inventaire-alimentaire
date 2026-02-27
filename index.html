@@ -509,6 +509,9 @@ function afficherAliments() {
     li.appendChild(actions);
     ul.appendChild(li);
   }); 
+	if (aliments.quantite > 0 and aliments.quantite < 1) {
+		aliments.quantite = 1;
+	}
 }
 function supprimerAliment(index) {
   if(confirm("Voulez-vous vraiment supprimer cet aliment ?")) {
@@ -1412,6 +1415,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
