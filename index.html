@@ -772,8 +772,8 @@ function repasCuisiné() {
       );
     }
   });
-   	if (quantite > 0 && quantite < 1) {
-	  quantite = 1;
+   	if (inventaire.quantite > 0 && inventaire.quantite < 1) {
+	  inventaire.quantite = 1;
 	}
   aliments = inventaire;
   localStorage.setItem("aliments", JSON.stringify(inventaire));
@@ -1415,6 +1415,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
