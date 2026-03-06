@@ -258,7 +258,7 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
       </table>
 	  <p>
       <button class="btn" onclick="nouvelleSemaine()">🆕 Nouvelle semaine</button>
-      <button class="btn" onclick="sauvegarderRepas()">💾 Sauvegarder la semaine</button>
+      <button class="btn" id="btnSauvegardeRepas" onclick="sauvegarderRepas()">💾 Sauvegarder la semaine</button>
       <button class="btn" onclick="chargerRepas()">🔄 Charger la semaine</button>
       <button class="btn" id="btnListeCourse" onclick="genererListeCourses()">🛒 Générer la liste de courses</button>
 	  </p>
@@ -576,7 +576,10 @@ function sauvegarderRepas() {
     repasData[jour][typeRepas] = input.value;
   });
   localStorage.setItem('repasSemaine', JSON.stringify(repasData));
-  alert("Repas sauvegardés !");
+  const btnSauvegarde = document.getElementById("btnSauvegardeRepas");
+  btnSauvegarde.onclick {
+	alert("Repas sauvegardés !");
+  }
 }
 function chargerRepas() {
   const repasData = JSON.parse(localStorage.getItem('repasSemaine'));
@@ -1417,6 +1420,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
