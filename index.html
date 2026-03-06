@@ -260,7 +260,7 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
       <button class="btn" onclick="nouvelleSemaine()">🆕 Nouvelle semaine</button>
       <button class="btn" onclick="sauvegarderRepas()">💾 Sauvegarder la semaine</button>
       <button class="btn" onclick="chargerRepas()">🔄 Charger la semaine</button>
-      <button class="btn" onclick="genererListeCourses()">🛒 Générer la liste de courses</button>
+      <button class="btn" id="btnListeCourse" onclick="genererListeCourses()">🛒 Générer la liste de courses</button>
 	  </p>
     </div>
 
@@ -589,8 +589,10 @@ function chargerRepas() {
   });
 }
 function genererListeCourses() {
-  if (confirm("Voulez-vous vous rendre sur la liste de course ?")) afficherPage('courses');
-	
+  const btnCourse = document.getElementById("btnListeCourse");
+  btnCourse.onclick = () => {
+  	if (confirm("Voulez-vous vous rendre sur la liste de course ?")) afficherPage('courses');
+  }
   let inventaire = [];
   try {
     inventaire = JSON.parse(localStorage.getItem('aliments')) || [];
@@ -1415,6 +1417,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
