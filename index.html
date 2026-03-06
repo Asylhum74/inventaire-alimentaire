@@ -26,7 +26,7 @@ html, body {height: 100%;}
 .nav-btn{width:100%; border:none; background:transparent; color:white; padding:12px 14px; border-radius:12px; text-align:center; cursor:pointer; font-weight:600;
   opacity:.9; }
 .nav-btn:hover{background:rgba(255,255,255,.08); }
-.nav-btn:active{background:var(--primary); }
+.nav-btn.active{background:var(--primary); }
 .content{padding:28px; flex: 1; width:100%; }
 .card{background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px; margin-bottom:22px; }
 .card h2{margin:0 0 14px 0; font-size:18px; }
@@ -331,6 +331,17 @@ li { display:flex; justify-content:space-between; align-items:center; flex-wrap:
 	</main>
 </div>
 <script>
+// ------------------- GESTION BOUTON ----------------
+const buttons = document.querySelectorAll(".nav-btn");
+
+buttons.forEach(button => {
+  button.addEventListener("click", () => {
+    buttons.forEach(btn => btn.classList.remove("active"));
+    button.classList.add("active");
+
+  });
+});
+	
 // ------------------- MODE SOMBRE -------------------
 if (localStorage.getItem("darkMode") === "true") {
   document.body.classList.add("dark");
@@ -1420,6 +1431,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
