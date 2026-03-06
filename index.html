@@ -577,7 +577,7 @@ function sauvegarderRepas() {
   });
   localStorage.setItem('repasSemaine', JSON.stringify(repasData));
   const btnSauvegarde = document.getElementById("btnSauvegardeRepas");
-  btnSauvegarde.onclick {
+  btnSauvegarde.onclick = () => {
 	alert("Repas sauvegardés !");
   }
 }
@@ -1420,6 +1420,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
